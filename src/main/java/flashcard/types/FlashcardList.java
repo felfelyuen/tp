@@ -1,40 +1,37 @@
 package flashcard.types;
 
-import static constants.ErrorMessages.CREATE_USAGE;
+import static constants.ErrorMessages.CREATE_INVALID_ORDER;
+import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
+import static constants.ErrorMessages.CREATE_MISSING_FIELD;
+import static constants.SuccessMessages.CREATE_SUCCESS;
 
 import java.util.ArrayList;
 
-import exceptions.IllegalArgumentException;
 import ui.Ui;
 
 public class FlashcardList {
     public static ArrayList<Flashcard> flashcards = new ArrayList<>();
 
-    public static void createFlashcard(String arguments) {
-        try {
-            boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
-            if (!containsAllArguments) {
-                throw new IllegalArgumentException("Missing /q or /a in input.");
-            }
-            int questionStart = arguments.indexOf("/q");
-            int answerStart = arguments.indexOf("/a");
-
-            String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
-            String answer = arguments.substring(answerStart + "/a".length()).trim();
-            if (question.isEmpty() || answer.isEmpty()) {
-                throw new IllegalArgumentException("Question or Answer cannot be empty.");
-            }
-            Flashcard newFlashcard = new Flashcard(question, answer);
-            flashcards.add(newFlashcard);
-            Ui.showToUser(String.format("Added a new flashcard.\n" +
-                    "Question: %s\n" +
-                    "Answer: %s\n" +
-                    "You have %d flashcard(s) in your deck.",
-                    newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size()));
-
-        } catch (exceptions.IllegalArgumentException e) {
-            Ui.showError(e.getMessage());
-            Ui.showError(CREATE_USAGE);
+    public static String createFlashcard(String arguments) throws IllegalArgumentException {
+        boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
+        if (!containsAllArguments) {
+            throw new IllegalArgumentException(CREATE_MISSING_FIELD);
         }
+        int questionStart = arguments.indexOf("/q");
+        int answerStart = arguments.indexOf("/a");
+
+        if (questionStart > answerStart) {
+            throw new IllegalArgumentException(CREATE_INVALID_ORDER);
+        }
+
+        String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
+        String answer = arguments.substring(answerStart + "/a".length()).trim();
+        if (question.isEmpty() || answer.isEmpty()) {
+            throw new IllegalArgumentException(CREATE_MISSING_DESCRIPTION);
+        }
+        Flashcard newFlashcard = new Flashcard(question, answer);
+        flashcards.add(newFlashcard);
+        return String.format(CREATE_SUCCESS,
+                newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size());
     }
 }

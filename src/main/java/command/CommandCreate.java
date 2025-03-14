@@ -1,6 +1,9 @@
 package command;
 
+import static constants.ErrorMessages.CREATE_USAGE;
 import static flashcard.types.FlashcardList.createFlashcard;
+
+import ui.Ui;
 
 public class CommandCreate extends Command{
     private final String arguments;
@@ -8,6 +11,11 @@ public class CommandCreate extends Command{
         this.arguments = arguments;
     }
     public void executeCommand() {
-        createFlashcard(this.arguments);
+        try {
+            Ui.showToUser(createFlashcard(arguments));
+        } catch (IllegalArgumentException e) {
+            Ui.showError(e.getMessage());
+            Ui.showError(CREATE_USAGE);
+        }
     }
 }
