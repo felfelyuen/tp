@@ -7,8 +7,6 @@ import static constants.SuccessMessages.CREATE_SUCCESS;
 
 import java.util.ArrayList;
 
-import ui.Ui;
-
 public class FlashcardList {
     public static ArrayList<Flashcard> flashcards = new ArrayList<>();
 
