@@ -1,8 +1,8 @@
-package seedu.duke;
+package FlashCLI;
 
 import java.util.Scanner;
 
-public class Duke {
+public class FlashCLI {
     /**
      * Main entry-point for the java.duke.Duke application.
      */
