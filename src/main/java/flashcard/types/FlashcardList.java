@@ -1,11 +1,11 @@
-package FlashcardTypes;
+package flashcard.types;
 
-import static Constants.ErrorMessages.CREATE_USAGE;
+import static constants.ErrorMessages.CREATE_USAGE;
 
 import java.util.ArrayList;
 
-import Exceptions.IllegalArgumentException;
-import Ui.Ui;
+import exceptions.IllegalArgumentException;
+import ui.Ui;
 
 public class FlashcardList {
     public static ArrayList<Flashcard> flashcards = new ArrayList<>();
@@ -29,9 +29,10 @@ public class FlashcardList {
             Ui.showToUser(String.format("Added a new flashcard.\n" +
                     "Question: %s\n" +
                     "Answer: %s\n" +
-                    "You have %d flashcard(s) in your deck.", newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size()));
+                    "You have %d flashcard(s) in your deck.",
+                    newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size()));
 
-        } catch (Exceptions.IllegalArgumentException e) {
+        } catch (exceptions.IllegalArgumentException e) {
             Ui.showError(e.getMessage());
             Ui.showError(CREATE_USAGE);
         }

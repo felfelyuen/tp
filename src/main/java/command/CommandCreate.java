@@ -1,6 +1,6 @@
-package Commands;
+package command;
 
-import static FlashcardTypes.FlashcardList.createFlashcard;
+import static flashcard.types.FlashcardList.createFlashcard;
 
 public class CommandCreate extends Command{
     private final String arguments;

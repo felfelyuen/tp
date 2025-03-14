@@ -1,18 +1,18 @@
-package FlashCLI;
+package flashcli;
 
-import static Constants.CommandConstants.EXIT;
+import static constants.CommandConstants.EXIT;
 
-import Commands.Command;
-import Ui.Ui;
-import Parser.Parser;
+import command.Command;
+import parser.Parser;
+import static ui.Ui.getUserCommand;
 
 public class FlashCLI {
     /**
-     * Main entry-point for the java.duke.Duke application.
+     * Main entry-point for the java.flashcli.FlashCLI application.
      */
     public static void main(String[] args) {
         System.out.println("Welcome to FlashCLI!");
-        String fullInputLine = Ui.getUserCommand();
+        String fullInputLine = getUserCommand();
 
         while (!(fullInputLine.equals(EXIT))) {
             try {
@@ -21,7 +21,7 @@ public class FlashCLI {
             } catch (IllegalArgumentException e) {
                 System.out.println("Possible commands are: add, exit");
             } finally {
-                fullInputLine = Ui.getUserCommand();
+                fullInputLine = getUserCommand();
             }
         }
 

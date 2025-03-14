@@ -1,4 +1,4 @@
-package Constants;
+package constants;
 
 public class CommandConstants {
     public static final String CREATE = "add";

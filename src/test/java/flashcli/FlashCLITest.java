@@ -1,4 +1,4 @@
-package FlashCLI;
+package flashcli;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

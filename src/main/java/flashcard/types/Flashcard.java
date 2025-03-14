@@ -1,4 +1,4 @@
-package FlashcardTypes;
+package flashcard.types;
 
 public class Flashcard {
     protected String question;
