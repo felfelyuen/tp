@@ -1,21 +1,30 @@
 package FlashCLI;
 
-import java.util.Scanner;
+import static Constants.CommandConstants.EXIT;
+
+import Commands.Command;
+import Ui.Ui;
+import Parser.Parser;
 
 public class FlashCLI {
     /**
      * Main entry-point for the java.duke.Duke application.
      */
     public static void main(String[] args) {
-        String logo = " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
-        System.out.println("Hello from\n" + logo);
-        System.out.println("What is your name?");
+        System.out.println("Welcome to FlashCLI!");
+        String fullInputLine = Ui.getUserCommand();
 
-        Scanner in = new Scanner(System.in);
-        System.out.println("Hello " + in.nextLine());
+        while (!(fullInputLine.equals(EXIT))) {
+            try {
+                Command c = Parser.parseInput(fullInputLine);
+                c.executeCommand();
+            } catch (IllegalArgumentException e) {
+                System.out.println("Possible commands are: add, exit");
+            } finally {
+                fullInputLine = Ui.getUserCommand();
+            }
+        }
+
+        System.out.println("Thank you for using FlashCLI!");
     }
 }
