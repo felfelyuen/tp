@@ -149,7 +149,7 @@ public class FlashcardListTest {
     }
 
     @Test
-    void viewFlashcard_invalidIndex_ArrayIndexOutOfBoundsExceptionThrown() {
+    void viewFlashcard_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
@@ -162,7 +162,7 @@ public class FlashcardListTest {
     }
 
     @Test
-    void viewFlashcard_IndexNotANumber_NumberFormatExceptionThrown() {
+    void viewFlashcard_IndexNotANumber_numberFormatExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
