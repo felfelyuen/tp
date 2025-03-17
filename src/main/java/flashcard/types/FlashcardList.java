@@ -35,12 +35,12 @@ public class FlashcardList {
                 newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size());
     }
 
-    public static String viewFlashcardQuestion (int index) throws ArrayIndexOutOfBoundsException {
+    public static String viewFlashcardQuestion (int index) throws ArrayIndexOutOfBoundsException{
         if (index <= 0 || index > flashcards.size()) {
             throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
         }
-        index = index - 1;
-        Flashcard flashcardToView = flashcards.get(index);
+        int arrayIndex = index - 1;
+        Flashcard flashcardToView = flashcards.get(arrayIndex);
         String question = flashcardToView.getQuestion();
         return String.format(VIEW_SUCCESS, index, question);
     }
