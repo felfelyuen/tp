@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class Ui {
     private static final Scanner in = new Scanner(System.in);
+
     public static String getUserCommand() {
         if (in.hasNextLine()) {
             return in.nextLine();

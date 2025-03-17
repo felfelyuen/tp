@@ -4,8 +4,10 @@ import command.Command;
 import command.CommandCreate;
 import command.CommandEdit;
 import command.CommandViewQuestion;
+import static constants.CommandConstants.CREATE;
+import static constants.CommandConstants.VIEW_QN;
+import static constants.CommandConstants.EDIT;
 
-import static constants.CommandConstants.*;
 
 public class Parser {
     public static Command parseInput(String input) throws IllegalArgumentException {

@@ -38,11 +38,12 @@ public class FlashcardList {
 
     /**
      * Views the flashcard question
+     *
      * @param index index of flashcard to view
      * @return the question in the format of VIEW_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
-    public static String viewFlashcardQuestion (int index) throws ArrayIndexOutOfBoundsException{
+    public static String viewFlashcardQuestion(int index) throws ArrayIndexOutOfBoundsException {
         if (index <= 0 || index > flashcards.size()) {
             throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
         }
@@ -54,12 +55,13 @@ public class FlashcardList {
 
     /**
      * Views the flashcard question
-     * @param index index of flashcard to view
+     *
+     * @param index     index of flashcard to view
      * @param arguments user inputs containing updated question and answer
      * @return the updated flashcard in the format of EDIT_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
-    public static String editFlashcard (int index, String arguments) throws ArrayIndexOutOfBoundsException {
+    public static String editFlashcard(int index, String arguments) throws ArrayIndexOutOfBoundsException {
         boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
         if (!containsAllArguments) {
             throw new IllegalArgumentException(CREATE_MISSING_FIELD);

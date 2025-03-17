@@ -2,11 +2,13 @@ package command;
 
 import ui.Ui;
 
-import static constants.ErrorMessages.*;
+import static constants.ErrorMessages.VIEW_INVALID_INDEX;
+import static constants.ErrorMessages.EDIT_USAGE;
 import static flashcard.types.FlashcardList.editFlashcard;
 
 public class CommandEdit extends Command {
     private final String arguments;
+
     public CommandEdit(String arguments) {
         this.arguments = arguments;
     }
