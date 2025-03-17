@@ -35,6 +35,12 @@ public class FlashcardList {
                 newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size());
     }
 
+    /**
+     * Views the flashcard question
+     * @param index index of flashcard to view
+     * @return the question in the format of VIEW_SUCCESS
+     * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
+     */
     public static String viewFlashcardQuestion (int index) throws ArrayIndexOutOfBoundsException{
         if (index <= 0 || index > flashcards.size()) {
             throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
