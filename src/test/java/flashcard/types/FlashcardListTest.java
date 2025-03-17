@@ -1,12 +1,18 @@
 package flashcard.types;
 
-import static constants.ErrorMessages.*;
+import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
+import static constants.ErrorMessages.CREATE_MISSING_FIELD;
+import static constants.ErrorMessages.CREATE_INVALID_ORDER;
+import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
+import static constants.ErrorMessages.VIEW_INVALID_INDEX;
 import static constants.SuccessMessages.CREATE_SUCCESS;
 import static constants.SuccessMessages.VIEW_SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 
+import command.Command;
+import command.CommandCreate;
 import command.CommandViewQuestion;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -135,7 +141,8 @@ public class FlashcardListTest {
     @Test
     void viewFlashcard_validInputs_success() {
         String createInput = "/q What is Java? /a A programming language.";
-        String createOutput = FlashcardList.createFlashcard(createInput);
+        Command createTest = new CommandCreate(createInput);
+        createTest.executeCommand();
         String viewOutput = FlashcardList.viewFlashcardQuestion(1);
         assertEquals(1, FlashcardList.flashcards.size());
         assertEquals(String.format(VIEW_SUCCESS, 1, "What is Java?"), viewOutput);
@@ -145,7 +152,8 @@ public class FlashcardListTest {
     void viewFlashcard_invalidIndex_ArrayIndexOutOfBoundsExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            String createOutput = FlashcardList.createFlashcard(createInput);
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
             assertEquals(1, FlashcardList.flashcards.size());
             new CommandViewQuestion("3");
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -157,15 +165,13 @@ public class FlashcardListTest {
     void viewFlashcard_IndexNotANumber_NumberFormatExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            String createOutput = FlashcardList.createFlashcard(createInput);
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
             assertEquals(1, FlashcardList.flashcards.size());
             new CommandViewQuestion("sjd");
         } catch (NumberFormatException e) {
             assertEquals(VIEW_INVALID_INDEX, e.getMessage());
         }
     }
-
-
-
 
 }

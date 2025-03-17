@@ -13,9 +13,9 @@ public class Parser {
         String command = inputList[0];
         String arguments = inputList.length > 1 ? inputList[1] : "";
         return switch (command) {
-            case CREATE -> new CommandCreate(arguments);
-            case VIEW_QN -> new CommandViewQuestion(arguments);
-            default -> throw new IllegalArgumentException();
+        case CREATE -> new CommandCreate(arguments);
+        case VIEW_QN -> new CommandViewQuestion(arguments);
+        default -> throw new IllegalArgumentException();
         };
     }
 }
