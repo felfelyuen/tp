@@ -1,13 +1,19 @@
 package flashcard.types;
 
-import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
+import static constants.ErrorMessages.CREATE_INVALID_ORDER;
+import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
+import static constants.ErrorMessages.VIEW_INVALID_INDEX;
 import static constants.SuccessMessages.CREATE_SUCCESS;
+import static constants.SuccessMessages.VIEW_SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 
+import command.Command;
+import command.CommandCreate;
+import command.CommandViewQuestion;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -132,7 +138,40 @@ public class FlashcardListTest {
         }
     }
 
+    @Test
+    void viewFlashcard_validInputs_success() {
+        String createInput = "/q What is Java? /a A programming language.";
+        Command createTest = new CommandCreate(createInput);
+        createTest.executeCommand();
+        String viewOutput = FlashcardList.viewFlashcardQuestion(1);
+        assertEquals(1, FlashcardList.flashcards.size());
+        assertEquals(String.format(VIEW_SUCCESS, 1, "What is Java?"), viewOutput);
+    }
 
+    @Test
+    void viewFlashcard_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            assertEquals(1, FlashcardList.flashcards.size());
+            new CommandViewQuestion("3");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
+        }
+    }
 
+    @Test
+    void viewFlashcard_indexNotANumber_numberFormatExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            assertEquals(1, FlashcardList.flashcards.size());
+            new CommandViewQuestion("sjd");
+        } catch (NumberFormatException e) {
+            assertEquals(VIEW_INVALID_INDEX, e.getMessage());
+        }
+    }
 
 }

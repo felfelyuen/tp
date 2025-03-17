@@ -3,7 +3,9 @@ package flashcard.types;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
+import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.SuccessMessages.CREATE_SUCCESS;
+import static constants.SuccessMessages.VIEW_SUCCESS;
 
 import java.util.ArrayList;
 
@@ -31,5 +33,21 @@ public class FlashcardList {
         flashcards.add(newFlashcard);
         return String.format(CREATE_SUCCESS,
                 newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size());
+    }
+
+    /**
+     * Views the flashcard question
+     * @param index index of flashcard to view
+     * @return the question in the format of VIEW_SUCCESS
+     * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
+     */
+    public static String viewFlashcardQuestion (int index) throws ArrayIndexOutOfBoundsException{
+        if (index <= 0 || index > flashcards.size()) {
+            throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
+        }
+        int arrayIndex = index - 1;
+        Flashcard flashcardToView = flashcards.get(arrayIndex);
+        String question = flashcardToView.getQuestion();
+        return String.format(VIEW_SUCCESS, index, question);
     }
 }
