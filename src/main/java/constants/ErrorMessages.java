@@ -8,4 +8,7 @@ public class ErrorMessages {
 
     public static final String VIEW_INVALID_INDEX = "Input is not a number";
     public static final String VIEW_OUT_OF_BOUNDS = "Input is out of bounds of current list of flashcards";
+
+    public static final String EDIT_USAGE = "Usage: edit {INDEX} /q{QUESTION} /a{ANSWER}";
+
 }

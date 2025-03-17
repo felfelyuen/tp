@@ -1,11 +1,11 @@
 package parser;
 
-import static constants.CommandConstants.CREATE;
-import static constants.CommandConstants.VIEW_QN;
-
 import command.Command;
 import command.CommandCreate;
+import command.CommandEdit;
 import command.CommandViewQuestion;
+
+import static constants.CommandConstants.*;
 
 public class Parser {
     public static Command parseInput(String input) throws IllegalArgumentException {
@@ -15,6 +15,7 @@ public class Parser {
         return switch (command) {
         case CREATE -> new CommandCreate(arguments);
         case VIEW_QN -> new CommandViewQuestion(arguments);
+        case EDIT -> new CommandEdit(arguments);
         default -> throw new IllegalArgumentException();
         };
     }
