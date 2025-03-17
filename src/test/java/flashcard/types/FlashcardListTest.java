@@ -162,7 +162,7 @@ public class FlashcardListTest {
     }
 
     @Test
-    void viewFlashcard_IndexNotANumber_numberFormatExceptionThrown() {
+    void viewFlashcard_indexNotANumber_numberFormatExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
