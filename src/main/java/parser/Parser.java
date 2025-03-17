@@ -1,7 +1,7 @@
 package parser;
 
 import static constants.CommandConstants.CREATE;
-import static constants.CommandConstants.VIEW;
+import static constants.CommandConstants.VIEW_QN;
 
 import command.Command;
 import command.CommandCreate;
@@ -14,7 +14,7 @@ public class Parser {
         String arguments = inputList.length > 1 ? inputList[1] : "";
         return switch (command) {
             case CREATE -> new CommandCreate(arguments);
-            case VIEW -> new CommandViewQuestion(arguments);
+            case VIEW_QN -> new CommandViewQuestion(arguments);
             default -> throw new IllegalArgumentException();
         };
     }
