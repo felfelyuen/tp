@@ -5,7 +5,8 @@ import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.SuccessMessages.CREATE_SUCCESS;
-import static constants.SuccessMessages.VIEW_SUCCESS;
+import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
+import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class FlashcardList {
      * Views the flashcard question
      *
      * @param index index of flashcard to view
-     * @return the question in the format of VIEW_SUCCESS
+     * @return the question in the format of VIEW_QUESTION_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
     public static String viewFlashcardQuestion(int index) throws ArrayIndexOutOfBoundsException {
@@ -50,11 +51,27 @@ public class FlashcardList {
         int arrayIndex = index - 1;
         Flashcard flashcardToView = flashcards.get(arrayIndex);
         String question = flashcardToView.getQuestion();
-        return String.format(VIEW_SUCCESS, index, question);
+        return String.format(VIEW_QUESTION_SUCCESS, index, question);
     }
 
     /**
-     * Views the flashcard question
+     * Views flashcard answer
+     * @param index index of flashcard
+     * @return the answer in the format of VIEW_ANSWER_SUCCESS
+     * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
+     */
+    public static String viewFlashcardAnswer(int index) throws ArrayIndexOutOfBoundsException {
+        if (index <= 0 || index > flashcards.size()) {
+            throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
+        }
+        int arrayIndex = index - 1;
+        Flashcard flashcardToView = flashcards.get(arrayIndex);
+        String answer = flashcardToView.getAnswer();
+        return String.format(VIEW_ANSWER_SUCCESS, index, answer);
+    }
+
+    /**
+     * Edits the flashcard
      *
      * @param index     index of flashcard to view
      * @param arguments user inputs containing updated question and answer

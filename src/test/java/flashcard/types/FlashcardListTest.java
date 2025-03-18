@@ -6,7 +6,7 @@ import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.VIEW_INVALID_INDEX;
 import static constants.SuccessMessages.CREATE_SUCCESS;
-import static constants.SuccessMessages.VIEW_SUCCESS;
+import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -147,7 +147,7 @@ public class FlashcardListTest {
         createTest.executeCommand();
         String viewOutput = FlashcardList.viewFlashcardQuestion(1);
         assertEquals(1, FlashcardList.flashcards.size());
-        assertEquals(String.format(VIEW_SUCCESS, 1, "What is Java?"), viewOutput);
+        assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?"), viewOutput);
     }
 
     @Test

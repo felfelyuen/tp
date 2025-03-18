@@ -3,8 +3,10 @@ package parser;
 import command.Command;
 import command.CommandCreate;
 import command.CommandEdit;
+import command.CommandViewAnswer;
 import command.CommandViewQuestion;
 import static constants.CommandConstants.CREATE;
+import static constants.CommandConstants.VIEW_ANSWER;
 import static constants.CommandConstants.VIEW_QN;
 import static constants.CommandConstants.EDIT;
 
@@ -17,6 +19,7 @@ public class Parser {
         return switch (command) {
         case CREATE -> new CommandCreate(arguments);
         case VIEW_QN -> new CommandViewQuestion(arguments);
+        case VIEW_ANSWER -> new CommandViewAnswer(arguments);
         case EDIT -> new CommandEdit(arguments);
         default -> throw new IllegalArgumentException();
         };
