@@ -6,6 +6,7 @@ import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.VIEW_INVALID_INDEX;
 import static constants.SuccessMessages.CREATE_SUCCESS;
+import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -173,6 +174,42 @@ public class FlashcardListTest {
             new CommandViewQuestion("sjd");
         } catch (NumberFormatException e) {
             assertEquals(VIEW_INVALID_INDEX, e.getMessage());
+        }
+    }
+
+    @Test
+    void viewFlashcardAnswer_validInputs_success() {
+        String createInput = "/q What is Java? /a A programming language.";
+        Command createTest = new CommandCreate(createInput);
+        createTest.executeCommand();
+        String viewOutput = FlashcardList.viewFlashcardAnswer(1);
+        assertEquals(1, FlashcardList.flashcards.size());
+        assertEquals(String.format(VIEW_ANSWER_SUCCESS, 1, "A programming language."), viewOutput);
+    }
+
+    @Test
+    void viewFlashcardAnswer_indexNotANumber_numberFormatExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            assertEquals(1, FlashcardList.flashcards.size());
+            new CommandViewQuestion("sjd");
+        } catch (NumberFormatException e) {
+            assertEquals(VIEW_INVALID_INDEX, e.getMessage());
+        }
+    }
+
+    @Test
+    void viewFlashcardAnswer_invalidIndex_ArrayIndexOutOfBoundsExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            assertEquals(1, FlashcardList.flashcards.size());
+            new CommandViewQuestion("72");
+        } catch (NumberFormatException e) {
+            assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
         }
     }
 
