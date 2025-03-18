@@ -201,7 +201,7 @@ public class FlashcardListTest {
     }
 
     @Test
-    void viewFlashcardAnswer_invalidIndex_ArrayIndexOutOfBoundsExceptionThrown() {
+    void viewFlashcardAnswer_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
