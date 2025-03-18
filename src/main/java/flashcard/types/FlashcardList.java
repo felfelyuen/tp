@@ -90,6 +90,6 @@ public class FlashcardList {
         String oldAnswer = oldFlashcard.getAnswer();
         flashcards.set(arrayIndex, updatedFlashcard);
         return String.format(EDIT_SUCCESS,
-                updatedQuestion, oldQuestion, updatedAnswer, oldAnswer);
+                oldQuestion, updatedQuestion, oldAnswer, updatedAnswer);
     }
 }
