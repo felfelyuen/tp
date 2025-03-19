@@ -17,4 +17,6 @@ public class SuccessMessages {
             "Updated: %s\n" +
             "Edit Answer: %s\n" +
             "Updated: %s\n";
+
+    public static final String LIST_SUCCESS = "List of flashcards:\n%s";
 }

@@ -6,4 +6,5 @@ public class CommandConstants {
     public static final String VIEW_ANS = "view_answer";
     public static final String EXIT = "exit";
     public static final String EDIT = "edit";
+    public static final String LIST = "list";
 }
