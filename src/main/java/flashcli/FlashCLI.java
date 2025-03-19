@@ -19,7 +19,7 @@ public class FlashCLI {
                 Command c = Parser.parseInput(fullInputLine);
                 c.executeCommand();
             } catch (IllegalArgumentException e) {
-                System.out.println("Possible commands are: add, view_qn, view_ans, edit, list,ad exit");
+                System.out.println("Possible commands are: add, view_qn, view_ans, edit, list, and exit");
             } finally {
                 fullInputLine = getUserCommand();
             }
