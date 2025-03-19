@@ -17,11 +17,9 @@ public class CommandViewAnswer extends Command {
         try {
             int index = Integer.parseInt(arguments);
             Ui.showToUser(viewFlashcardAnswer(index));
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             Ui.showError(VIEW_INVALID_INDEX);
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             Ui.showError(VIEW_OUT_OF_BOUNDS);
         }
     }
