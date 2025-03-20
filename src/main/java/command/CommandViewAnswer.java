@@ -6,12 +6,18 @@ import static flashcard.types.FlashcardList.viewFlashcardAnswer;
 
 import ui.Ui;
 
+/**
+ * class to handle viewing of flashcard answer
+ */
 public class CommandViewAnswer extends Command {
     private final String arguments;
     public CommandViewAnswer(String arguments) {
         this.arguments = arguments;
     }
 
+    /**
+     * executes the command to view the answer
+     */
     @Override
     public void executeCommand() {
         try {
