@@ -16,29 +16,60 @@ import static constants.SuccessMessages.EDIT_SUCCESS;
 import static constants.SuccessMessages.LIST_SUCCESS;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class FlashcardList {
     public static ArrayList<Flashcard> flashcards = new ArrayList<>();
 
+    /**
+     * Creates a new flashcard
+     *
+     * <p>The arguments must contain both a question (denoted by "/q") and an answer (denoted by "/a").
+     * The question must appear before the answer in the input string.</p>
+     *
+     * @param arguments A string with the flashcard details
+     * @return A success message indicating the flashcard has been created.
+     * @throws FlashCLIillegalArgumentException If required fields are missing,
+     *         the question and answer are in the wrong order, or either field is empty.
+     */
+    private static final Logger logger = Logger.getLogger(FlashcardList.class.getName());
+
     public static String createFlashcard(String arguments) throws FlashCLIillegalArgumentException {
+        logger.info("Starting to create a flashcard with arguments: " + arguments);
+
         boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
         if (!containsAllArguments) {
+            logger.warning("Missing required fields: /q or /a");
             throw new FlashCLIillegalArgumentException(CREATE_MISSING_FIELD);
         }
+
         int questionStart = arguments.indexOf("/q");
         int answerStart = arguments.indexOf("/a");
 
+        assert questionStart >= 0 : "Index of /q should be valid";
+        assert answerStart >= 0 : "Index of /a should be valid";
+
+        logger.fine("Index of /q: " + questionStart + ", Index of /a: " + answerStart);
+
         if (questionStart > answerStart) {
+            logger.warning("Invalid order: /q comes after /a");
             throw new FlashCLIillegalArgumentException(CREATE_INVALID_ORDER);
         }
 
+        assert questionStart < answerStart : "Question should come before answer in arguments";
+
         String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
         String answer = arguments.substring(answerStart + "/a".length()).trim();
+
         if (question.isEmpty() || answer.isEmpty()) {
+            logger.warning("Missing description: question or answer is empty");
             throw new FlashCLIillegalArgumentException(CREATE_MISSING_DESCRIPTION);
         }
+
         Flashcard newFlashcard = new Flashcard(question, answer);
         flashcards.add(newFlashcard);
+
+        logger.info("Successfully created a flashcard: Question: " + question + ", Answer: " + answer);
         return String.format(CREATE_SUCCESS,
                 newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size());
     }
@@ -56,7 +87,9 @@ public class FlashcardList {
         }
         int arrayIndex = index - 1;
         Flashcard flashcardToView = flashcards.get(arrayIndex);
+        assert flashcardToView != null : "flashcard object should not be null";
         String question = flashcardToView.getQuestion();
+        assert !question.isEmpty() : "Question should not be empty when viewing flashcards";
         return String.format(VIEW_QUESTION_SUCCESS, index, question);
     }
 
@@ -72,7 +105,9 @@ public class FlashcardList {
         }
         int arrayIndex = index - 1;
         Flashcard flashcardToView = flashcards.get(arrayIndex);
+        assert flashcardToView != null : "flashcard object should not be null";
         String answer = flashcardToView.getAnswer();
+        assert !answer.isEmpty() : "Answer should not be empty when viewing flashcards";
         return String.format(VIEW_ANSWER_SUCCESS, index, answer);
     }
 
@@ -154,6 +189,7 @@ public class FlashcardList {
         }
         int arrayIndex = index - 1;
         Flashcard flashcardToDelete = flashcards.get(arrayIndex);
+        assert flashcardToDelete != null : "flashcard object should not be null";
         flashcards.remove(arrayIndex);
         return String.format(DELETE_SUCCESS, flashcardToDelete);
     }
