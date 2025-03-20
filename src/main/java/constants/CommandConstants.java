@@ -7,4 +7,5 @@ public class CommandConstants {
     public static final String EXIT = "exit";
     public static final String EDIT = "edit";
     public static final String LIST = "list";
+    public static final String DELETE = "delete";
 }

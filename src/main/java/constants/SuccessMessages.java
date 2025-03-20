@@ -19,4 +19,6 @@ public class SuccessMessages {
             "Updated: %s\n";
 
     public static final String LIST_SUCCESS = "List of flashcards:\n%s";
+
+    public static final String DELETE_SUCCESS = "Deleted flashcard: %s";
 }

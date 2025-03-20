@@ -9,6 +9,7 @@ import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.EMPTY_LIST;
 import static constants.SuccessMessages.CREATE_SUCCESS;
+import static constants.SuccessMessages.DELETE_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
@@ -139,5 +140,21 @@ public class FlashcardList {
         }
 
         return String.format(LIST_SUCCESS, list);
+    }
+
+    /**
+     * Deletes the flashcard
+     * @param index index of flashcard
+     * @return the flashcard details in the format of DELETE_SUCCESS
+     * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
+     */
+    public static String deleteFlashcard(int index) throws ArrayIndexOutOfBoundsException {
+        if (index <= 0 || index > flashcards.size()) {
+            throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
+        }
+        int arrayIndex = index - 1;
+        Flashcard flashcardToDelete = flashcards.get(arrayIndex);
+        flashcards.remove(arrayIndex);
+        return String.format(DELETE_SUCCESS, flashcardToDelete);
     }
 }
