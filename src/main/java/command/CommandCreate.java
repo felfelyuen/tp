@@ -3,6 +3,7 @@ package command;
 import static constants.ErrorMessages.CREATE_USAGE;
 import static flashcard.types.FlashcardList.createFlashcard;
 
+import exceptions.FlashCLIillegalArgumentException;
 import ui.Ui;
 
 public class CommandCreate extends Command{
@@ -13,7 +14,7 @@ public class CommandCreate extends Command{
     public void executeCommand() {
         try {
             Ui.showToUser(createFlashcard(arguments));
-        } catch (IllegalArgumentException e) {
+        } catch (FlashCLIillegalArgumentException e) {
             Ui.showError(e.getMessage());
             Ui.showError(CREATE_USAGE);
         }
