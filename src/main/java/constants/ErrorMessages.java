@@ -11,4 +11,6 @@ public class ErrorMessages {
 
     public static final String EDIT_USAGE = "Usage: edit {INDEX} /q{QUESTION} /a{ANSWER}";
 
+    public static final String EMPTY_LIST = "Invalid: List is empty.";
+
 }
