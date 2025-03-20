@@ -20,6 +20,7 @@ public class Parser {
         String[] inputList = input.split(" ", 2);
         String command = inputList[0];
         String arguments = inputList.length > 1 ? inputList[1] : "";
+        assert arguments != null : "Arguments should not be null";
         return switch (command) {
         case CREATE -> new CommandCreate(arguments);
         case VIEW_QN -> new CommandViewQuestion(arguments);

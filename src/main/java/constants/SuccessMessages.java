@@ -1,5 +1,7 @@
 package constants;
-
+/**
+ * class to hold all success messages
+ */
 public class SuccessMessages {
     public static final String CREATE_SUCCESS = "Added a new flashcard.\n" +
             "Question: %s\n" +

@@ -11,6 +11,7 @@ public class FlashCLI {
      * Main entry-point for the java.flashcli.FlashCLI application.
      */
     public static void main(String[] args) {
+        //assert false : "dummy assertion set to fail";
         System.out.println("Welcome to FlashCLI!");
         String fullInputLine = getUserCommand();
 
