@@ -1,5 +1,7 @@
 package constants;
-
+/**
+ * class to hold all success messages
+ */
 public class SuccessMessages {
     public static final String CREATE_SUCCESS = "Added a new flashcard.\n" +
             "Question: %s\n" +
@@ -17,4 +19,8 @@ public class SuccessMessages {
             "Updated: %s\n" +
             "Edit Answer: %s\n" +
             "Updated: %s\n";
+
+    public static final String LIST_SUCCESS = "List of flashcards:\n%s";
+
+    public static final String DELETE_SUCCESS = "Deleted flashcard: %s";
 }
