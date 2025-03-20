@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import command.Command;
 import command.CommandCreate;
+import command.CommandDelete;
 import command.CommandEdit;
 import command.CommandViewQuestion;
 import exceptions.EmptyListException;
@@ -297,6 +298,64 @@ public class FlashcardListTest {
                     listOutput);
         } catch (EmptyListException e) {
             assertEquals(EMPTY_LIST, e.getMessage());
+        }
+    }
+
+    @Test
+    void deleteFlashcard_validInputs_success() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+            String listOutput = FlashcardList.listFlashcards();
+            assertEquals(2, FlashcardList.flashcards.size());
+            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
+            Command deleteTest = new CommandDelete("1");
+            deleteTest.executeCommand();
+            String listAfterDeleteOutput = FlashcardList.listFlashcards();
+            assertEquals(1, FlashcardList.flashcards.size());
+            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?"), listAfterDeleteOutput);
+        } catch (EmptyListException e) {
+            fail("Unexpected EmptyListException was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void deleteFlashcard_indexNotANumber_numberFormatExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+            String listOutput = FlashcardList.listFlashcards();
+            assertEquals(2, FlashcardList.flashcards.size());
+            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
+            Command deleteTest = new CommandDelete("sdsd");
+            deleteTest.executeCommand();
+        } catch (EmptyListException e) {
+            fail("Unexpected EmptyListException was thrown: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            assertEquals(VIEW_INVALID_INDEX, e.getMessage());
+        }
+    }
+
+    @Test
+    void deleteFlashcard_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+            String listOutput = FlashcardList.listFlashcards();
+            assertEquals(2, FlashcardList.flashcards.size());
+            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
+            Command deleteTest = new CommandDelete("72");
+            deleteTest.executeCommand();
+        } catch (EmptyListException e) {
+            fail("Unexpected EmptyListException was thrown: " + e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
         }
     }
 }
