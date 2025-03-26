@@ -2,7 +2,7 @@ package command;
 
 import static constants.ErrorMessages.VIEW_INVALID_INDEX;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
-import static flashcard.types.FlashcardList.viewFlashcardQuestion;
+import static deck.DeckManager.currentDeck;
 
 import ui.Ui;
 
@@ -21,7 +21,7 @@ public class CommandViewQuestion extends Command{
     public void executeCommand() {
         try {
             int index = Integer.parseInt(arguments);
-            Ui.showToUser(viewFlashcardQuestion(index));
+            Ui.showToUser(currentDeck.viewFlashcardQuestion(index));
         } catch (ArrayIndexOutOfBoundsException e) {
             Ui.showError(VIEW_OUT_OF_BOUNDS);
         } catch (NumberFormatException e) {

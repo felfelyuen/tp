@@ -1,4 +1,4 @@
-package flashcard.types;
+package deck;
 
 /**
  * Represents a flashcard with a question and an answer.
