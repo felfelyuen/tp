@@ -26,6 +26,9 @@ public class Deck {
         this.name = name.trim();
     }
 
+    public String getName() {
+        return name;
+    }
 
     /**
      * Creates a new flashcard

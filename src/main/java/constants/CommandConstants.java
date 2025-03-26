@@ -12,4 +12,5 @@ public class CommandConstants {
     public static final String LIST = "list";
     public static final String DELETE = "delete";
     public static final String NEW_DECK = "newdeck";
+    public static final String SWITCH_DECK = "deck";
 }

@@ -23,4 +23,6 @@ public class SuccessMessages {
     public static final String LIST_SUCCESS = "List of flashcards:\n%s";
 
     public static final String DELETE_SUCCESS = "Deleted flashcard: %s";
+    public static final String CREATE_DECK_SUCCESS = "Deck \"%s\" created, no of decks %d";
+    public static final String SWITCH_DECK_SUCCESS = "Switched to deck \"%s\"";
 }

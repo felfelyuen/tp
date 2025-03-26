@@ -1,24 +1,22 @@
 package command;
 
-import static deck.DeckManager.createDeck;
+import static deck.DeckManager.switchDeck;
 
-import deck.Deck;
 import exceptions.FlashCLIillegalArgumentException;
 import ui.Ui;
 
-public class CommandCreateDeck extends Command{
-    public final String arguments;
+public class CommandSwitchDeck extends Command {
+    private final String arguments;
 
-    public CommandCreateDeck(String arguments) {
+    public CommandSwitchDeck(String arguments) {
         this.arguments = arguments;
     }
 
     public void executeCommand() {
         try {
-            Ui.showToUser(createDeck(arguments));
+            Ui.showToUser(switchDeck(arguments));
         } catch (FlashCLIillegalArgumentException e) {
             Ui.showError(e.getMessage());
         }
     }
-
 }
