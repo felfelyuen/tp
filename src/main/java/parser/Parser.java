@@ -4,15 +4,18 @@ import command.Command;
 import command.CommandCreate;
 import command.CommandDelete;
 import command.CommandEdit;
+import command.CommandListQuestion;
+import command.CommandQuizFlashcards;
 import command.CommandViewAnswer;
 import command.CommandViewQuestion;
-import command.CommandListQuestion;
+
 import static constants.CommandConstants.CREATE;
 import static constants.CommandConstants.DELETE;
-import static constants.CommandConstants.VIEW_ANS;
-import static constants.CommandConstants.VIEW_QN;
 import static constants.CommandConstants.EDIT;
 import static constants.CommandConstants.LIST;
+import static constants.CommandConstants.TEST;
+import static constants.CommandConstants.VIEW_ANS;
+import static constants.CommandConstants.VIEW_QN;
 
 
 public class Parser {
@@ -28,6 +31,7 @@ public class Parser {
         case EDIT -> new CommandEdit(arguments);
         case LIST -> new CommandListQuestion();
         case DELETE -> new CommandDelete(arguments);
+        case TEST -> new CommandQuizFlashcards(arguments);
         default -> throw new IllegalArgumentException();
         };
     }

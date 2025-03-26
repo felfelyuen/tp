@@ -2,12 +2,19 @@ package flashcard.types;
 
 import exceptions.EmptyListException;
 import exceptions.FlashCLIillegalArgumentException;
+import ui.Ui;
 
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.EMPTY_LIST;
+import static constants.QuizMessages.QUIZ_CORRECT;
+import static constants.QuizMessages.QUIZ_END;
+import static constants.QuizMessages.QUIZ_INCORRECT;
+import static constants.QuizMessages.QUIZ_LAST_QUESTION;
+import static constants.QuizMessages.QUIZ_QUESTIONS_LEFT;
+import static constants.QuizMessages.QUIZ_START;
 import static constants.SuccessMessages.CREATE_SUCCESS;
 import static constants.SuccessMessages.DELETE_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
@@ -192,5 +199,40 @@ public class FlashcardList {
         assert flashcardToDelete != null : "flashcard object should not be null";
         flashcards.remove(arrayIndex);
         return String.format(DELETE_SUCCESS, flashcardToDelete);
+    }
+
+    public static void quizFlashcards() throws EmptyListException {
+        if (flashcards.isEmpty()) {
+            throw new EmptyListException(EMPTY_LIST);
+        }
+
+        //SHUFFLE THE FLASHCARDS AND PUT THEM IN QUEUE HERE
+
+        Ui.showToUser(QUIZ_START);
+        int last_index = flashcards.size() - 1;
+        for (int i = 0; i < last_index; i++) {
+            //handles all questions except last one
+            int questions_left = flashcards.size() - i;
+            Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questions_left));
+            handleQuizForFlashcard(i);
+        }
+        Ui.showToUser(QUIZ_LAST_QUESTION);
+        handleQuizForFlashcard(last_index);
+
+        //HANDLE TIMER HERE
+        int timer_amount = 5; //arbitrary value for now
+        
+        Ui.showToUser(String.format(QUIZ_END, timer_amount));
+    }
+
+    public static void handleQuizForFlashcard (int index) {
+        Flashcard index_card = flashcards.get(index);
+        Ui.showToUser(index_card.getQuestion());
+        String userAnswer = Ui.getUserCommand();
+        if (userAnswer.equals(index_card.getAnswer())) {
+            Ui.showToUser(QUIZ_CORRECT);
+        } else {
+            Ui.showToUser(QUIZ_INCORRECT);
+        }
     }
 }
