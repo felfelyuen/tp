@@ -21,5 +21,6 @@ public class ErrorMessages {
     public static final String EMPTY_DECK_NAME = "Deck name must not be empty!";
     public static final String DUPLICATE_DECK_NAME = "Deck name already exists!";
     public static final String NO_SUCH_DECK = "Deck does not exist!";
+    public static final String NO_DECK_TO_VIEW = "No decks available. Create a deck to start.";
 
 }

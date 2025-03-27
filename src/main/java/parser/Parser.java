@@ -8,6 +8,7 @@ import command.CommandEdit;
 import command.CommandRenameDeck;
 import command.CommandSwitchDeck;
 import command.CommandViewAnswer;
+import command.CommandViewDecks;
 import command.CommandViewQuestion;
 import command.CommandListQuestion;
 import exceptions.FlashCLIillegalArgumentException;
@@ -19,6 +20,7 @@ import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.RENAME_DECK;
 import static constants.CommandConstants.SWITCH_DECK;
 import static constants.CommandConstants.VIEW_ANS;
+import static constants.CommandConstants.VIEW_DECKS;
 import static constants.CommandConstants.VIEW_QN;
 import static constants.CommandConstants.EDIT;
 import static constants.CommandConstants.LIST;
@@ -53,6 +55,7 @@ public class Parser {
         case NEW_DECK -> new CommandCreateDeck(arguments);
         case SWITCH_DECK -> new CommandSwitchDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
+        case VIEW_DECKS -> new CommandViewDecks();
         default -> throw new FlashCLIillegalArgumentException(POSSIBLE_COMMANDS);
         };
     }

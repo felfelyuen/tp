@@ -4,18 +4,23 @@ import static constants.ErrorMessages.DUPLICATE_DECK_NAME;
 import static constants.ErrorMessages.EMPTY_DECK_NAME;
 import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
+import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.NO_SUCH_DECK;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
+import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import exceptions.FlashCLIillegalArgumentException;
 
 public class DeckManager {
     public static Deck currentDeck;
-    public static HashMap<String, Deck> decks = new HashMap<>();
+    public static LinkedHashMap<String, Deck> decks = new LinkedHashMap<>();
 
     public static int getDeckSize() {
         return decks.size();
@@ -53,6 +58,23 @@ public class DeckManager {
         decks.put(newDeckName, newDeck);
         currentDeck = newDeck;
         return String.format(RENAME_DECK_SUCCESS, oldDeckName, currentDeck.getName());
+    }
+
+    public static String viewDecks() throws FlashCLIillegalArgumentException {
+        if (decks.isEmpty()) {
+            throw new FlashCLIillegalArgumentException(NO_DECK_TO_VIEW);
+        }
+
+        StringBuilder deckList = new StringBuilder();
+        int listIndex = 1;
+        for (Map.Entry<String, Deck> deck : decks.entrySet()) {
+            deckList.append(listIndex).append(". ").append(deck.getKey());
+            if (listIndex != decks.size()) {
+                deckList.append("\n");
+            }
+            listIndex++;
+        }
+        return String.format(VIEW_DECKS_SUCCESS, deckList);
     }
 
     public static String switchDeck(String arguments) throws FlashCLIillegalArgumentException{
