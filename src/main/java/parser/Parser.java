@@ -11,8 +11,7 @@ import command.CommandViewAnswer;
 import command.CommandViewDecks;
 import command.CommandViewQuestion;
 import command.CommandListQuestion;
-import exceptions.FlashCLIillegalArgumentException;
-import ui.Ui;
+import exceptions.FlashCLIArgumentException;
 
 import static constants.CommandConstants.CREATE;
 import static constants.CommandConstants.DELETE;
@@ -33,7 +32,7 @@ import java.util.List;
 
 
 public class Parser {
-    public static Command parseInput(String input) throws FlashCLIillegalArgumentException {
+    public static Command parseInput(String input) throws FlashCLIArgumentException {
         String[] inputList = input.split(" ", 2);
         String command = inputList[0];
         String arguments = inputList.length > 1 ? inputList[1] : "";
@@ -42,7 +41,7 @@ public class Parser {
         ArrayList<String> commandsWithDeck =
                 new ArrayList<>(List.of(CREATE, VIEW_QN, VIEW_ANS, EDIT, LIST, DELETE, RENAME_DECK));
         if (currentDeck == null && commandsWithDeck.contains(command)) {
-            throw new FlashCLIillegalArgumentException(NO_DECK_ERROR);
+            throw new FlashCLIArgumentException(NO_DECK_ERROR);
         }
 
         return switch (command) {
@@ -56,7 +55,7 @@ public class Parser {
         case SWITCH_DECK -> new CommandSwitchDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks();
-        default -> throw new FlashCLIillegalArgumentException(POSSIBLE_COMMANDS);
+        default -> throw new FlashCLIArgumentException(POSSIBLE_COMMANDS);
         };
     }
 }

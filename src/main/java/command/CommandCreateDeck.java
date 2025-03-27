@@ -2,8 +2,7 @@ package command;
 
 import static deck.DeckManager.createDeck;
 
-import deck.Deck;
-import exceptions.FlashCLIillegalArgumentException;
+import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
 public class CommandCreateDeck extends Command{
@@ -16,7 +15,7 @@ public class CommandCreateDeck extends Command{
     public void executeCommand() {
         try {
             Ui.showToUser(createDeck(arguments));
-        } catch (FlashCLIillegalArgumentException e) {
+        } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
         }
     }

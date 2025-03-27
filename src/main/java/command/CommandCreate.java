@@ -3,7 +3,7 @@ package command;
 import static constants.ErrorMessages.CREATE_USAGE;
 import static deck.DeckManager.currentDeck;
 
-import exceptions.FlashCLIillegalArgumentException;
+import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
 /**
@@ -22,7 +22,7 @@ public class CommandCreate extends Command{
     public void executeCommand() {
         try {
             Ui.showToUser(currentDeck.createFlashcard(arguments));
-        } catch (FlashCLIillegalArgumentException e) {
+        } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
             Ui.showError(CREATE_USAGE);
         }

@@ -1,7 +1,5 @@
 package command;
 
-import deck.Deck;
-
 public abstract class Command {
 
     /**

@@ -1,6 +1,6 @@
 package command;
 
-import exceptions.FlashCLIillegalArgumentException;
+import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
 import static constants.ErrorMessages.VIEW_INVALID_INDEX;
@@ -23,7 +23,7 @@ public class CommandEdit extends Command {
             Ui.showError(e.getMessage());
         } catch (NumberFormatException e) {
             Ui.showError(VIEW_INVALID_INDEX);
-        } catch (FlashCLIillegalArgumentException e) {
+        } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
             Ui.showError(EDIT_USAGE);
         }

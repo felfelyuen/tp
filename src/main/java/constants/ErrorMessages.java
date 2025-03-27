@@ -16,7 +16,8 @@ public class ErrorMessages {
     public static final String DECK_INDEX_OUT_OF_BOUNDS = "Deck index must be valid.";
     public static final String EMPTY_DECK_NUMBER = "Deck number cannot be left empty.";
     public static final String NO_DECK_TO_SWITCH = "No decks available. Create a deck before selecting.";
-    public static final String POSSIBLE_COMMANDS = "Possible commands are: add, view_qn, view_ans, edit, list, delete and exit";
+    public static final String POSSIBLE_COMMANDS =
+            "Possible commands are: add, view_qn, view_ans, edit, list, delete, new, select, rename, decks and exit";
     public static final String NO_DECK_ERROR = "Select a deck first!";
     public static final String EMPTY_DECK_NAME = "Deck name must not be empty!";
     public static final String DUPLICATE_DECK_NAME = "Deck name already exists!";

@@ -3,7 +3,7 @@ package flashcli;
 import static constants.CommandConstants.EXIT;
 
 import command.Command;
-import exceptions.FlashCLIillegalArgumentException;
+import exceptions.FlashCLIArgumentException;
 import parser.Parser;
 import ui.Ui;
 
@@ -22,7 +22,7 @@ public class FlashCLI {
             try {
                 Command c = Parser.parseInput(fullInputLine);
                 c.executeCommand();
-            } catch (FlashCLIillegalArgumentException e) {
+            } catch (FlashCLIArgumentException e) {
                 Ui.showError(e.getMessage());
             } finally {
                 fullInputLine = getUserCommand();

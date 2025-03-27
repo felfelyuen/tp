@@ -2,7 +2,7 @@ package command;
 
 import static deck.DeckManager.switchDeck;
 
-import exceptions.FlashCLIillegalArgumentException;
+import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
 public class CommandSwitchDeck extends Command {
@@ -15,7 +15,7 @@ public class CommandSwitchDeck extends Command {
     public void executeCommand() {
         try {
             Ui.showToUser(switchDeck(arguments));
-        } catch (FlashCLIillegalArgumentException e) {
+        } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
         }
     }

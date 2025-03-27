@@ -11,12 +11,10 @@ import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import exceptions.FlashCLIillegalArgumentException;
+import exceptions.FlashCLIArgumentException;
 
 public class DeckManager {
     public static Deck currentDeck;
@@ -26,30 +24,30 @@ public class DeckManager {
         return decks.size();
     }
 
-    public static String createDeck(String arguments) throws FlashCLIillegalArgumentException {
+    public static String createDeck(String arguments) throws FlashCLIArgumentException {
         String newDeckName = arguments.trim();
 
         if (newDeckName.isEmpty()) {
-            throw new FlashCLIillegalArgumentException(MISSING_DECK_NAME);
+            throw new FlashCLIArgumentException(MISSING_DECK_NAME);
         }
 
         if (decks.containsKey(newDeckName)) {
-            throw new FlashCLIillegalArgumentException(DUPLICATE_DECK_NAME);
+            throw new FlashCLIArgumentException(DUPLICATE_DECK_NAME);
         }
 
         decks.put(newDeckName, new Deck(newDeckName));
         return String.format(CREATE_DECK_SUCCESS, newDeckName, getDeckSize());
     }
 
-    public static String renameDeck(String arguments) throws FlashCLIillegalArgumentException {
+    public static String renameDeck(String arguments) throws FlashCLIArgumentException {
         String newDeckName = arguments.trim();
         if (newDeckName.isEmpty()) {
-            throw new FlashCLIillegalArgumentException(EMPTY_DECK_NAME);
+            throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
         }
         boolean isNewDeckNameSameAsCurrent = currentDeck.getName().equals(newDeckName);
         boolean isDeckNameDuplicate = decks.containsKey(newDeckName);
         if (!isNewDeckNameSameAsCurrent && isDeckNameDuplicate) {
-            throw new FlashCLIillegalArgumentException(DUPLICATE_DECK_NAME);
+            throw new FlashCLIArgumentException(DUPLICATE_DECK_NAME);
         }
 
         String oldDeckName = currentDeck.getName();
@@ -60,9 +58,9 @@ public class DeckManager {
         return String.format(RENAME_DECK_SUCCESS, oldDeckName, currentDeck.getName());
     }
 
-    public static String viewDecks() throws FlashCLIillegalArgumentException {
+    public static String viewDecks() throws FlashCLIArgumentException {
         if (decks.isEmpty()) {
-            throw new FlashCLIillegalArgumentException(NO_DECK_TO_VIEW);
+            throw new FlashCLIArgumentException(NO_DECK_TO_VIEW);
         }
 
         StringBuilder deckList = new StringBuilder();
@@ -77,18 +75,18 @@ public class DeckManager {
         return String.format(VIEW_DECKS_SUCCESS, deckList);
     }
 
-    public static String switchDeck(String arguments) throws FlashCLIillegalArgumentException{
+    public static String switchDeck(String arguments) throws FlashCLIArgumentException {
         String deckName = arguments.trim();
         if (decks.isEmpty()) {
-            throw new FlashCLIillegalArgumentException(NO_DECK_TO_SWITCH);
+            throw new FlashCLIArgumentException(NO_DECK_TO_SWITCH);
         }
         if (deckName.isEmpty()) {
-            throw new FlashCLIillegalArgumentException(EMPTY_DECK_NAME);
+            throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
         }
         currentDeck = decks.get(deckName);
 
         if (currentDeck == null) {
-            throw new FlashCLIillegalArgumentException(NO_SUCH_DECK);
+            throw new FlashCLIArgumentException(NO_SUCH_DECK);
         }
 
         return String.format(SWITCH_DECK_SUCCESS, currentDeck.getName());

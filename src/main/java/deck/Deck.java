@@ -1,7 +1,7 @@
 package deck;
 
 import exceptions.EmptyListException;
-import exceptions.FlashCLIillegalArgumentException;
+import exceptions.FlashCLIArgumentException;
 
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class Deck {
+
+    private static final Logger logger = Logger.getLogger(Deck.class.getName());
     private String name;
-    private final ArrayList<Flashcard> flashcards = new ArrayList<>();
+    private ArrayList<Flashcard> flashcards = new ArrayList<>();
 
     public Deck(String name) {
         this.name = name.trim();
@@ -46,18 +48,17 @@ public class Deck {
      *
      * @param arguments A string with the flashcard details
      * @return A success message indicating the flashcard has been created.
-     * @throws FlashCLIillegalArgumentException If required fields are missing,
+     * @throws FlashCLIArgumentException If required fields are missing,
      *         the question and answer are in the wrong order, or either field is empty.
      */
-    private static final Logger logger = Logger.getLogger(Deck.class.getName());
 
-    public String createFlashcard(String arguments) throws FlashCLIillegalArgumentException {
+    public String createFlashcard(String arguments) throws FlashCLIArgumentException {
         logger.info("Starting to create a flashcard with arguments: " + arguments);
 
         boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
         if (!containsAllArguments) {
             logger.warning("Missing required fields: /q or /a");
-            throw new FlashCLIillegalArgumentException(CREATE_MISSING_FIELD);
+            throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
         }
 
         int questionStart = arguments.indexOf("/q");
@@ -70,7 +71,7 @@ public class Deck {
 
         if (questionStart > answerStart) {
             logger.warning("Invalid order: /q comes after /a");
-            throw new FlashCLIillegalArgumentException(CREATE_INVALID_ORDER);
+            throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
         }
 
         assert questionStart < answerStart : "Question should come before answer in arguments";
@@ -80,7 +81,7 @@ public class Deck {
 
         if (question.isEmpty() || answer.isEmpty()) {
             logger.warning("Missing description: question or answer is empty");
-            throw new FlashCLIillegalArgumentException(CREATE_MISSING_DESCRIPTION);
+            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
         }
 
         Flashcard newFlashcard = new Flashcard(question, answer);
@@ -138,22 +139,22 @@ public class Deck {
      */
     public String editFlashcard(int index, String arguments)
             throws ArrayIndexOutOfBoundsException,
-            FlashCLIillegalArgumentException {
+            FlashCLIArgumentException {
         boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
         if (!containsAllArguments) {
-            throw new FlashCLIillegalArgumentException(CREATE_MISSING_FIELD);
+            throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
         }
         int questionStart = arguments.indexOf("/q");
         int answerStart = arguments.indexOf("/a");
 
         if (questionStart > answerStart) {
-            throw new FlashCLIillegalArgumentException(CREATE_INVALID_ORDER);
+            throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
         }
 
         String updatedQuestion = arguments.substring(questionStart + "/q".length(), answerStart).trim();
         String updatedAnswer = arguments.substring(answerStart + "/a".length()).trim();
         if (updatedQuestion.isEmpty() || updatedAnswer.isEmpty()) {
-            throw new FlashCLIillegalArgumentException(CREATE_MISSING_DESCRIPTION);
+            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
         }
         Flashcard updatedFlashcard = new Flashcard(updatedQuestion, updatedAnswer);
 

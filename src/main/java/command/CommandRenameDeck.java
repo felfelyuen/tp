@@ -2,7 +2,7 @@ package command;
 
 import static deck.DeckManager.renameDeck;
 
-import exceptions.FlashCLIillegalArgumentException;
+import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
 public class CommandRenameDeck extends Command {
@@ -15,7 +15,7 @@ public class CommandRenameDeck extends Command {
     public void executeCommand() {
         try {
             Ui.showToUser(renameDeck(this.arguments));
-        } catch (FlashCLIillegalArgumentException e) {
+        } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
         }
     }
