@@ -30,7 +30,7 @@ public class DeckTest {
     private Deck deck;
 
     @BeforeEach
-    void setUp() throws FlashCLIArgumentException {
+    void setUp() {
         deck = new Deck("test1");
         DeckManager.currentDeck = deck;
     }
