@@ -28,7 +28,7 @@ public class ParserTest {
     }
 
     @Test
-    void parseInput_invalidCommands_FlashCLIArgumentExceptionThrown() {
+    void parseInput_invalidCommands_flashCLIArgumentExceptionThrown() {
         String input = "bunnyhop";
 
         assertThrows(FlashCLIArgumentException.class, () -> {
