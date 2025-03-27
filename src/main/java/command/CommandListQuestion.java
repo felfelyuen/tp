@@ -3,7 +3,7 @@ package command;
 import exceptions.EmptyListException;
 import ui.Ui;
 
-import static flashcard.types.FlashcardList.listFlashcards;
+import static deck.DeckManager.currentDeck;
 
 /**
  * Class that handles listing all the questions
@@ -14,7 +14,7 @@ public class CommandListQuestion extends Command{
      */
     public void executeCommand() {
         try {
-            String list = listFlashcards();
+            String list = currentDeck.listFlashcards();
             Ui.showToUser(list);
         } catch (EmptyListException e) {
             Ui.showError(e.getMessage());

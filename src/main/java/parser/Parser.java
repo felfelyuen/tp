@@ -2,25 +2,48 @@ package parser;
 
 import command.Command;
 import command.CommandCreate;
+import command.CommandCreateDeck;
 import command.CommandDelete;
 import command.CommandEdit;
+import command.CommandRenameDeck;
+import command.CommandSwitchDeck;
 import command.CommandViewAnswer;
+import command.CommandViewDecks;
 import command.CommandViewQuestion;
 import command.CommandListQuestion;
+import exceptions.FlashCLIArgumentException;
+
 import static constants.CommandConstants.CREATE;
 import static constants.CommandConstants.DELETE;
+import static constants.CommandConstants.NEW_DECK;
+import static constants.CommandConstants.RENAME_DECK;
+import static constants.CommandConstants.SWITCH_DECK;
 import static constants.CommandConstants.VIEW_ANS;
+import static constants.CommandConstants.VIEW_DECKS;
 import static constants.CommandConstants.VIEW_QN;
 import static constants.CommandConstants.EDIT;
 import static constants.CommandConstants.LIST;
+import static constants.ErrorMessages.NO_DECK_ERROR;
+import static constants.ErrorMessages.POSSIBLE_COMMANDS;
+import static deck.DeckManager.currentDeck;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Parser {
-    public static Command parseInput(String input) throws IllegalArgumentException {
+    public static Command parseInput(String input) throws FlashCLIArgumentException {
         String[] inputList = input.split(" ", 2);
         String command = inputList[0];
         String arguments = inputList.length > 1 ? inputList[1] : "";
         assert arguments != null : "Arguments should not be null";
+
+        ArrayList<String> commandsWithDeck =
+                new ArrayList<>(List.of(CREATE, VIEW_QN, VIEW_ANS, EDIT, LIST, DELETE, RENAME_DECK));
+        if (currentDeck == null && commandsWithDeck.contains(command)) {
+            throw new FlashCLIArgumentException(NO_DECK_ERROR);
+        }
+
         return switch (command) {
         case CREATE -> new CommandCreate(arguments);
         case VIEW_QN -> new CommandViewQuestion(arguments);
@@ -28,7 +51,11 @@ public class Parser {
         case EDIT -> new CommandEdit(arguments);
         case LIST -> new CommandListQuestion();
         case DELETE -> new CommandDelete(arguments);
-        default -> throw new IllegalArgumentException();
+        case NEW_DECK -> new CommandCreateDeck(arguments);
+        case SWITCH_DECK -> new CommandSwitchDeck(arguments);
+        case RENAME_DECK -> new CommandRenameDeck(arguments);
+        case VIEW_DECKS -> new CommandViewDecks();
+        default -> throw new FlashCLIArgumentException(POSSIBLE_COMMANDS);
         };
     }
 }

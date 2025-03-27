@@ -1,9 +1,9 @@
 package command;
 
 import static constants.ErrorMessages.CREATE_USAGE;
-import static flashcard.types.FlashcardList.createFlashcard;
+import static deck.DeckManager.currentDeck;
 
-import exceptions.FlashCLIillegalArgumentException;
+import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
 /**
@@ -21,8 +21,8 @@ public class CommandCreate extends Command{
      */
     public void executeCommand() {
         try {
-            Ui.showToUser(createFlashcard(arguments));
-        } catch (FlashCLIillegalArgumentException e) {
+            Ui.showToUser(currentDeck.createFlashcard(arguments));
+        } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
             Ui.showError(CREATE_USAGE);
         }
