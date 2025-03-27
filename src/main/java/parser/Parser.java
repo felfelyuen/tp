@@ -5,6 +5,7 @@ import command.CommandCreate;
 import command.CommandCreateDeck;
 import command.CommandDelete;
 import command.CommandEdit;
+import command.CommandRenameDeck;
 import command.CommandSwitchDeck;
 import command.CommandViewAnswer;
 import command.CommandViewQuestion;
@@ -15,6 +16,7 @@ import ui.Ui;
 import static constants.CommandConstants.CREATE;
 import static constants.CommandConstants.DELETE;
 import static constants.CommandConstants.NEW_DECK;
+import static constants.CommandConstants.RENAME_DECK;
 import static constants.CommandConstants.SWITCH_DECK;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_QN;
@@ -34,10 +36,13 @@ public class Parser {
         String command = inputList[0];
         String arguments = inputList.length > 1 ? inputList[1] : "";
         assert arguments != null : "Arguments should not be null";
-        ArrayList<String> commandsWithDeck = new ArrayList<>(List.of(CREATE, VIEW_QN, VIEW_ANS, EDIT, LIST, DELETE));
+
+        ArrayList<String> commandsWithDeck =
+                new ArrayList<>(List.of(CREATE, VIEW_QN, VIEW_ANS, EDIT, LIST, DELETE, RENAME_DECK));
         if (currentDeck == null && commandsWithDeck.contains(command)) {
             throw new FlashCLIillegalArgumentException(NO_DECK_ERROR);
         }
+
         return switch (command) {
         case CREATE -> new CommandCreate(arguments);
         case VIEW_QN -> new CommandViewQuestion(arguments);
@@ -47,6 +52,7 @@ public class Parser {
         case DELETE -> new CommandDelete(arguments);
         case NEW_DECK -> new CommandCreateDeck(arguments);
         case SWITCH_DECK -> new CommandSwitchDeck(arguments);
+        case RENAME_DECK -> new CommandRenameDeck(arguments);
         default -> throw new FlashCLIillegalArgumentException(POSSIBLE_COMMANDS);
         };
     }

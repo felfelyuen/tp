@@ -29,17 +29,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FlashcardListTest {
+    private Deck newdeck;
+    private ArrayList<Flashcard> flashcards;
 
-    @Test
-    // happy path
     @BeforeEach
     void setUp() {
-        Deck.flashcards = new ArrayList<>();
+        this.newdeck = new Deck("test1");
+        this.flashcards = newdeck.getFlashcards();
     }
 
     @AfterEach
     void tearDown() {
-        Deck.flashcards.clear();
+        this.flashcards.clear();
     }
 
     @Test
