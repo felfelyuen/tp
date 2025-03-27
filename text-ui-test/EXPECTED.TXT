@@ -1,1 +1,2 @@
 Welcome to FlashCLI!
+Thank you for using FlashCLI!
