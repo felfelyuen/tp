@@ -1,6 +1,1 @@
-Welcome to FlashCLI!
-Added a new flashcard.
-Question: What is Java?
-Answer: A programming language.
-You have 1 flashcard(s) in your deck.
-Thank you for using FlashCLI!
+
