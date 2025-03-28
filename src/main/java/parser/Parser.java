@@ -36,8 +36,21 @@ import static deck.DeckManager.currentDeck;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Parses user input and returns the corresponding command.
+ *
+ * <p>Splits the input string into command and arguments,
+ * validates them, and returns the appropriate command object for execution.</p>
+ */
 public class Parser {
+
+    /**
+     * Parses the given input string to create a corresponding command.
+     *
+     * @param input the user input containing a command and optional arguments.
+     * @return the corresponding Command object based on the parsed input.
+     * @throws FlashCLIArgumentException if the input is invalid or required arguments are missing.
+     */
     public static Command parseInput(String input) throws FlashCLIArgumentException {
         String[] inputList = input.split(" ", 2);
         String command = inputList[0];
