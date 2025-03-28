@@ -50,6 +50,11 @@ public class Deck {
     private static final Logger logger = Logger.getLogger(Deck.class.getName());
     private String name;
     private final ArrayList<Flashcard> flashcards = new ArrayList<>();
+    private final ArrayList<Flashcard> incorrectFlashcards = new ArrayList<>();
+    private final ArrayList<Integer> incorrectIndexes = new ArrayList<>();
+    private final ArrayList<String> incorrectAnswers = new ArrayList<>();
+
+
 
     /**
      * Creates a new deck with the specified name.
@@ -131,7 +136,8 @@ public class Deck {
             throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
         }
 
-        Flashcard newFlashcard = new Flashcard(question, answer);
+        int flashcardIndex = flashcards.size();
+        Flashcard newFlashcard = new Flashcard(flashcardIndex, question, answer);
         flashcards.add(newFlashcard);
 
         logger.info("Successfully created a flashcard: Question: " + question + ", Answer: " + answer);
@@ -203,7 +209,8 @@ public class Deck {
         if (updatedQuestion.isEmpty() || updatedAnswer.isEmpty()) {
             throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
         }
-        Flashcard updatedFlashcard = new Flashcard(updatedQuestion, updatedAnswer);
+
+        Flashcard updatedFlashcard = new Flashcard(index, updatedQuestion, updatedAnswer);
 
         if (index <= 0 || index > flashcards.size()) {
             throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
@@ -261,44 +268,59 @@ public class Deck {
 
     /**
      * quizzes flashcards within the current deck
+     * clears incorrect_flashcards, incorrect_card_indexes and incorrect_answers if quiz starts.
+     * adds into incorrect_flashcards, incorrect_card_indexes and incorrect_answers if incorrect answers are given.
      * @throws EmptyListException if there are no flashcards in the deck
      */
-    public void quizFlashcards() throws EmptyListException, QuizCancelledException {
+    //@@author felfelyuen
+    public boolean quizFlashcards() throws EmptyListException, QuizCancelledException {
         logger.info("starting to enter quiz mode:");
         if (flashcards.isEmpty()) {
             throw new EmptyListException(EMPTY_LIST);
         }
+
+        incorrectIndexes.clear();
+        incorrectFlashcards.clear();
+        incorrectAnswers.clear();
+
         logger.info("Found " + flashcards.size() + " flashcards in the deck");
         logger.info("starting shuffling:");
-        ArrayList<Flashcard> queue;
-
-        //DELETE THESE COMMENTS ONCE DONE:
-        //SHUFFLE THE FLASHCARDS AND PUT THEM IN QUEUE HERE
-        //placeholder code:
-        queue = flashcards;
+        ArrayList<Flashcard> queue = shuffleDeck(flashcards);
 
         Ui.showToUser(QUIZ_START);
-        int last_index = queue.size() - 1;
-        assert last_index >= 0 : "Queue size should not be zero";
-        for (int i = 0; i < last_index; i++) {
-            //handles all questions except last one
-            int questions_left = queue.size() - i;
-            Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questions_left));
-            handleQuizForFlashcard(queue, i);
+        int lastIndex = queue.size() - 1;
+        assert lastIndex >= 0 : "Queue size should not be zero";
+        for (int i = 0; i < lastIndex; i++) {
+            int questionsLeft = queue.size() - i;
+            Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questionsLeft));
+            String userAnswer = Ui.getUserCommand().trim();
+            while (userAnswer.isEmpty()) {
+                logger.info("no answer detected");
+                Ui.showError(QUIZ_NO_ANSWER_DETECTED);
+                userAnswer = Ui.getUserCommand().trim();
+            }
+            handleQuizForFlashcard(queue, i, userAnswer);
         }
         logger.info("Last question:");
         Ui.showToUser(QUIZ_LAST_QUESTION);
-        handleQuizForFlashcard(queue, last_index);
+        String lastUserAnswer = Ui.getUserCommand().trim();
+        while (lastUserAnswer.isEmpty()) {
+            logger.info("no answer detected");
+            Ui.showError(QUIZ_NO_ANSWER_DETECTED);
+            lastUserAnswer = Ui.getUserCommand().trim();
+        }
+        handleQuizForFlashcard(queue, lastIndex, lastUserAnswer);
 
         logger.info("Finished asking questions, tabulating timer amount:");
         //DELETE THESE COMMENTS ONCE DONE:
         //HANDLE TIMER HERE
         //placeholder code (5 is an arbitrary value):
-        int timer_amount = 5;
-        assert timer_amount > 0 : "Timer_amount should not be zero";
+        int timerAmount = 5;
+        assert timerAmount > 0 : "Timer_amount should not be zero";
 
         logger.info("Exiting quiz mode:");
-        Ui.showToUser(String.format(QUIZ_END, timer_amount));
+        Ui.showToUser(String.format(QUIZ_END, timerAmount));
+        return true;
     }
 
     /**
@@ -306,13 +328,14 @@ public class Deck {
      * @param queue of flashcards to quiz from
      * @param index of flashcard to be quizzed
      */
-    public void handleQuizForFlashcard (ArrayList<Flashcard> queue, int index) throws QuizCancelledException {
-        Flashcard index_card = queue.get(index);
-        assert index_card != null : "index flashcard should not be null";
-        Ui.showToUser(index_card.getQuestion());
-        assert index_card.getQuestion() != null : "question in index flashcard should not be null";
+    //@@author felfelyuen
+    public boolean handleQuizForFlashcard (ArrayList<Flashcard> queue, int index, String userAnswer)
+            throws QuizCancelledException {
+        Flashcard indexCard = queue.get(index);
+        assert indexCard != null : "index flashcard should not be null";
+        Ui.showToUser(indexCard.getQuestion());
+        assert indexCard.getQuestion() != null : "question in index flashcard should not be null";
 
-        String userAnswer = Ui.getUserCommand().trim();
         while (userAnswer.isEmpty()) {
             logger.info("no answer detected");
             Ui.showError(QUIZ_NO_ANSWER_DETECTED);
@@ -324,11 +347,27 @@ public class Deck {
             throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
         }
 
-        logger.info("answer detected");
-        if (userAnswer.equals(index_card.getAnswer())) {
+        logger.info("answer detected:" + userAnswer);
+        if (userAnswer.equals(indexCard.getAnswer())) {
+            logger.info("Correct answer detected");
             Ui.showToUser(QUIZ_CORRECT);
+            return true;
         } else {
+            logger.info("Wrong answer detected, should be:" +
+                    indexCard.getAnswer() +
+                    "adding into incorrect answer arrays");
+            int incorrectIndex = indexCard.getIndex();
+            incorrectIndexes.add(incorrectIndex);
+            incorrectFlashcards.add(indexCard);
+            incorrectAnswers.add(userAnswer);
             Ui.showToUser(QUIZ_INCORRECT);
+            return false;
         }
+    }
+
+    public ArrayList<Flashcard> shuffleDeck (ArrayList<Flashcard> deck) {
+        //add shuffle deck code here
+
+        return deck;
     }
 }
