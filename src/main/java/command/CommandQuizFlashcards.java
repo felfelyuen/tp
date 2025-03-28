@@ -1,6 +1,7 @@
 package command;
 
 import exceptions.EmptyListException;
+import exceptions.QuizCancelledException;
 import ui.Ui;
 
 import static deck.DeckManager.currentDeck;
@@ -9,12 +10,6 @@ import static deck.DeckManager.currentDeck;
  * Class that handles quizzing of the current Deck.
  */
 public class CommandQuizFlashcards extends Command{
-    //arguments likely to be utilised when decks are updated
-    private final String arguments;
-    public CommandQuizFlashcards(String arguments) {
-        this.arguments = arguments;
-    }
-
     /**
      * executes command to quiz all the questions in the deck.
      */
@@ -24,6 +19,8 @@ public class CommandQuizFlashcards extends Command{
             currentDeck.quizFlashcards();
         } catch (EmptyListException e) {
             Ui.showError(e.getMessage());
+        } catch (QuizCancelledException e) {
+            Ui.showToUser(e.getMessage());
         }
     }
 }

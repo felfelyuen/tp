@@ -71,7 +71,7 @@ public class Parser {
         case SWITCH_DECK -> new CommandSwitchDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks();
-        case QUIZ -> new CommandQuizFlashcards(arguments);
+        case QUIZ -> new CommandQuizFlashcards();
         default -> throw new FlashCLIArgumentException(POSSIBLE_COMMANDS);
         };
     }

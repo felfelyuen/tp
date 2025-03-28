@@ -8,6 +8,8 @@ import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.EMPTY_LIST;
+import static constants.QuizMessages.QUIZ_CANCEL;
+import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.QuizMessages.QUIZ_CORRECT;
 import static constants.QuizMessages.QUIZ_END;
 import static constants.QuizMessages.QUIZ_INCORRECT;
@@ -25,6 +27,7 @@ import static constants.SuccessMessages.LIST_SUCCESS;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import exceptions.QuizCancelledException;
 import ui.Ui;
 /**
  * Represents a deck that contains a collection of flashcards.
@@ -260,7 +263,7 @@ public class Deck {
      * quizzes flashcards within the current deck
      * @throws EmptyListException if there are no flashcards in the deck
      */
-    public void quizFlashcards() throws EmptyListException {
+    public void quizFlashcards() throws EmptyListException, QuizCancelledException {
         logger.info("starting to enter quiz mode:");
         if (flashcards.isEmpty()) {
             throw new EmptyListException(EMPTY_LIST);
@@ -276,25 +279,25 @@ public class Deck {
 
         Ui.showToUser(QUIZ_START);
         int last_index = queue.size() - 1;
-        assert last_index >= 0 : "queue_size should not be zero";
+        assert last_index >= 0 : "Queue size should not be zero";
         for (int i = 0; i < last_index; i++) {
             //handles all questions except last one
             int questions_left = queue.size() - i;
             Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questions_left));
             handleQuizForFlashcard(queue, i);
         }
-        logger.info("last question:");
+        logger.info("Last question:");
         Ui.showToUser(QUIZ_LAST_QUESTION);
         handleQuizForFlashcard(queue, last_index);
 
-        logger.info("finished asking questions, tabulating timer amount:");
+        logger.info("Finished asking questions, tabulating timer amount:");
         //DELETE THESE COMMENTS ONCE DONE:
         //HANDLE TIMER HERE
         //placeholder code (5 is an arbitrary value):
         int timer_amount = 5;
-        assert timer_amount > 0 : "timer_amount should not be zero";
+        assert timer_amount > 0 : "Timer_amount should not be zero";
 
-        logger.info("exiting quiz mode:");
+        logger.info("Exiting quiz mode:");
         Ui.showToUser(String.format(QUIZ_END, timer_amount));
     }
 
@@ -303,7 +306,7 @@ public class Deck {
      * @param queue of flashcards to quiz from
      * @param index of flashcard to be quizzed
      */
-    public void handleQuizForFlashcard (ArrayList<Flashcard> queue, int index) {
+    public void handleQuizForFlashcard (ArrayList<Flashcard> queue, int index) throws QuizCancelledException {
         Flashcard index_card = queue.get(index);
         assert index_card != null : "index flashcard should not be null";
         Ui.showToUser(index_card.getQuestion());
@@ -314,6 +317,11 @@ public class Deck {
             logger.info("no answer detected");
             Ui.showError(QUIZ_NO_ANSWER_DETECTED);
             userAnswer = Ui.getUserCommand().trim();
+        }
+
+        if(userAnswer.equals(QUIZ_CANCEL)) {
+            logger.info("Quiz cancelled by user. Exiting quiz:");
+            throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
         }
 
         logger.info("answer detected");
