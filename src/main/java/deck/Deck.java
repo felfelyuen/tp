@@ -18,24 +18,58 @@ import static constants.SuccessMessages.LIST_SUCCESS;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+/**
+ * Represents a deck that contains a collection of flashcards.
+ *
+ * <p>This class provides functionalities to manage flashcards within the deck,
+ * including adding, viewing, editing, listing, and deleting flashcards.
+ * Each deck has a name and maintains a list of flashcards.</p>
+ *
+ * <p>Instances of this class support various operations on flashcards,
+ * such as retrieving a flashcard's question or answer, modifying its content,
+ * and handling user input errors related to flashcard management.</p>
+ *
+ * <p>Logging is implemented to track actions performed on the deck,
+ * ensuring better debugging and error handling.</p>
+ */
 public class Deck {
 
     private static final Logger logger = Logger.getLogger(Deck.class.getName());
     private String name;
-    private ArrayList<Flashcard> flashcards = new ArrayList<>();
+    private final ArrayList<Flashcard> flashcards = new ArrayList<>();
 
+    /**
+     * Creates a new deck with the specified name.
+     *
+     * @param name the name of the deck.
+     */
     public Deck(String name) {
         this.name = name.trim();
     }
 
+    /**
+     * Returns the name of the deck.
+     *
+     * @return the deck name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets a new name for the deck.
+     *
+     * @param name the new name for the deck.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns the list of flashcards in the deck.
+     *
+     * @return an {@code ArrayList} of {@code Flashcard} objects.
+     */
     public ArrayList<Flashcard> getFlashcards() {
         return flashcards;
     }
