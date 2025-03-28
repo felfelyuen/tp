@@ -1,2 +1,0 @@
-add /q What is Java? /a A programming language.
-exit

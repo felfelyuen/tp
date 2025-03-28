@@ -1,9 +1,10 @@
-package flashcard.types;
+package deck;
 
 /**
  * Represents a flashcard with a question and an answer.
  */
 public class Flashcard {
+    protected int index;
     protected String question;
     protected String answer;
 
@@ -13,9 +14,19 @@ public class Flashcard {
      * @param question The question for the flashcard.
      * @param answer The answer to the flashcard question.
      */
-    public Flashcard(String question, String answer) {
+    public Flashcard(int index, String question, String answer) {
+        this.index = index;
         this.question = question;
         this.answer = answer;
+    }
+
+    /**
+     * Returns the index of the flashcard.
+     *
+     * @return The flashcard index in the deck
+     */
+    public int getIndex() {
+        return index;
     }
 
     /**

@@ -3,7 +3,11 @@ package flashcli;
 import static constants.CommandConstants.EXIT;
 
 import command.Command;
+import exceptions.FlashCLIArgumentException;
+import logger.LoggingSetup;
 import parser.Parser;
+import ui.Ui;
+
 import static ui.Ui.getUserCommand;
 
 public class FlashCLI {
@@ -11,16 +15,16 @@ public class FlashCLI {
      * Main entry-point for the java.flashcli.FlashCLI application.
      */
     public static void main(String[] args) {
-        //assert false : "dummy assertion set to fail";
         System.out.println("Welcome to FlashCLI!");
+        LoggingSetup.configureGlobalLogging();
         String fullInputLine = getUserCommand();
 
         while (!(fullInputLine.equals(EXIT))) {
             try {
                 Command c = Parser.parseInput(fullInputLine);
                 c.executeCommand();
-            } catch (IllegalArgumentException e) {
-                System.out.println("Possible commands are: add, view_qn, view_ans, edit, list, delete and exit");
+            } catch (FlashCLIArgumentException e) {
+                Ui.showError(e.getMessage());
             } finally {
                 fullInputLine = getUserCommand();
             }

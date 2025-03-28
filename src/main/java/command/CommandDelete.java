@@ -2,7 +2,7 @@ package command;
 
 import static constants.ErrorMessages.VIEW_INVALID_INDEX;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
-import static flashcard.types.FlashcardList.deleteFlashcard;
+import static deck.DeckManager.currentDeck;
 
 import ui.Ui;
 
@@ -22,7 +22,7 @@ public class CommandDelete extends Command{
     public void executeCommand() {
         try {
             int index = Integer.parseInt(arguments);
-            Ui.showToUser(deleteFlashcard(index));
+            Ui.showToUser(currentDeck.deleteFlashcard(index));
         } catch (NumberFormatException e) {
             Ui.showError(VIEW_INVALID_INDEX);
         } catch (ArrayIndexOutOfBoundsException e) {

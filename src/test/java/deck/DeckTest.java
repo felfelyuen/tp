@@ -1,4 +1,4 @@
-package flashcard.types;
+package deck;
 
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
@@ -6,55 +6,55 @@ import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.VIEW_INVALID_INDEX;
 import static constants.ErrorMessages.EMPTY_LIST;
+import static constants.QuizMessages.QUIZ_CANCEL;
+import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.SuccessMessages.CREATE_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static constants.SuccessMessages.LIST_SUCCESS;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.ArrayList;
 
 import command.Command;
 import command.CommandCreate;
 import command.CommandDelete;
 import command.CommandEdit;
+import command.CommandQuizFlashcards;
 import command.CommandViewQuestion;
 import exceptions.EmptyListException;
-import exceptions.FlashCLIillegalArgumentException;
-import org.junit.jupiter.api.AfterEach;
+import exceptions.FlashCLIArgumentException;
+
+import exceptions.QuizCancelledException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class FlashcardListTest {
+import java.util.ArrayList;
 
-    @Test
-    // happy path
+public class DeckTest {
+    private Deck deck;
+
     @BeforeEach
     void setUp() {
-        FlashcardList.flashcards = new ArrayList<>();
-    }
-
-    @AfterEach
-    void tearDown() {
-        FlashcardList.flashcards.clear();
+        deck = new Deck("test1");
+        DeckManager.currentDeck = deck;
     }
 
     @Test
     void createFlashcard_validInputs_success() {
         String input = "/q What is Java? /a A programming language.";
         try {
-            String output = FlashcardList.createFlashcard(input);
+            String output = deck.createFlashcard(input);
 
-            assertEquals(1, FlashcardList.flashcards.size());
-            Flashcard createdFlashcard = FlashcardList.flashcards.get(0);
+            assertEquals(1, deck.getFlashcards().size());
+            Flashcard createdFlashcard = deck.getFlashcards().get(0);
             assertEquals("What is Java?", createdFlashcard.getQuestion());
             assertEquals("A programming language.", createdFlashcard.getAnswer());
             assertEquals(String.format(CREATE_SUCCESS,
                 "What is Java?", "A programming language.", 1), output);
-        } catch (FlashCLIillegalArgumentException e) {
+        } catch (FlashCLIArgumentException e) {
             fail("Unexpected FlashCLI_IllegalArgumentException was thrown: " + e.getMessage());
         }
     }
@@ -63,22 +63,22 @@ public class FlashcardListTest {
     void createFlashcard_invalidQuestionField_flashCLIillegalArgumentExceptionThrown() {
         try {
             String input = "/q /a A programming language.";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_DESCRIPTION, e.getMessage());
         }
 
         try {
             String input = "/a A programming language.";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_FIELD, e.getMessage());
         }
 
         try {
             String input = "/q       /a A programming language.";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_DESCRIPTION, e.getMessage());
         }
     }
@@ -88,22 +88,22 @@ public class FlashcardListTest {
     void createFlashcard_invalidAnswerField_illegalArgumentExceptionThrown() {
         try {
             String input = "/q What is Java? ";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_FIELD, e.getMessage());
         }
 
         try {
             String input = "/q What is Java? /a";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_DESCRIPTION, e.getMessage());
         }
 
         try {
             String input = "/q What is Java? /a     ";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_DESCRIPTION, e.getMessage());
         }
     }
@@ -112,43 +112,43 @@ public class FlashcardListTest {
     void createFlashcard_invalidQuestionAndAnswerField_illegalArgumentExceptionThrown() {
         try {
             String input = "  ";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_FIELD, e.getMessage());
         }
 
         try {
             String input = "/q /a";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_DESCRIPTION, e.getMessage());
         }
 
         try {
             String input = "/q";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_FIELD, e.getMessage());
         }
 
         try {
             String input = "/a";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_MISSING_FIELD, e.getMessage());
         }
 
         try {
             String input = "/a A programming language. /q What is Java?";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_INVALID_ORDER, e.getMessage());
         }
 
         try {
             String input = "/a /q";
-            FlashcardList.createFlashcard(input);
-        } catch (FlashCLIillegalArgumentException e) {
+            deck.createFlashcard(input);
+        } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_INVALID_ORDER, e.getMessage());
         }
     }
@@ -158,8 +158,8 @@ public class FlashcardListTest {
         String createInput = "/q What is Java? /a A programming language.";
         Command createTest = new CommandCreate(createInput);
         createTest.executeCommand();
-        String viewOutput = FlashcardList.viewFlashcardQuestion(1);
-        assertEquals(1, FlashcardList.flashcards.size());
+        String viewOutput = deck.viewFlashcardQuestion(1);
+        assertEquals(1, deck.getFlashcards().size());
         assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?"), viewOutput);
     }
 
@@ -169,7 +169,7 @@ public class FlashcardListTest {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
-            assertEquals(1, FlashcardList.flashcards.size());
+            assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("3");
         } catch (ArrayIndexOutOfBoundsException e) {
             assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
@@ -182,7 +182,7 @@ public class FlashcardListTest {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
-            assertEquals(1, FlashcardList.flashcards.size());
+            assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("sjd");
         } catch (NumberFormatException e) {
             assertEquals(VIEW_INVALID_INDEX, e.getMessage());
@@ -194,8 +194,8 @@ public class FlashcardListTest {
         String createInput = "/q What is Java? /a A programming language.";
         Command createTest = new CommandCreate(createInput);
         createTest.executeCommand();
-        String viewOutput = FlashcardList.viewFlashcardAnswer(1);
-        assertEquals(1, FlashcardList.flashcards.size());
+        String viewOutput = deck.viewFlashcardAnswer(1);
+        assertEquals(1, deck.getFlashcards().size());
         assertEquals(String.format(VIEW_ANSWER_SUCCESS, 1, "A programming language."), viewOutput);
     }
 
@@ -205,7 +205,7 @@ public class FlashcardListTest {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
-            assertEquals(1, FlashcardList.flashcards.size());
+            assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("sjd");
         } catch (NumberFormatException e) {
             assertEquals(VIEW_INVALID_INDEX, e.getMessage());
@@ -218,7 +218,7 @@ public class FlashcardListTest {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
-            assertEquals(1, FlashcardList.flashcards.size());
+            assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("72");
         } catch (NumberFormatException e) {
             assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
@@ -232,15 +232,15 @@ public class FlashcardListTest {
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
             String editInput = "1 /q What is Python? /a A different programming language.";
-            String editOutput = FlashcardList.editFlashcard(1, editInput);
-            assertEquals(1, FlashcardList.flashcards.size());
-            Flashcard editedFlashcard = FlashcardList.flashcards.get(0);
+            String editOutput = deck.editFlashcard(1, editInput);
+            assertEquals(1, deck.getFlashcards().size());
+            Flashcard editedFlashcard = deck.getFlashcards().get(0);
             assertEquals("What is Python?", editedFlashcard.getQuestion());
             assertEquals("A different programming language.", editedFlashcard.getAnswer());
             assertEquals(String.format(EDIT_SUCCESS,
                     "What is Java?", "What is Python?",
                     "A programming language.", "A different programming language."), editOutput);
-        } catch (FlashCLIillegalArgumentException e) {
+        } catch (FlashCLIArgumentException e) {
             fail("Unexpected FlashCLI_IllegalArgumentException was thrown: " + e.getMessage());
         }
     }
@@ -251,7 +251,7 @@ public class FlashcardListTest {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
-            assertEquals(1, FlashcardList.flashcards.size());
+            assertEquals(1, deck.getFlashcards().size());
             new CommandEdit("sjd /q What is Python? /a A different programming language.");
         } catch (NumberFormatException e) {
             assertEquals(VIEW_INVALID_INDEX, e.getMessage());
@@ -264,7 +264,7 @@ public class FlashcardListTest {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
-            assertEquals(1, FlashcardList.flashcards.size());
+            assertEquals(1, deck.getFlashcards().size());
             new CommandEdit("4 /q What is Python? /a A different programming language.");
         } catch (ArrayIndexOutOfBoundsException e) {
             assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
@@ -279,8 +279,8 @@ public class FlashcardListTest {
             createTest.executeCommand();
             createTest.executeCommand();
             createTest.executeCommand();
-            String listOutput = FlashcardList.listFlashcards();
-            assertEquals(3, FlashcardList.flashcards.size());
+            String listOutput = deck.listFlashcards();
+            assertEquals(3, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS,
                     "1. What is Java?\n2. What is Java?\n3. What is Java?"),
                     listOutput);
@@ -292,7 +292,7 @@ public class FlashcardListTest {
     @Test
     void listFlashcards_emptyList_emptyListExceptionThrown() {
         try {
-            String listOutput = FlashcardList.listFlashcards();
+            String listOutput = deck.listFlashcards();
             assertEquals(String.format(LIST_SUCCESS,
                             "1. What is Java?\n2. What is Java?\n3. What is Java?"),
                     listOutput);
@@ -308,13 +308,13 @@ public class FlashcardListTest {
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
-            String listOutput = FlashcardList.listFlashcards();
-            assertEquals(2, FlashcardList.flashcards.size());
+            String listOutput = deck.listFlashcards();
+            assertEquals(2, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
             Command deleteTest = new CommandDelete("1");
             deleteTest.executeCommand();
-            String listAfterDeleteOutput = FlashcardList.listFlashcards();
-            assertEquals(1, FlashcardList.flashcards.size());
+            String listAfterDeleteOutput = deck.listFlashcards();
+            assertEquals(1, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS, "1. What is Java?"), listAfterDeleteOutput);
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
@@ -328,8 +328,8 @@ public class FlashcardListTest {
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
-            String listOutput = FlashcardList.listFlashcards();
-            assertEquals(2, FlashcardList.flashcards.size());
+            String listOutput = deck.listFlashcards();
+            assertEquals(2, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
             Command deleteTest = new CommandDelete("sdsd");
             deleteTest.executeCommand();
@@ -347,8 +347,8 @@ public class FlashcardListTest {
             Command createTest = new CommandCreate(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
-            String listOutput = FlashcardList.listFlashcards();
-            assertEquals(2, FlashcardList.flashcards.size());
+            String listOutput = deck.listFlashcards();
+            assertEquals(2, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
             Command deleteTest = new CommandDelete("72");
             deleteTest.executeCommand();
@@ -356,6 +356,70 @@ public class FlashcardListTest {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
         } catch (ArrayIndexOutOfBoundsException e) {
             assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
+        }
+    }
+
+    @Test
+    void quizFlashcards_correctAnswer_success() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+
+            ArrayList<Flashcard> flashcards = deck.getFlashcards();
+            String userAnswer = "A programming language.";
+            boolean testSuccess = deck.handleQuizForFlashcard(flashcards, 0, userAnswer);
+            assertTrue(testSuccess);
+        } catch (Exception e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void quizFlashcards_wrongAnswer_success() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+
+            ArrayList<Flashcard> flashcards = deck.getFlashcards();
+            String userAnswer = "dummy response";
+            boolean testSuccess = deck.handleQuizForFlashcard(flashcards, 0, userAnswer);
+            assertFalse(testSuccess);
+        } catch (QuizCancelledException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void quizFlashcards_emptyList_emptyListExceptionThrown() {
+        try {
+            Command c = new CommandQuizFlashcards();
+            boolean quizSuccess = deck.quizFlashcards();
+            assertTrue(quizSuccess);
+        } catch (EmptyListException e) {
+            assertEquals(EMPTY_LIST,e.getMessage());
+        } catch (QuizCancelledException e) {
+            fail("Unexpected QuizCancelledException was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void quizFlashcards_cancelQuiz_quizCancelledExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+
+            ArrayList<Flashcard> flashcards = deck.getFlashcards();
+            String userAnswer = "dummy response";
+            boolean testSuccess = deck.handleQuizForFlashcard(flashcards, 0, userAnswer);
+            assertFalse(testSuccess);
+            boolean exitQuizSuccess = deck.handleQuizForFlashcard(flashcards, 1, QUIZ_CANCEL);
+            assertFalse(exitQuizSuccess);
+        } catch (QuizCancelledException e) {
+            assertEquals(QUIZ_CANCEL_MESSAGE,e.getMessage());
         }
     }
 }
