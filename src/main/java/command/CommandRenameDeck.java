@@ -8,7 +8,8 @@ import ui.Ui;
 /**
  * Command to rename a selected deck.
  *
- * <p>Renames a deck to the provided new deck name. Displays either the success message or an error message based on the result.</p>
+ * <p>Renames a deck to the provided new deck name.
+ * Displays either the success message or an error message based on the result.</p>
  */
 public class CommandRenameDeck extends Command {
     private final String arguments;

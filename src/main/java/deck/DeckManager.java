@@ -26,6 +26,8 @@ import exceptions.FlashCLIArgumentException;
  *
  * <p>Throws {@code FlashCLIArgumentException} for invalid input conditions.</p>
  */
+
+//@@author Betahaxer
 public class DeckManager {
     public static Deck currentDeck;
     public static LinkedHashMap<String, Deck> decks = new LinkedHashMap<>();

@@ -8,7 +8,8 @@ import ui.Ui;
 /**
  * Command to create a new deck.
  *
- * <p>Executes the creation of a deck using the provided arguments. Displays either the success message or an error message based on the result.</p>
+ * <p>Executes the creation of a deck using the provided arguments.
+ * Displays either the success message or an error message based on the result.</p>
  */
 public class CommandCreateDeck extends Command{
     public final String arguments;

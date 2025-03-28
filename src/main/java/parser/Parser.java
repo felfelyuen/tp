@@ -33,7 +33,8 @@ import java.util.List;
 /**
  * Parses user input and returns the corresponding command.
  *
- * <p>Splits the input string into command and arguments, validates them, and returns the appropriate command object for execution.</p>
+ * <p>Splits the input string into command and arguments,
+ * validates them, and returns the appropriate command object for execution.</p>
  */
 public class Parser {
 

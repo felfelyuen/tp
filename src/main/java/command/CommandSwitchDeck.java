@@ -8,7 +8,8 @@ import ui.Ui;
 /**
  * Command to switch to a deck.
  *
- * <p>Switches to a deck that is available. Displays either the success message or an error message based on the result.</p>
+ * <p>Switches to a deck that is available.
+ * Displays either the success message or an error message based on the result.</p>
  */
 public class CommandSwitchDeck extends Command {
     private final String arguments;

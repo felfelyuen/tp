@@ -8,7 +8,8 @@ import ui.Ui;
 /**
  * Command to view all decks available.
  *
- * <p>Lists all decks that are available. Displays either the success message or an error message based on the result.</p>
+ * <p>Lists all decks that are available.
+ * Displays either the success message or an error message based on the result.</p>
  */
 public class CommandViewDecks extends Command {
 

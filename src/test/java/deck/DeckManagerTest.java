@@ -28,7 +28,7 @@ import exceptions.FlashCLIArgumentException;
 public class DeckManagerTest {
 
     @BeforeEach
-    void Setup() {
+    void setUp() {
         decks.clear();
     }
 
