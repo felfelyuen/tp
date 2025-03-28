@@ -7,10 +7,12 @@ import command.CommandDelete;
 import command.CommandEdit;
 import command.CommandRenameDeck;
 import command.CommandSwitchDeck;
+import command.CommandListQuestion;
+import command.CommandQuizFlashcards;
 import command.CommandViewAnswer;
 import command.CommandViewDecks;
 import command.CommandViewQuestion;
-import command.CommandListQuestion;
+
 import exceptions.FlashCLIArgumentException;
 
 import static constants.CommandConstants.CREATE;
@@ -23,6 +25,7 @@ import static constants.CommandConstants.VIEW_DECKS;
 import static constants.CommandConstants.VIEW_QN;
 import static constants.CommandConstants.EDIT;
 import static constants.CommandConstants.LIST;
+import static constants.CommandConstants.QUIZ;
 import static constants.ErrorMessages.NO_DECK_ERROR;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
 import static deck.DeckManager.currentDeck;
@@ -52,7 +55,7 @@ public class Parser {
         assert arguments != null : "Arguments should not be null";
 
         ArrayList<String> commandsWithDeck =
-                new ArrayList<>(List.of(CREATE, VIEW_QN, VIEW_ANS, EDIT, LIST, DELETE, RENAME_DECK));
+                new ArrayList<>(List.of(CREATE, VIEW_QN, VIEW_ANS, EDIT, LIST, DELETE, QUIZ, RENAME_DECK));
         if (currentDeck == null && commandsWithDeck.contains(command)) {
             throw new FlashCLIArgumentException(NO_DECK_ERROR);
         }
@@ -68,6 +71,7 @@ public class Parser {
         case SWITCH_DECK -> new CommandSwitchDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks();
+        case QUIZ -> new CommandQuizFlashcards();
         default -> throw new FlashCLIArgumentException(POSSIBLE_COMMANDS);
         };
     }

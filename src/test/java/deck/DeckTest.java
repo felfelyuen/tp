@@ -6,25 +6,32 @@ import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.VIEW_INVALID_INDEX;
 import static constants.ErrorMessages.EMPTY_LIST;
+import static constants.QuizMessages.QUIZ_CANCEL;
+import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.SuccessMessages.CREATE_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static constants.SuccessMessages.LIST_SUCCESS;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import command.Command;
 import command.CommandCreate;
 import command.CommandDelete;
 import command.CommandEdit;
+import command.CommandQuizFlashcards;
 import command.CommandViewQuestion;
 import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
+import exceptions.QuizCancelledException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 public class DeckTest {
     private Deck deck;
@@ -349,6 +356,70 @@ public class DeckTest {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
         } catch (ArrayIndexOutOfBoundsException e) {
             assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
+        }
+    }
+
+    @Test
+    void quizFlashcards_correctAnswer_success() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+
+            ArrayList<Flashcard> flashcards = deck.getFlashcards();
+            String userAnswer = "A programming language.";
+            boolean testSuccess = deck.handleQuizForFlashcard(flashcards, 0, userAnswer);
+            assertTrue(testSuccess);
+        } catch (Exception e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void quizFlashcards_wrongAnswer_success() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+
+            ArrayList<Flashcard> flashcards = deck.getFlashcards();
+            String userAnswer = "dummy response";
+            boolean testSuccess = deck.handleQuizForFlashcard(flashcards, 0, userAnswer);
+            assertFalse(testSuccess);
+        } catch (QuizCancelledException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void quizFlashcards_emptyList_emptyListExceptionThrown() {
+        try {
+            Command c = new CommandQuizFlashcards();
+            boolean quizSuccess = deck.quizFlashcards();
+            assertTrue(quizSuccess);
+        } catch (EmptyListException e) {
+            assertEquals(EMPTY_LIST,e.getMessage());
+        } catch (QuizCancelledException e) {
+            fail("Unexpected QuizCancelledException was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void quizFlashcards_cancelQuiz_quizCancelledExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+
+            ArrayList<Flashcard> flashcards = deck.getFlashcards();
+            String userAnswer = "dummy response";
+            boolean testSuccess = deck.handleQuizForFlashcard(flashcards, 0, userAnswer);
+            assertFalse(testSuccess);
+            boolean exitQuizSuccess = deck.handleQuizForFlashcard(flashcards, 1, QUIZ_CANCEL);
+            assertFalse(exitQuizSuccess);
+        } catch (QuizCancelledException e) {
+            assertEquals(QUIZ_CANCEL_MESSAGE,e.getMessage());
         }
     }
 }
