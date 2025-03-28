@@ -6,6 +6,7 @@ import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.NO_SUCH_DECK;
+import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
@@ -85,8 +86,10 @@ public class DeckManagerTest {
     void renameDeck_sameName_noChange() throws FlashCLIArgumentException {
         createDeck("Coding Quality Concepts");
         currentDeck = decks.get("Coding Quality Concepts");
-        String result = renameDeck("Coding Quality Concepts");
-        assertEquals(String.format(RENAME_DECK_SUCCESS, "Coding Quality Concepts", "Coding Quality Concepts"), result);
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            renameDeck("Coding Quality Concepts");
+        });
+        assertEquals(UNCHANGED_DECK_NAME, exception.getMessage());
     }
 
     @Test
