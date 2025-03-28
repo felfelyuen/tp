@@ -12,6 +12,7 @@ import static constants.QuizMessages.QUIZ_CORRECT;
 import static constants.QuizMessages.QUIZ_END;
 import static constants.QuizMessages.QUIZ_INCORRECT;
 import static constants.QuizMessages.QUIZ_LAST_QUESTION;
+import static constants.QuizMessages.QUIZ_NO_ANSWER_DETECTED;
 import static constants.QuizMessages.QUIZ_QUESTIONS_LEFT;
 import static constants.QuizMessages.QUIZ_START;
 import static constants.SuccessMessages.CREATE_SUCCESS;
@@ -255,39 +256,67 @@ public class Deck {
         return String.format(DELETE_SUCCESS, flashcardToDelete);
     }
 
+    /**
+     * quizzes flashcards within the current deck
+     * @throws EmptyListException if there are no flashcards in the deck
+     */
     public void quizFlashcards() throws EmptyListException {
+        logger.info("starting to enter quiz mode:");
         if (flashcards.isEmpty()) {
             throw new EmptyListException(EMPTY_LIST);
         }
+        logger.info("Found " + flashcards.size() + " flashcards in the deck");
+        logger.info("starting shuffling:");
         ArrayList<Flashcard> queue;
 
+        //DELETE THESE COMMENTS ONCE DONE:
         //SHUFFLE THE FLASHCARDS AND PUT THEM IN QUEUE HERE
         //placeholder code:
         queue = flashcards;
 
         Ui.showToUser(QUIZ_START);
         int last_index = queue.size() - 1;
+        assert last_index >= 0 : "queue_size should not be zero";
         for (int i = 0; i < last_index; i++) {
             //handles all questions except last one
             int questions_left = queue.size() - i;
             Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questions_left));
             handleQuizForFlashcard(queue, i);
         }
+        logger.info("last question:");
         Ui.showToUser(QUIZ_LAST_QUESTION);
         handleQuizForFlashcard(queue, last_index);
 
+        logger.info("finished asking questions, tabulating timer amount:");
+        //DELETE THESE COMMENTS ONCE DONE:
         //HANDLE TIMER HERE
         //placeholder code (5 is an arbitrary value):
         int timer_amount = 5;
+        assert timer_amount > 0 : "timer_amount should not be zero";
 
+        logger.info("exiting quiz mode:");
         Ui.showToUser(String.format(QUIZ_END, timer_amount));
     }
 
+    /**
+     * handles asking a question and evaluating the answer for question of a specific index in a queue
+     * @param queue of flashcards to quiz from
+     * @param index of flashcard to be quizzed
+     */
     public void handleQuizForFlashcard (ArrayList<Flashcard> queue, int index) {
         Flashcard index_card = queue.get(index);
+        assert index_card != null : "index flashcard should not be null";
         Ui.showToUser(index_card.getQuestion());
+        assert index_card.getQuestion() != null : "question in index flashcard should not be null";
 
         String userAnswer = Ui.getUserCommand().trim();
+        while (userAnswer.isEmpty()) {
+            logger.info("no answer detected");
+            Ui.showError(QUIZ_NO_ANSWER_DETECTED);
+            userAnswer = Ui.getUserCommand().trim();
+        }
+
+        logger.info("answer detected");
         if (userAnswer.equals(index_card.getAnswer())) {
             Ui.showToUser(QUIZ_CORRECT);
         } else {
