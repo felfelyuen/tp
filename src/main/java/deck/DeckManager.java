@@ -13,6 +13,7 @@ import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import exceptions.FlashCLIArgumentException;
 
@@ -29,6 +30,7 @@ import exceptions.FlashCLIArgumentException;
 
 //@@author Betahaxer
 public class DeckManager {
+    private static final Logger logger = Logger.getLogger(DeckManager.class.getName());
     public static Deck currentDeck;
     public static LinkedHashMap<String, Deck> decks = new LinkedHashMap<>();
 
@@ -49,17 +51,25 @@ public class DeckManager {
      * @throws FlashCLIArgumentException if the name is empty or already exists.
      */
     public static String createDeck(String arguments) throws FlashCLIArgumentException {
+        logger.info("Entering createDeck method with arguments: " + arguments);
+
         String newDeckName = arguments.trim();
 
         if (newDeckName.isEmpty()) {
+            logger.warning("Deck name is empty.");
             throw new FlashCLIArgumentException(MISSING_DECK_NAME);
         }
 
         if (decks.containsKey(newDeckName)) {
+            logger.warning("Attempt to create duplicate deck: " + newDeckName);
             throw new FlashCLIArgumentException(DUPLICATE_DECK_NAME);
         }
 
         decks.put(newDeckName, new Deck(newDeckName));
+        logger.info("Deck created successfully: " + newDeckName);
+
+        assert decks.containsKey(newDeckName) : "Deck was not added successfully!";
+
         return String.format(CREATE_DECK_SUCCESS, newDeckName, getDeckSize());
     }
 
@@ -71,21 +81,33 @@ public class DeckManager {
      * @throws FlashCLIArgumentException if the name is empty or already exists.
      */
     public static String renameDeck(String arguments) throws FlashCLIArgumentException {
+        logger.info("Entering renameDeck method with arguments: " + arguments);
+
         String newDeckName = arguments.trim();
         if (newDeckName.isEmpty()) {
+            logger.warning("Deck name is empty.");
             throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
         }
+
         boolean isNewDeckNameSameAsCurrent = currentDeck.getName().equals(newDeckName);
         boolean isDeckNameDuplicate = decks.containsKey(newDeckName);
+
         if (!isNewDeckNameSameAsCurrent && isDeckNameDuplicate) {
+            logger.warning("Attempt to rename deck to an existing deck name: " + newDeckName);
             throw new FlashCLIArgumentException(DUPLICATE_DECK_NAME);
         }
 
         String oldDeckName = currentDeck.getName();
+        logger.info("Renaming deck: " + oldDeckName + " -> " + newDeckName);
+
         decks.remove(oldDeckName);
-        Deck newDeck = new Deck(newDeckName);
-        decks.put(newDeckName, newDeck);
-        currentDeck = newDeck;
+        createDeck(newDeckName);
+
+        assert !decks.containsKey(oldDeckName) : "Old deck name still exists after renaming!";
+        assert decks.containsKey(newDeckName) : "New deck name was not successfully added!";
+        assert currentDeck.getName().equals(newDeckName) : "Current deck name was not updated properly!";
+
+        logger.info("Deck renamed successfully: " + oldDeckName + " -> " + newDeckName);
         return String.format(RENAME_DECK_SUCCESS, oldDeckName, currentDeck.getName());
     }
 
@@ -96,7 +118,10 @@ public class DeckManager {
      * @throws FlashCLIArgumentException if there are no decks to view.
      */
     public static String viewDecks() throws FlashCLIArgumentException {
+        logger.info("Entering viewDecks method");
+
         if (decks.isEmpty()) {
+            logger.warning("Attempted to view decks, but no decks are available.");
             throw new FlashCLIArgumentException(NO_DECK_TO_VIEW);
         }
 
@@ -109,6 +134,13 @@ public class DeckManager {
             }
             listIndex++;
         }
+
+        int expectedDeckCount = decks.size();
+        int actualDeckCount = listIndex - 1;
+        assert actualDeckCount == expectedDeckCount :
+                "Mismatch in deck count! Expected: " + expectedDeckCount + ", Found: " + actualDeckCount;
+
+        logger.info("Decks viewed successfully. Total decks: " + expectedDeckCount);
         return String.format(VIEW_DECKS_SUCCESS, deckList);
     }
 
@@ -120,19 +152,31 @@ public class DeckManager {
      * @throws FlashCLIArgumentException if the deck does not exist or input is invalid.
      */
     public static String switchDeck(String arguments) throws FlashCLIArgumentException {
+        logger.info("Entering switchDeck method with arguments: " + arguments);
+
         String deckName = arguments.trim();
+
         if (decks.isEmpty()) {
+            logger.warning("Attempted to switch decks, but no decks are available.");
             throw new FlashCLIArgumentException(NO_DECK_TO_SWITCH);
         }
         if (deckName.isEmpty()) {
+            logger.warning("Deck name is empty.");
             throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
         }
-        currentDeck = decks.get(deckName);
 
-        if (currentDeck == null) {
+        if (!decks.containsKey(deckName)) {
+            logger.warning("Deck '" + deckName + "' does not exist.");
             throw new FlashCLIArgumentException(NO_SUCH_DECK);
         }
 
+        currentDeck = decks.get(deckName);
+        logger.info("Switched to deck: " + currentDeck.getName());
+
+        assert currentDeck != null : "Current deck should not be null after switching!";
+        assert decks.containsKey(currentDeck.getName()) : "Switched deck does not exist in decks!";
+
+        logger.info("Deck switched successfully: " + currentDeck.getName());
         return String.format(SWITCH_DECK_SUCCESS, currentDeck.getName());
     }
 }

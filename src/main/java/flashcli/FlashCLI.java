@@ -4,6 +4,7 @@ import static constants.CommandConstants.EXIT;
 
 import command.Command;
 import exceptions.FlashCLIArgumentException;
+import logger.LoggingSetup;
 import parser.Parser;
 import ui.Ui;
 
@@ -14,8 +15,8 @@ public class FlashCLI {
      * Main entry-point for the java.flashcli.FlashCLI application.
      */
     public static void main(String[] args) {
-        //assert false : "dummy assertion set to fail";
         System.out.println("Welcome to FlashCLI!");
+        LoggingSetup.configureGlobalLogging();
         String fullInputLine = getUserCommand();
 
         while (!(fullInputLine.equals(EXIT))) {
