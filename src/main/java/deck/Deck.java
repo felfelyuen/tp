@@ -1,8 +1,7 @@
-package flashcard.types;
+package deck;
 
 import exceptions.EmptyListException;
-import exceptions.FlashCLIillegalArgumentException;
-import ui.Ui;
+import exceptions.FlashCLIArgumentException;
 
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
@@ -25,8 +24,29 @@ import static constants.SuccessMessages.LIST_SUCCESS;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-public class FlashcardList {
-    public static ArrayList<Flashcard> flashcards = new ArrayList<>();
+import ui.Ui;
+
+public class Deck {
+
+    private static final Logger logger = Logger.getLogger(Deck.class.getName());
+    private String name;
+    private ArrayList<Flashcard> flashcards = new ArrayList<>();
+
+    public Deck(String name) {
+        this.name = name.trim();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ArrayList<Flashcard> getFlashcards() {
+        return flashcards;
+    }
 
     /**
      * Creates a new flashcard
@@ -36,18 +56,17 @@ public class FlashcardList {
      *
      * @param arguments A string with the flashcard details
      * @return A success message indicating the flashcard has been created.
-     * @throws FlashCLIillegalArgumentException If required fields are missing,
+     * @throws FlashCLIArgumentException If required fields are missing,
      *         the question and answer are in the wrong order, or either field is empty.
      */
-    private static final Logger logger = Logger.getLogger(FlashcardList.class.getName());
 
-    public static String createFlashcard(String arguments) throws FlashCLIillegalArgumentException {
+    public String createFlashcard(String arguments) throws FlashCLIArgumentException {
         logger.info("Starting to create a flashcard with arguments: " + arguments);
 
         boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
         if (!containsAllArguments) {
             logger.warning("Missing required fields: /q or /a");
-            throw new FlashCLIillegalArgumentException(CREATE_MISSING_FIELD);
+            throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
         }
 
         int questionStart = arguments.indexOf("/q");
@@ -60,7 +79,7 @@ public class FlashcardList {
 
         if (questionStart > answerStart) {
             logger.warning("Invalid order: /q comes after /a");
-            throw new FlashCLIillegalArgumentException(CREATE_INVALID_ORDER);
+            throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
         }
 
         assert questionStart < answerStart : "Question should come before answer in arguments";
@@ -70,7 +89,7 @@ public class FlashcardList {
 
         if (question.isEmpty() || answer.isEmpty()) {
             logger.warning("Missing description: question or answer is empty");
-            throw new FlashCLIillegalArgumentException(CREATE_MISSING_DESCRIPTION);
+            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
         }
 
         Flashcard newFlashcard = new Flashcard(question, answer);
@@ -88,7 +107,7 @@ public class FlashcardList {
      * @return the question in the format of VIEW_QUESTION_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
-    public static String viewFlashcardQuestion(int index) throws ArrayIndexOutOfBoundsException {
+    public String viewFlashcardQuestion(int index) throws ArrayIndexOutOfBoundsException {
         if (index <= 0 || index > flashcards.size()) {
             throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
         }
@@ -106,7 +125,7 @@ public class FlashcardList {
      * @return the answer in the format of VIEW_ANSWER_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
-    public static String viewFlashcardAnswer(int index) throws ArrayIndexOutOfBoundsException {
+    public String viewFlashcardAnswer(int index) throws ArrayIndexOutOfBoundsException {
         if (index <= 0 || index > flashcards.size()) {
             throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
         }
@@ -126,24 +145,24 @@ public class FlashcardList {
      * @return the updated flashcard in the format of EDIT_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
-    public static String editFlashcard(int index, String arguments)
+    public String editFlashcard(int index, String arguments)
             throws ArrayIndexOutOfBoundsException,
-            FlashCLIillegalArgumentException {
+            FlashCLIArgumentException {
         boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
         if (!containsAllArguments) {
-            throw new FlashCLIillegalArgumentException(CREATE_MISSING_FIELD);
+            throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
         }
         int questionStart = arguments.indexOf("/q");
         int answerStart = arguments.indexOf("/a");
 
         if (questionStart > answerStart) {
-            throw new FlashCLIillegalArgumentException(CREATE_INVALID_ORDER);
+            throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
         }
 
         String updatedQuestion = arguments.substring(questionStart + "/q".length(), answerStart).trim();
         String updatedAnswer = arguments.substring(answerStart + "/a".length()).trim();
         if (updatedQuestion.isEmpty() || updatedAnswer.isEmpty()) {
-            throw new FlashCLIillegalArgumentException(CREATE_MISSING_DESCRIPTION);
+            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
         }
         Flashcard updatedFlashcard = new Flashcard(updatedQuestion, updatedAnswer);
 
@@ -165,7 +184,7 @@ public class FlashcardList {
      * @return list of questions in the format of LIST_SUCCESS
      * @throws EmptyListException if the list is empty
      */
-    public static String listFlashcards() throws EmptyListException {
+    public String listFlashcards() throws EmptyListException {
         if (flashcards.isEmpty()) {
             throw new EmptyListException(EMPTY_LIST);
         }
@@ -190,7 +209,7 @@ public class FlashcardList {
      * @return the flashcard details in the format of DELETE_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
-    public static String deleteFlashcard(int index) throws ArrayIndexOutOfBoundsException {
+    public String deleteFlashcard(int index) throws ArrayIndexOutOfBoundsException {
         if (index <= 0 || index > flashcards.size()) {
             throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
         }
@@ -201,34 +220,39 @@ public class FlashcardList {
         return String.format(DELETE_SUCCESS, flashcardToDelete);
     }
 
-    public static void quizFlashcards() throws EmptyListException {
+    public void quizFlashcards() throws EmptyListException {
         if (flashcards.isEmpty()) {
             throw new EmptyListException(EMPTY_LIST);
         }
+        ArrayList<Flashcard> queue;
 
         //SHUFFLE THE FLASHCARDS AND PUT THEM IN QUEUE HERE
+        //placeholder code:
+        queue = flashcards;
 
         Ui.showToUser(QUIZ_START);
-        int last_index = flashcards.size() - 1;
+        int last_index = queue.size() - 1;
         for (int i = 0; i < last_index; i++) {
             //handles all questions except last one
-            int questions_left = flashcards.size() - i;
+            int questions_left = queue.size() - i;
             Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questions_left));
-            handleQuizForFlashcard(i);
+            handleQuizForFlashcard(queue, i);
         }
         Ui.showToUser(QUIZ_LAST_QUESTION);
-        handleQuizForFlashcard(last_index);
+        handleQuizForFlashcard(queue, last_index);
 
         //HANDLE TIMER HERE
-        int timer_amount = 5; //arbitrary value for now
-        
+        //placeholder code (5 is an arbitrary value):
+        int timer_amount = 5;
+
         Ui.showToUser(String.format(QUIZ_END, timer_amount));
     }
 
-    public static void handleQuizForFlashcard (int index) {
-        Flashcard index_card = flashcards.get(index);
+    public void handleQuizForFlashcard (ArrayList<Flashcard> queue, int index) {
+        Flashcard index_card = queue.get(index);
         Ui.showToUser(index_card.getQuestion());
-        String userAnswer = Ui.getUserCommand();
+
+        String userAnswer = Ui.getUserCommand().trim();
         if (userAnswer.equals(index_card.getAnswer())) {
             Ui.showToUser(QUIZ_CORRECT);
         } else {

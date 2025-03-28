@@ -3,7 +3,10 @@ package flashcli;
 import static constants.CommandConstants.EXIT;
 
 import command.Command;
+import exceptions.FlashCLIArgumentException;
 import parser.Parser;
+import ui.Ui;
+
 import static ui.Ui.getUserCommand;
 
 public class FlashCLI {
@@ -19,8 +22,8 @@ public class FlashCLI {
             try {
                 Command c = Parser.parseInput(fullInputLine);
                 c.executeCommand();
-            } catch (IllegalArgumentException e) {
-                System.out.println("Possible commands are: add, view_qn, view_ans, edit, list, delete and exit");
+            } catch (FlashCLIArgumentException e) {
+                Ui.showError(e.getMessage());
             } finally {
                 fullInputLine = getUserCommand();
             }

@@ -3,7 +3,7 @@ package command;
 import exceptions.EmptyListException;
 import ui.Ui;
 
-import static flashcard.types.FlashcardList.quizFlashcards;
+import static deck.DeckManager.currentDeck;
 
 public class CommandQuizFlashcards extends Command{
     //arguments likely to be utilised when decks are updated
@@ -15,7 +15,7 @@ public class CommandQuizFlashcards extends Command{
     @Override
     public void executeCommand() {
         try {
-            quizFlashcards();
+            currentDeck.quizFlashcards();
         } catch (EmptyListException e) {
             Ui.showError(e.getMessage());
         }
