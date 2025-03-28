@@ -1,5 +1,6 @@
 package deck;
 
+import static constants.ErrorMessages.DELETE_EMPTY_DECK_ERROR;
 import static constants.ErrorMessages.DUPLICATE_DECK_NAME;
 import static constants.ErrorMessages.EMPTY_DECK_NAME;
 import static constants.ErrorMessages.MISSING_DECK_NAME;
@@ -7,6 +8,7 @@ import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.NO_SUCH_DECK;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
+import static constants.SuccessMessages.DELETE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
@@ -29,7 +31,7 @@ import exceptions.FlashCLIArgumentException;
 
 //@@author Betahaxer
 public class DeckManager {
-    public static Deck currentDeck;
+    public static Deck currentDeck = null;
     public static LinkedHashMap<String, Deck> decks = new LinkedHashMap<>();
 
     /**
@@ -134,6 +136,23 @@ public class DeckManager {
         }
 
         return String.format(SWITCH_DECK_SUCCESS, currentDeck.getName());
+    }
+
+    public static String deleteDeck(String arguments) throws FlashCLIArgumentException {
+        String deckName = arguments.trim();
+        if (decks.isEmpty()) {
+            throw new FlashCLIArgumentException(DELETE_EMPTY_DECK_ERROR);
+        }
+        if (deckName.isEmpty()) {
+            throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
+        }
+        Deck deletedDeck = decks.remove(deckName);
+
+        if (deletedDeck == null) {
+            throw new FlashCLIArgumentException(NO_SUCH_DECK);
+        }
+
+        return String.format(DELETE_DECK_SUCCESS, deckName);
     }
 }
 

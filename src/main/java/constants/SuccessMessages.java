@@ -27,4 +27,5 @@ public class SuccessMessages {
     public static final String SWITCH_DECK_SUCCESS = "Switched to deck \"%s\"";
     public static final String RENAME_DECK_SUCCESS = "Renamed deck \"%s\" to \"%s\" ";
     public static final String VIEW_DECKS_SUCCESS = "List of decks:\n%s";
+    public static final String DELETE_DECK_SUCCESS = "Deleted deck \"%s\"";
 }
