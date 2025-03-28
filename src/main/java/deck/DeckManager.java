@@ -6,6 +6,7 @@ import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.NO_SUCH_DECK;
+import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
@@ -30,9 +31,9 @@ import exceptions.FlashCLIArgumentException;
 
 //@@author Betahaxer
 public class DeckManager {
-    private static final Logger logger = Logger.getLogger(DeckManager.class.getName());
     public static Deck currentDeck;
     public static LinkedHashMap<String, Deck> decks = new LinkedHashMap<>();
+    private static final Logger logger = Logger.getLogger(DeckManager.class.getName());
 
     /**
      * Returns the number of decks currently stored.
@@ -92,7 +93,12 @@ public class DeckManager {
         boolean isNewDeckNameSameAsCurrent = currentDeck.getName().equals(newDeckName);
         boolean isDeckNameDuplicate = decks.containsKey(newDeckName);
 
-        if (!isNewDeckNameSameAsCurrent && isDeckNameDuplicate) {
+        if (isNewDeckNameSameAsCurrent) {
+            logger.warning("Deck name is unchanged");
+            throw new FlashCLIArgumentException(UNCHANGED_DECK_NAME);
+        }
+
+        if (isDeckNameDuplicate) {
             logger.warning("Attempt to rename deck to an existing deck name: " + newDeckName);
             throw new FlashCLIArgumentException(DUPLICATE_DECK_NAME);
         }
@@ -102,6 +108,7 @@ public class DeckManager {
 
         decks.remove(oldDeckName);
         createDeck(newDeckName);
+        switchDeck(newDeckName);
 
         assert !decks.containsKey(oldDeckName) : "Old deck name still exists after renaming!";
         assert decks.containsKey(newDeckName) : "New deck name was not successfully added!";
