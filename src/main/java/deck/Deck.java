@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import exceptions.QuizCancelledException;
 import ui.Ui;
+import timer.Timer;
 /**
  * Represents a deck that contains a collection of flashcards.
  *
@@ -53,6 +54,7 @@ public class Deck {
     private final ArrayList<Flashcard> incorrectFlashcards = new ArrayList<>();
     private final ArrayList<Integer> incorrectIndexes = new ArrayList<>();
     private final ArrayList<String> incorrectAnswers = new ArrayList<>();
+    private Timer timer;
 
 
 
@@ -288,6 +290,8 @@ public class Deck {
         ArrayList<Flashcard> queue = shuffleDeck(flashcards);
 
         Ui.showToUser(QUIZ_START);
+        long startTime = System.nanoTime();
+        timer = new Timer(startTime);
         int lastIndex = queue.size() - 1;
         assert lastIndex >= 0 : "Queue size should not be zero";
         for (int i = 0; i < lastIndex; i++) {
@@ -300,14 +304,11 @@ public class Deck {
         handleQuestionForQuiz(queue.get(lastIndex));
 
         logger.info("Finished asking questions, tabulating timer amount:");
-        //DELETE THESE COMMENTS ONCE DONE:
-        //HANDLE TIMER HERE
-        //placeholder code (5 is an arbitrary value):
-        int timerAmount = 5;
-        assert timerAmount > 0 : "Timer_amount should not be zero";
+        long timeTaken = timer.getDuration();
+        assert timeTaken > 0 : "Timer_amount should not be zero";
 
         logger.info("Exiting quiz mode:");
-        Ui.showToUser(String.format(QUIZ_END, timerAmount));
+        Ui.showToUser(String.format(QUIZ_END, timeTaken));
         return true;
     }
 
