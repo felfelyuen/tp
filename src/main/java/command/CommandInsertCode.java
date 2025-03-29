@@ -19,7 +19,7 @@ public class CommandInsertCode extends Command{
             String output = currentDeck.insertCodeSnippet(index, arguments);
             Ui.showToUser(output);
         } catch (ArrayIndexOutOfBoundsException e) {
-            Ui.showError(e.getMessage());
+            Ui.showError(VIEW_OUT_OF_BOUNDS);
         } catch (NumberFormatException e) {
             Ui.showError(VIEW_INVALID_INDEX);
         } catch (FlashCLIArgumentException e) {

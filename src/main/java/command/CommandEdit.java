@@ -3,8 +3,7 @@ package command;
 import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
-import static constants.ErrorMessages.VIEW_INVALID_INDEX;
-import static constants.ErrorMessages.EDIT_USAGE;
+import static constants.ErrorMessages.*;
 import static deck.DeckManager.currentDeck;
 
 public class CommandEdit extends Command {
@@ -20,7 +19,7 @@ public class CommandEdit extends Command {
             int index = Integer.parseInt(arguments.split(" ", 2)[0]);
             Ui.showToUser(currentDeck.editFlashcard(index, arguments));
         } catch (ArrayIndexOutOfBoundsException e) {
-            Ui.showError(e.getMessage());
+            Ui.showError(VIEW_OUT_OF_BOUNDS);
         } catch (NumberFormatException e) {
             Ui.showError(VIEW_INVALID_INDEX);
         } catch (FlashCLIArgumentException e) {
