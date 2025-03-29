@@ -1,11 +1,6 @@
 package deck;
 
-import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
-import static constants.ErrorMessages.CREATE_MISSING_FIELD;
-import static constants.ErrorMessages.CREATE_INVALID_ORDER;
-import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
-import static constants.ErrorMessages.VIEW_INVALID_INDEX;
-import static constants.ErrorMessages.EMPTY_LIST;
+import static constants.ErrorMessages.*;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.SuccessMessages.CREATE_SUCCESS;
@@ -18,12 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import command.Command;
-import command.CommandCreate;
-import command.CommandDelete;
-import command.CommandEdit;
-import command.CommandQuizFlashcards;
-import command.CommandViewQuestion;
+import command.*;
 import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
@@ -422,4 +412,53 @@ public class DeckTest {
             assertEquals(QUIZ_CANCEL_MESSAGE,e.getMessage());
         }
     }
+
+    @Test
+    void insertCodeSnippet_validInputs_success() {
+        String createInput = "/q What is Java? /a A programming language.";
+        Command createTest = new CommandCreate(createInput);
+        createTest.executeCommand();
+        String viewOutput = deck.viewFlashcardQuestion(1);
+        String insertCodeSnippet = "/c Class Java { void method() {...} }";
+        Command insertTest = new CommandInsertCode(insertCodeSnippet);
+        insertTest.executeCommand();
+        assertEquals(1, deck.getFlashcards().size());
+        assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?", "Class Java { void method() {...} }"), viewOutput);
+    }
+
+    @Test
+    void insertCodeSnippet_invalidCodeSnippetField_illegalArgumentExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            deck.createFlashcard(createInput);
+            String insertCodeSnippet = " ";
+            deck.insertCodeSnippet(1, insertCodeSnippet);
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(INSERT_MISSING_FIELD, e.getMessage());
+        }
+
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            deck.createFlashcard(createInput);
+            String insertCodeSnippet = "/c ";
+            deck.insertCodeSnippet(1, insertCodeSnippet);
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(INSERT_MISSING_CODE, e.getMessage());
+        }
+    }
+
+
+    @Test
+    void insertCodeSnippet_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreate(createInput);
+            createTest.executeCommand();
+            assertEquals(1, deck.getFlashcards().size());
+            new CommandInsertCode("72 /c somecode");
+        } catch (NumberFormatException e) {
+            assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
+        }
+    }
+
 }
