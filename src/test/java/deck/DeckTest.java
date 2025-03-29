@@ -368,7 +368,7 @@ public class DeckTest {
 
             ArrayList<Flashcard> flashcards = deck.getFlashcards();
             String userAnswer = "A programming language.";
-            boolean testSuccess = deck.handleQuizForFlashcard(flashcards, 0, userAnswer);
+            boolean testSuccess = deck.handleAnswerForFlashcard(flashcards.get(0), userAnswer);
             assertTrue(testSuccess);
         } catch (Exception e) {
             fail("Unexpected Exception was thrown: " + e.getMessage());
@@ -384,7 +384,7 @@ public class DeckTest {
 
             ArrayList<Flashcard> flashcards = deck.getFlashcards();
             String userAnswer = "dummy response";
-            boolean testSuccess = deck.handleQuizForFlashcard(flashcards, 0, userAnswer);
+            boolean testSuccess = deck.handleAnswerForFlashcard(flashcards.get(0), userAnswer);
             assertFalse(testSuccess);
         } catch (QuizCancelledException e) {
             fail("Unexpected Exception was thrown: " + e.getMessage());
@@ -394,7 +394,6 @@ public class DeckTest {
     @Test
     void quizFlashcards_emptyList_emptyListExceptionThrown() {
         try {
-            Command c = new CommandQuizFlashcards();
             boolean quizSuccess = deck.quizFlashcards();
             assertTrue(quizSuccess);
         } catch (EmptyListException e) {
@@ -414,9 +413,9 @@ public class DeckTest {
 
             ArrayList<Flashcard> flashcards = deck.getFlashcards();
             String userAnswer = "dummy response";
-            boolean testSuccess = deck.handleQuizForFlashcard(flashcards, 0, userAnswer);
+            boolean testSuccess = deck.handleAnswerForFlashcard(flashcards.get(0), userAnswer);
             assertFalse(testSuccess);
-            boolean exitQuizSuccess = deck.handleQuizForFlashcard(flashcards, 1, QUIZ_CANCEL);
+            boolean exitQuizSuccess = deck.handleAnswerForFlashcard(flashcards.get(1), QUIZ_CANCEL);
             assertFalse(exitQuizSuccess);
         } catch (QuizCancelledException e) {
             assertEquals(QUIZ_CANCEL_MESSAGE,e.getMessage());
