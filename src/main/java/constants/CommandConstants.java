@@ -17,4 +17,6 @@ public class CommandConstants {
     public static final String SWITCH_DECK = "select";
     public static final String RENAME_DECK = "rename";
     public static final String VIEW_DECKS = "decks";
+    public static final String INSERT_CODE = "insert_code";
+
 }
