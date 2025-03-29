@@ -328,8 +328,8 @@ public class Deck {
             userAnswer = Ui.getUserCommand().trim();
         }
 
-        boolean answer_correct = handleAnswerForFlashcard(indexCard, userAnswer);
-        if (!answer_correct) {
+        boolean answerCorrect = handleAnswerForFlashcard(indexCard, userAnswer);
+        if (!answerCorrect) {
             logger.info("Adding into incorrect answer arrays:");
             int incorrectIndex = indexCard.getIndex();
             incorrectIndexes.add(incorrectIndex);
