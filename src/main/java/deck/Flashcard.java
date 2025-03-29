@@ -7,6 +7,7 @@ public class Flashcard {
     protected int index;
     protected String question;
     protected String answer;
+    protected String codeSnippet;
 
     /**
      * Constructs a Flashcard with the specified question and answer.
@@ -56,6 +57,23 @@ public class Flashcard {
     public String toString() {
         return String.format("Question: %s\n" +
                 "Answer: %s", this.question, this.answer);
+    }
+
+    /**
+     * Sets the code snippet of the flashcard.
+     *
+     */
+    public void setCodeSnippet(String codeSnippet) {
+        this.codeSnippet = codeSnippet;
+    }
+
+    /**
+     * Returns the code snippet of the flashcard.
+     *
+     * @return The flashcard code snippet.
+     */
+    public String getCodeSnippet() {
+        return (codeSnippet == null) ? "" : codeSnippet;
     }
 }
 

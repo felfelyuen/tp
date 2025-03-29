@@ -3,11 +3,7 @@ package deck;
 import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
-import static constants.ErrorMessages.CREATE_INVALID_ORDER;
-import static constants.ErrorMessages.CREATE_MISSING_FIELD;
-import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
-import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
-import static constants.ErrorMessages.EMPTY_LIST;
+import static constants.ErrorMessages.*;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.QuizMessages.QUIZ_CORRECT;
@@ -17,17 +13,13 @@ import static constants.QuizMessages.QUIZ_LAST_QUESTION;
 import static constants.QuizMessages.QUIZ_NO_ANSWER_DETECTED;
 import static constants.QuizMessages.QUIZ_QUESTIONS_LEFT;
 import static constants.QuizMessages.QUIZ_START;
-import static constants.SuccessMessages.CREATE_SUCCESS;
-import static constants.SuccessMessages.DELETE_SUCCESS;
-import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
-import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
-import static constants.SuccessMessages.EDIT_SUCCESS;
-import static constants.SuccessMessages.LIST_SUCCESS;
+import static constants.SuccessMessages.*;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import exceptions.QuizCancelledException;
+import parser.Parser;
 import ui.Ui;
 /**
  * Represents a deck that contains a collection of flashcards.
@@ -161,7 +153,8 @@ public class Deck {
         assert flashcardToView != null : "flashcard object should not be null";
         String question = flashcardToView.getQuestion();
         assert !question.isEmpty() : "Question should not be empty when viewing flashcards";
-        return String.format(VIEW_QUESTION_SUCCESS, index, question);
+        String codeSnippet = flashcardToView.getCodeSnippet();
+        return String.format(VIEW_QUESTION_SUCCESS, index, question, codeSnippet);
     }
 
     /**
@@ -364,6 +357,44 @@ public class Deck {
             return false;
         }
     }
+
+    /**
+     * Inserts code snippets to the flashcard
+     *
+     * @param index     index of flashcard to insert code snippet
+     * @param arguments user inputs containing updated question and answer
+     * @return the updated flashcard in the format of EDIT_SUCCESS
+     * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
+     */
+    //@@author ElonKoh
+    public String insertCodeSnippet(int index, String arguments)
+            throws ArrayIndexOutOfBoundsException,
+            FlashCLIArgumentException {
+        boolean containsAllArguments = arguments.contains("/c");
+        if (!containsAllArguments) {
+            throw new FlashCLIArgumentException(INSERT_MISSING_FIELD);
+        }
+        int codeStart = arguments.indexOf("/c");
+
+        if (index <= 0 || index > flashcards.size()) {
+            throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
+        }
+        String codeSnippet = arguments.substring(codeStart + "/c".length()).trim();
+        if (codeSnippet.isEmpty()) {
+            throw new FlashCLIArgumentException(INSERT_MISSING_CODE);
+        }
+        String formattedCodeSnippet = Parser.parseCodeSnippet(codeSnippet);
+
+        int arrayIndex = index - 1;
+        Flashcard insertFlashcard = flashcards.get(arrayIndex);
+
+        insertFlashcard.setCodeSnippet(formattedCodeSnippet);
+        return String.format(INSERT_SUCCESS,
+                insertFlashcard.getQuestion(), insertFlashcard.getAnswer(),
+                formattedCodeSnippet);
+    }
+
+
 
     public ArrayList<Flashcard> shuffleDeck (ArrayList<Flashcard> deck) {
         //add shuffle deck code here

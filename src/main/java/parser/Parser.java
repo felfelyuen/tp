@@ -1,31 +1,10 @@
 package parser;
 
-import command.Command;
-import command.CommandCreate;
-import command.CommandCreateDeck;
-import command.CommandDelete;
-import command.CommandEdit;
-import command.CommandRenameDeck;
-import command.CommandSwitchDeck;
-import command.CommandListQuestion;
-import command.CommandQuizFlashcards;
-import command.CommandViewAnswer;
-import command.CommandViewDecks;
-import command.CommandViewQuestion;
+import command.*;
 
 import exceptions.FlashCLIArgumentException;
 
-import static constants.CommandConstants.CREATE;
-import static constants.CommandConstants.DELETE;
-import static constants.CommandConstants.NEW_DECK;
-import static constants.CommandConstants.RENAME_DECK;
-import static constants.CommandConstants.SWITCH_DECK;
-import static constants.CommandConstants.VIEW_ANS;
-import static constants.CommandConstants.VIEW_DECKS;
-import static constants.CommandConstants.VIEW_QN;
-import static constants.CommandConstants.EDIT;
-import static constants.CommandConstants.LIST;
-import static constants.CommandConstants.QUIZ;
+import static constants.CommandConstants.*;
 import static constants.ErrorMessages.NO_DECK_ERROR;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
 import static deck.DeckManager.currentDeck;
@@ -55,7 +34,7 @@ public class Parser {
         assert arguments != null : "Arguments should not be null";
 
         ArrayList<String> commandsWithDeck =
-                new ArrayList<>(List.of(CREATE, VIEW_QN, VIEW_ANS, EDIT, LIST, DELETE, QUIZ, RENAME_DECK));
+                new ArrayList<>(List.of(CREATE, VIEW_QN, VIEW_ANS, EDIT, LIST, DELETE, QUIZ, RENAME_DECK, INSERT_CODE));
         if (currentDeck == null && commandsWithDeck.contains(command)) {
             throw new FlashCLIArgumentException(NO_DECK_ERROR);
         }
@@ -72,7 +51,20 @@ public class Parser {
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks();
         case QUIZ -> new CommandQuizFlashcards();
+        case INSERT_CODE -> new CommandInsertCode(arguments);
         default -> throw new FlashCLIArgumentException(POSSIBLE_COMMANDS);
         };
     }
+
+    /**
+     * Parses a given code snippet to the correct formatting.
+     *
+     * @param codeSnippet the code snippet input.
+     * @return the formatted code snippet for storage and printing.
+     * @throws FlashCLIArgumentException if the input is invalid or required arguments are missing.
+     */
+    public static String parseCodeSnippet(String codeSnippet) {
+        return codeSnippet;
+    }
+
 }
