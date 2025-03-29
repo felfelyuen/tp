@@ -298,23 +298,11 @@ public class Deck {
         for (int i = 0; i < lastIndex; i++) {
             int questionsLeft = queue.size() - i;
             Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questionsLeft));
-            String userAnswer = Ui.getUserCommand().trim();
-            while (userAnswer.isEmpty()) {
-                logger.info("no answer detected");
-                Ui.showError(QUIZ_NO_ANSWER_DETECTED);
-                userAnswer = Ui.getUserCommand().trim();
-            }
-            handleQuizForFlashcard(queue, i, userAnswer);
+            handleQuestionForQuiz(queue.get(i));
         }
         logger.info("Last question:");
         Ui.showToUser(QUIZ_LAST_QUESTION);
-        String lastUserAnswer = Ui.getUserCommand().trim();
-        while (lastUserAnswer.isEmpty()) {
-            logger.info("no answer detected");
-            Ui.showError(QUIZ_NO_ANSWER_DETECTED);
-            lastUserAnswer = Ui.getUserCommand().trim();
-        }
-        handleQuizForFlashcard(queue, lastIndex, lastUserAnswer);
+        handleQuestionForQuiz(queue.get(lastIndex));
 
         logger.info("Finished asking questions, tabulating timer amount:");
         //DELETE THESE COMMENTS ONCE DONE:
@@ -329,24 +317,42 @@ public class Deck {
     }
 
     /**
-     * handles asking a question and evaluating the answer for question of a specific index in a queue
-     * @param queue of flashcards to quiz from
-     * @param index of flashcard to be quizzed
+     * handles asking the flashcard's question and taking in the input
+     * function specific for quiz, as incorrect answer would affect the arrays for incorrect answers
+     * @param indexCard to ask the question from
+     * @throws QuizCancelledException if user wants to cancel halfway through the quiz
      */
     //@@author felfelyuen
-    public boolean handleQuizForFlashcard (ArrayList<Flashcard> queue, int index, String userAnswer)
-            throws QuizCancelledException {
-        Flashcard indexCard = queue.get(index);
-        assert indexCard != null : "index flashcard should not be null";
+    public void handleQuestionForQuiz(Flashcard indexCard) throws QuizCancelledException {
         Ui.showToUser(indexCard.getQuestion());
-        assert indexCard.getQuestion() != null : "question in index flashcard should not be null";
 
+        String userAnswer = Ui.getUserCommand().trim();
         while (userAnswer.isEmpty()) {
             logger.info("no answer detected");
             Ui.showError(QUIZ_NO_ANSWER_DETECTED);
             userAnswer = Ui.getUserCommand().trim();
         }
 
+        boolean answerCorrect = handleAnswerForFlashcard(indexCard, userAnswer);
+        if (!answerCorrect) {
+            logger.info("Adding into incorrect answer arrays:");
+            int incorrectIndex = indexCard.getIndex();
+            incorrectIndexes.add(incorrectIndex);
+            incorrectFlashcards.add(indexCard);
+            incorrectAnswers.add(userAnswer);
+        }
+    }
+
+    /**
+     * checks if the answer is correct with a specific flashcard
+     * @param indexCard the card with the question and index
+     * @param userAnswer the answer that is inputted
+     * @return boolean value of whether the answer is correct
+     * @throws QuizCancelledException if the user wants to cancel the quiz half-way.
+     */
+    //@@author felfelyuen
+    public boolean handleAnswerForFlashcard (Flashcard indexCard, String userAnswer)
+            throws QuizCancelledException {
         if(userAnswer.equals(QUIZ_CANCEL)) {
             logger.info("Quiz cancelled by user. Exiting quiz:");
             throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
@@ -359,12 +365,7 @@ public class Deck {
             return true;
         } else {
             logger.info("Wrong answer detected, should be:" +
-                    indexCard.getAnswer() +
-                    "adding into incorrect answer arrays");
-            int incorrectIndex = indexCard.getIndex();
-            incorrectIndexes.add(incorrectIndex);
-            incorrectFlashcards.add(indexCard);
-            incorrectAnswers.add(userAnswer);
+                    indexCard.getAnswer());
             Ui.showToUser(QUIZ_INCORRECT);
             return false;
         }
