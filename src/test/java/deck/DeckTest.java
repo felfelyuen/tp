@@ -1,6 +1,13 @@
 package deck;
 
-import static constants.ErrorMessages.*;
+import static constants.ErrorMessages.CREATE_INVALID_ORDER;
+import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
+import static constants.ErrorMessages.CREATE_MISSING_FIELD;
+import static constants.ErrorMessages.EMPTY_LIST;
+import static constants.ErrorMessages.INSERT_MISSING_CODE;
+import static constants.ErrorMessages.INSERT_MISSING_FIELD;
+import static constants.ErrorMessages.VIEW_INVALID_INDEX;
+import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.SuccessMessages.CREATE_SUCCESS;
@@ -13,7 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import command.*;
+import command.Command;
+import command.CommandCreate;
+import command.CommandDelete;
+import command.CommandEdit;
+import command.CommandInsertCode;
+import command.CommandQuizFlashcards;
+import command.CommandViewQuestion;
 import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
@@ -150,7 +163,7 @@ public class DeckTest {
         createTest.executeCommand();
         String viewOutput = deck.viewFlashcardQuestion(1);
         assertEquals(1, deck.getFlashcards().size());
-        assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?"), viewOutput);
+        assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?", ""), viewOutput);
     }
 
     @Test
@@ -418,12 +431,13 @@ public class DeckTest {
         String createInput = "/q What is Java? /a A programming language.";
         Command createTest = new CommandCreate(createInput);
         createTest.executeCommand();
-        String viewOutput = deck.viewFlashcardQuestion(1);
-        String insertCodeSnippet = "/c Class Java { void method() {...} }";
+        String insertCodeSnippet = "1 /c Class Java { void method() {...} }";
         Command insertTest = new CommandInsertCode(insertCodeSnippet);
         insertTest.executeCommand();
+        String viewOutput = deck.viewFlashcardQuestion(1);
         assertEquals(1, deck.getFlashcards().size());
-        assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?", "Class Java { void method() {...} }"), viewOutput);
+        assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?",
+                "Class Java { void method() {...} }"), viewOutput);
     }
 
     @Test

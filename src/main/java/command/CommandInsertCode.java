@@ -3,7 +3,9 @@ package command;
 import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
-import static constants.ErrorMessages.*;
+import static constants.ErrorMessages.INSERT_USAGE;
+import static constants.ErrorMessages.VIEW_INVALID_INDEX;
+import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static deck.DeckManager.currentDeck;
 
 public class CommandInsertCode extends Command{

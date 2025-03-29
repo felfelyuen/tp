@@ -1,10 +1,32 @@
 package parser;
 
-import command.*;
-
+import command.Command;
+import command.CommandCreate;
+import command.CommandCreateDeck;
+import command.CommandDelete;
+import command.CommandEdit;
+import command.CommandInsertCode;
+import command.CommandListQuestion;
+import command.CommandQuizFlashcards;
+import command.CommandRenameDeck;
+import command.CommandSwitchDeck;
+import command.CommandViewAnswer;
+import command.CommandViewDecks;
+import command.CommandViewQuestion;
 import exceptions.FlashCLIArgumentException;
 
-import static constants.CommandConstants.*;
+import static constants.CommandConstants.CREATE;
+import static constants.CommandConstants.DELETE;
+import static constants.CommandConstants.EDIT;
+import static constants.CommandConstants.INSERT_CODE;
+import static constants.CommandConstants.LIST;
+import static constants.CommandConstants.NEW_DECK;
+import static constants.CommandConstants.QUIZ;
+import static constants.CommandConstants.RENAME_DECK;
+import static constants.CommandConstants.SWITCH_DECK;
+import static constants.CommandConstants.VIEW_ANS;
+import static constants.CommandConstants.VIEW_DECKS;
+import static constants.CommandConstants.VIEW_QN;
 import static constants.ErrorMessages.NO_DECK_ERROR;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
 import static deck.DeckManager.currentDeck;
