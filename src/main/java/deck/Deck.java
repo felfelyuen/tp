@@ -360,6 +360,7 @@ public class Deck {
     //@@author felfelyuen
     public boolean handleAnswerForFlashcard (Flashcard indexCard, String userAnswer)
             throws QuizCancelledException {
+        assert (!userAnswer.isEmpty()) : "userAnswer should not be empty";
         if(userAnswer.equals(QUIZ_CANCEL)) {
             logger.info("Quiz cancelled by user. Exiting quiz:");
             throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
@@ -441,16 +442,20 @@ public class Deck {
             throws NumberFormatException,
             FlashCLIArgumentException {
         if (arguments.isEmpty()) {
+            logger.warning("No input detected.");
             throw new FlashCLIArgumentException(CHANGE_ISLEARNED_MISSING_INDEX);
         }
+
         int index = Integer.parseInt(arguments.trim());
         logger.info("index received:" + index);
         if (index < 0 || index > flashcards.size()) {
+            logger.warning("Index out of bounds");
             throw new FlashCLIArgumentException(INDEX_OUT_OF_BOUNDS);
         }
 
         Flashcard indexCard = flashcards.get(index - 1);
         indexCard.setIsLearned(isLearned);
+        logger.info("indexCard " + index + "'s isLearned changed");
         if (isLearned) {
             return (String.format(CHANGED_ISLEARNED_SUCCESS, index, "learned"));
         } else {
