@@ -6,8 +6,8 @@ import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.EMPTY_LIST;
 import static constants.ErrorMessages.INSERT_MISSING_CODE;
 import static constants.ErrorMessages.INSERT_MISSING_FIELD;
-import static constants.ErrorMessages.VIEW_INVALID_INDEX;
-import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
+import static constants.ErrorMessages.INVALID_INDEX_INPUT;
+import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.SuccessMessages.CREATE_SUCCESS;
@@ -174,7 +174,7 @@ public class DeckTest {
             assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("3");
         } catch (ArrayIndexOutOfBoundsException e) {
-            assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
+            assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
         }
     }
 
@@ -187,7 +187,7 @@ public class DeckTest {
             assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("sjd");
         } catch (NumberFormatException e) {
-            assertEquals(VIEW_INVALID_INDEX, e.getMessage());
+            assertEquals(INVALID_INDEX_INPUT, e.getMessage());
         }
     }
 
@@ -210,7 +210,7 @@ public class DeckTest {
             assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("sjd");
         } catch (NumberFormatException e) {
-            assertEquals(VIEW_INVALID_INDEX, e.getMessage());
+            assertEquals(INVALID_INDEX_INPUT, e.getMessage());
         }
     }
 
@@ -223,7 +223,7 @@ public class DeckTest {
             assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("72");
         } catch (NumberFormatException e) {
-            assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
+            assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
         }
     }
 
@@ -256,7 +256,7 @@ public class DeckTest {
             assertEquals(1, deck.getFlashcards().size());
             new CommandEdit("sjd /q What is Python? /a A different programming language.");
         } catch (NumberFormatException e) {
-            assertEquals(VIEW_INVALID_INDEX, e.getMessage());
+            assertEquals(INVALID_INDEX_INPUT, e.getMessage());
         }
     }
 
@@ -269,7 +269,7 @@ public class DeckTest {
             assertEquals(1, deck.getFlashcards().size());
             new CommandEdit("4 /q What is Python? /a A different programming language.");
         } catch (ArrayIndexOutOfBoundsException e) {
-            assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
+            assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
         }
     }
 
@@ -338,7 +338,7 @@ public class DeckTest {
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
         } catch (NumberFormatException e) {
-            assertEquals(VIEW_INVALID_INDEX, e.getMessage());
+            assertEquals(INVALID_INDEX_INPUT, e.getMessage());
         }
     }
 
@@ -357,7 +357,7 @@ public class DeckTest {
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
         } catch (ArrayIndexOutOfBoundsException e) {
-            assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
+            assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
         }
     }
 
@@ -469,7 +469,7 @@ public class DeckTest {
             assertEquals(1, deck.getFlashcards().size());
             new CommandInsertCode("72 /c somecode");
         } catch (NumberFormatException e) {
-            assertEquals(VIEW_OUT_OF_BOUNDS, e.getMessage());
+            assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
         }
     }
 
