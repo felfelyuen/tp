@@ -11,6 +11,7 @@ import command.CommandListQuestion;
 import command.CommandQuizFlashcards;
 import command.CommandRenameDeck;
 import command.CommandSwitchDeck;
+import command.CommandUserGuide;
 import command.CommandViewAnswer;
 import command.CommandViewDecks;
 import command.CommandViewQuestion;
@@ -27,6 +28,7 @@ import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.QUIZ;
 import static constants.CommandConstants.RENAME_DECK;
 import static constants.CommandConstants.SWITCH_DECK;
+import static constants.CommandConstants.USER_GUIDE;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_DECKS;
 import static constants.CommandConstants.VIEW_QN;
@@ -79,6 +81,7 @@ public class Parser {
         case INSERT_CODE -> new CommandInsertCode(arguments);
         case MARK_LEARNED -> new CommandChangeLearned(arguments, true);
         case MARK_UNLEARNED -> new CommandChangeLearned(arguments, false);
+        case USER_GUIDE -> new CommandUserGuide();
         default -> throw new FlashCLIArgumentException(POSSIBLE_COMMANDS);
         };
     }
