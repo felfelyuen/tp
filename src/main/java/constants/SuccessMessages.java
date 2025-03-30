@@ -32,4 +32,6 @@ public class SuccessMessages {
             "Question: %s\n" +
             "Answer: %s\n" +
             "Code Snippet: %s\n";
+
+    public static final String CHANGED_ISLEARNED_SUCCESS = "Changed flashcard number %s into %s";
 }

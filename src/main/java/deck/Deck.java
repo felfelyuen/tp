@@ -3,13 +3,14 @@ package deck;
 import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
+import static constants.ErrorMessages.CHANGE_ISLEARNED_MISSING_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.EMPTY_LIST;
+import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.INSERT_MISSING_CODE;
 import static constants.ErrorMessages.INSERT_MISSING_FIELD;
-import static constants.ErrorMessages.VIEW_OUT_OF_BOUNDS;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.QuizMessages.QUIZ_CORRECT;
@@ -17,8 +18,10 @@ import static constants.QuizMessages.QUIZ_END;
 import static constants.QuizMessages.QUIZ_INCORRECT;
 import static constants.QuizMessages.QUIZ_LAST_QUESTION;
 import static constants.QuizMessages.QUIZ_NO_ANSWER_DETECTED;
+import static constants.QuizMessages.QUIZ_NO_UNLEARNED;
 import static constants.QuizMessages.QUIZ_QUESTIONS_LEFT;
 import static constants.QuizMessages.QUIZ_START;
+import static constants.SuccessMessages.CHANGED_ISLEARNED_SUCCESS;
 import static constants.SuccessMessages.CREATE_SUCCESS;
 import static constants.SuccessMessages.DELETE_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
@@ -33,6 +36,7 @@ import java.util.logging.Logger;
 import exceptions.QuizCancelledException;
 import parser.Parser;
 import ui.Ui;
+import timer.Timer;
 /**
  * Represents a deck that contains a collection of flashcards.
  *
@@ -57,6 +61,7 @@ public class Deck {
     private final ArrayList<Flashcard> incorrectFlashcards = new ArrayList<>();
     private final ArrayList<Integer> incorrectIndexes = new ArrayList<>();
     private final ArrayList<String> incorrectAnswers = new ArrayList<>();
+    private Timer timer;
 
 
 
@@ -158,7 +163,7 @@ public class Deck {
      */
     public String viewFlashcardQuestion(int index) throws ArrayIndexOutOfBoundsException {
         if (index <= 0 || index > flashcards.size()) {
-            throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
+            throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
         }
         int arrayIndex = index - 1;
         Flashcard flashcardToView = flashcards.get(arrayIndex);
@@ -177,7 +182,7 @@ public class Deck {
      */
     public String viewFlashcardAnswer(int index) throws ArrayIndexOutOfBoundsException {
         if (index <= 0 || index > flashcards.size()) {
-            throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
+            throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
         }
         int arrayIndex = index - 1;
         Flashcard flashcardToView = flashcards.get(arrayIndex);
@@ -218,7 +223,7 @@ public class Deck {
         Flashcard updatedFlashcard = new Flashcard(index, updatedQuestion, updatedAnswer);
 
         if (index <= 0 || index > flashcards.size()) {
-            throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
+            throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
         }
         int arrayIndex = index - 1;
 
@@ -262,7 +267,7 @@ public class Deck {
      */
     public String deleteFlashcard(int index) throws ArrayIndexOutOfBoundsException {
         if (index <= 0 || index > flashcards.size()) {
-            throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
+            throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
         }
         int arrayIndex = index - 1;
         Flashcard flashcardToDelete = flashcards.get(arrayIndex);
@@ -289,10 +294,15 @@ public class Deck {
         incorrectAnswers.clear();
 
         logger.info("Found " + flashcards.size() + " flashcards in the deck");
-        logger.info("starting shuffling:");
+        logger.info("starting sorting and shuffling:");
         ArrayList<Flashcard> queue = shuffleDeck(flashcards);
+        if (queue.isEmpty()) {
+            throw new EmptyListException(QUIZ_NO_UNLEARNED);
+        }
 
         Ui.showToUser(QUIZ_START);
+        long startTime = System.nanoTime();
+        timer = new Timer(startTime);
         int lastIndex = queue.size() - 1;
         assert lastIndex >= 0 : "Queue size should not be zero";
         for (int i = 0; i < lastIndex; i++) {
@@ -305,14 +315,11 @@ public class Deck {
         handleQuestionForQuiz(queue.get(lastIndex));
 
         logger.info("Finished asking questions, tabulating timer amount:");
-        //DELETE THESE COMMENTS ONCE DONE:
-        //HANDLE TIMER HERE
-        //placeholder code (5 is an arbitrary value):
-        int timerAmount = 5;
-        assert timerAmount > 0 : "Timer_amount should not be zero";
+        long timeTaken = timer.getDuration();
+        assert timeTaken > 0 : "Timer_amount should not be zero";
 
         logger.info("Exiting quiz mode:");
-        Ui.showToUser(String.format(QUIZ_END, timerAmount));
+        Ui.showToUser(String.format(QUIZ_END, timeTaken));
         return true;
     }
 
@@ -341,6 +348,7 @@ public class Deck {
             incorrectFlashcards.add(indexCard);
             incorrectAnswers.add(userAnswer);
         }
+        indexCard.setIsLearned(answerCorrect);
     }
 
     /**
@@ -353,6 +361,7 @@ public class Deck {
     //@@author felfelyuen
     public boolean handleAnswerForFlashcard (Flashcard indexCard, String userAnswer)
             throws QuizCancelledException {
+        assert (!userAnswer.isEmpty()) : "userAnswer should not be empty";
         if(userAnswer.equals(QUIZ_CANCEL)) {
             logger.info("Quiz cancelled by user. Exiting quiz:");
             throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
@@ -390,7 +399,7 @@ public class Deck {
         int codeStart = arguments.indexOf("/c");
 
         if (index <= 0 || index > flashcards.size()) {
-            throw new ArrayIndexOutOfBoundsException(VIEW_OUT_OF_BOUNDS);
+            throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
         }
         String codeSnippet = arguments.substring(codeStart + "/c".length()).trim();
         if (codeSnippet.isEmpty()) {
@@ -410,8 +419,48 @@ public class Deck {
 
 
     public ArrayList<Flashcard> shuffleDeck (ArrayList<Flashcard> deck) {
+        //sort into unlearned ones only
+        ArrayList<Flashcard> queue = new ArrayList<>();
+        for (Flashcard flashcard : deck) {
+            if(!flashcard.getIsLearned()) {
+                queue.add(flashcard);
+            }
+        }
+
         //add shuffle deck code here
 
-        return deck;
+        return queue;
+    }
+
+    /**
+     * changes isLearned of Flashcard
+     * @param arguments index of flashcard
+     * @param isLearned new boolean value of isLearned
+     * @throws NumberFormatException if arguments is not a number
+     * @throws ArrayIndexOutOfBoundsException if the index is outside of list size.
+     */
+    public String changeIsLearned (String arguments, boolean isLearned)
+            throws NumberFormatException,
+            FlashCLIArgumentException {
+        if (arguments.isEmpty()) {
+            logger.warning("No input detected.");
+            throw new FlashCLIArgumentException(CHANGE_ISLEARNED_MISSING_INDEX);
+        }
+
+        int index = Integer.parseInt(arguments.trim());
+        logger.info("index received:" + index);
+        if (index < 0 || index > flashcards.size()) {
+            logger.warning("Index out of bounds");
+            throw new FlashCLIArgumentException(INDEX_OUT_OF_BOUNDS);
+        }
+
+        Flashcard indexCard = flashcards.get(index - 1);
+        indexCard.setIsLearned(isLearned);
+        logger.info("indexCard " + index + "'s isLearned changed");
+        if (isLearned) {
+            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, "learned"));
+        } else {
+            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, "unlearned"));
+        }
     }
 }
