@@ -1,6 +1,7 @@
 package parser;
 
 import command.Command;
+import command.CommandChangeLearned;
 import command.CommandCreate;
 import command.CommandCreateDeck;
 import command.CommandDelete;
@@ -20,6 +21,8 @@ import static constants.CommandConstants.DELETE;
 import static constants.CommandConstants.EDIT;
 import static constants.CommandConstants.INSERT_CODE;
 import static constants.CommandConstants.LIST;
+import static constants.CommandConstants.MARK_LEARNED;
+import static constants.CommandConstants.MARK_UNLEARNED;
 import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.QUIZ;
 import static constants.CommandConstants.RENAME_DECK;
@@ -74,6 +77,8 @@ public class Parser {
         case VIEW_DECKS -> new CommandViewDecks();
         case QUIZ -> new CommandQuizFlashcards();
         case INSERT_CODE -> new CommandInsertCode(arguments);
+        case MARK_LEARNED -> new CommandChangeLearned(arguments, true);
+        case MARK_UNLEARNED -> new CommandChangeLearned(arguments, false);
         default -> throw new FlashCLIArgumentException(POSSIBLE_COMMANDS);
         };
     }
