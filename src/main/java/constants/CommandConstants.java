@@ -12,6 +12,7 @@ public class CommandConstants {
     public static final String LIST_CARDS = "list";
     public static final String DELETE_CARD = "delete";
     public static final String INSERT_CODE = "insert_code";
+    public static final String SEARCH_CARD = "search";
 
     // quiz commands
     public static final String QUIZ = "quiz";

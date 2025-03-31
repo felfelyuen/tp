@@ -16,6 +16,7 @@ import command.CommandUserGuide;
 import command.CommandViewAnswer;
 import command.CommandViewDecks;
 import command.CommandViewQuestion;
+import command.CommandSearchFlashcard;
 import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
@@ -35,6 +36,7 @@ import static constants.CommandConstants.VIEW_DECKS;
 import static constants.CommandConstants.VIEW_QN;
 import static constants.CommandConstants.EDIT_CARD;
 import static constants.CommandConstants.LIST_CARDS;
+import static constants.CommandConstants.SEARCH_CARD;
 import static constants.ConfirmationMessages.CONFIRM_DELETE_DECK;
 import static constants.ErrorMessages.NO_DECK_ERROR;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
@@ -79,6 +81,7 @@ public class Parser {
         case LIST_CARDS -> new CommandListQuestion();
         case DELETE_CARD -> new CommandDelete(arguments);
         case INSERT_CODE -> new CommandInsertCode(arguments);
+        case SEARCH_CARD -> new CommandSearchFlashcard(arguments);
 
         case NEW_DECK -> new CommandCreateDeck(arguments);
         case SWITCH_DECK -> new CommandSwitchDeck(arguments);

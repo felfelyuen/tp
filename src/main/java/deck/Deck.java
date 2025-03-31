@@ -3,7 +3,7 @@ package deck;
 import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
-import static constants.ErrorMessages.CHANGE_ISLEARNED_MISSING_INDEX;
+import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
@@ -11,6 +11,9 @@ import static constants.ErrorMessages.EMPTY_LIST;
 import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.INSERT_MISSING_CODE;
 import static constants.ErrorMessages.INSERT_MISSING_FIELD;
+import static constants.ErrorMessages.SEARCH_EMPTY_DECK;
+import static constants.ErrorMessages.SEARCH_MISSING_FIELD;
+import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.QuizMessages.QUIZ_CORRECT;
@@ -27,6 +30,7 @@ import static constants.SuccessMessages.DELETE_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static constants.SuccessMessages.INSERT_SUCCESS;
 import static constants.SuccessMessages.LIST_SUCCESS;
+import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 
@@ -464,7 +468,7 @@ public class Deck {
             FlashCLIArgumentException {
         if (arguments.isEmpty()) {
             logger.warning("No input detected.");
-            throw new FlashCLIArgumentException(CHANGE_ISLEARNED_MISSING_INDEX);
+            throw new FlashCLIArgumentException(CHANGE_IS_LEARNED_MISSING_INDEX);
         }
 
         int index = Integer.parseInt(arguments.trim());
@@ -482,5 +486,77 @@ public class Deck {
         } else {
             return (String.format(CHANGED_ISLEARNED_SUCCESS, index, "unlearned"));
         }
+    }
+
+    /**
+     * helper function to search for flashcards
+     * @param arguments question and/or answer to be searched
+     * @return arraylist of flashcards
+     * @throws FlashCLIArgumentException if no question or answer is provided
+     */
+    //@@author ManZ9802
+    public ArrayList<Flashcard> searchFlashcardHelper(String arguments) throws FlashCLIArgumentException {
+        boolean hasQuestion = arguments.contains("/q");
+        boolean hasAnswer = arguments.contains("/a");
+
+        if (!hasQuestion && !hasAnswer) {
+            throw new FlashCLIArgumentException(SEARCH_MISSING_FIELD);
+        }
+
+        String queryQuestion = "";
+        String queryAnswer = "";
+
+        if (hasQuestion) {
+            int qStart = arguments.indexOf("/q") + 2;
+            int aStart = hasAnswer ? arguments.indexOf("/a") : arguments.length();
+            queryQuestion = arguments.substring(qStart, aStart).trim().toLowerCase();
+        }
+
+        if (hasAnswer) {
+            int aStart = arguments.indexOf("/a") + 2;
+            queryAnswer = arguments.substring(aStart).trim().toLowerCase();
+        }
+
+        ArrayList<Flashcard> matchedFlashcards = new ArrayList<>();
+
+        for (Flashcard flashcard : flashcards) {
+            String question = flashcard.getQuestion();
+            String answer = flashcard.getAnswer();
+            boolean questionMatches = hasQuestion && question.toLowerCase().contains(queryQuestion);
+            boolean answerMatches = hasAnswer && answer.toLowerCase().contains(queryAnswer);
+
+            if ((hasQuestion && hasAnswer && questionMatches && answerMatches)
+                    || (hasQuestion && !hasAnswer && questionMatches)
+                    || (!hasQuestion && hasAnswer && answerMatches)) {
+                matchedFlashcards.add(flashcard);
+            }
+        }
+
+        return matchedFlashcards;
+    }
+
+    /**
+     * wrapper function for searching flashcards
+     * @param arguments question and/or answer to be searched
+     * @return string of matching questions and answers
+     * @throws FlashCLIArgumentException if no question or answer is provided
+     * @throws EmptyListException if search is not a match / if the deck is empty
+     */
+    public String searchFlashcard(String arguments) throws FlashCLIArgumentException, EmptyListException {
+        ArrayList<Flashcard> matchedFlashcards = searchFlashcardHelper(arguments);
+        if (flashcards.isEmpty()) {
+            throw new EmptyListException(SEARCH_EMPTY_DECK);
+        }
+        if (matchedFlashcards.isEmpty()) {
+            throw new EmptyListException(SEARCH_RESULT_EMPTY);
+        }
+        StringBuilder result = new StringBuilder();
+        for (Flashcard flashcard : matchedFlashcards) {
+            result.append(String.format("Question: %s\nAnswer: %s\n\n",
+                    flashcard.getQuestion(),
+                    flashcard.getAnswer()));
+        }
+
+        return String.format(SEARCH_SUCCESS, result.toString().trim());
     }
 }
