@@ -4,6 +4,7 @@ import static constants.CommandConstants.EXIT;
 
 import command.Command;
 import exceptions.FlashCLIArgumentException;
+import logger.LoggingSetup;
 import parser.Parser;
 import ui.Ui;
 
@@ -15,6 +16,7 @@ public class FlashCLI {
      */
     public static void main(String[] args) {
         System.out.println("Welcome to FlashCLI!");
+        LoggingSetup.configureGlobalLogging();
         String fullInputLine = getUserCommand();
 
         while (!(fullInputLine.equals(EXIT))) {
