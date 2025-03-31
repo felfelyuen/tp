@@ -22,7 +22,9 @@ import static constants.CommandConstants.VIEW_RESULTS;
  */
 public class UserGuideMessages {
     public static final String USER_GUIDE_INFORMATION =
-            "\"" + CREATE + "\": creates a flashcard\n" +
+            "Create a deck of flashcards, select it, and begin adding flashcards!\n" +
+                    "List of commands:\n" +
+                    "\"" + CREATE + "\": creates a flashcard\n" +
                     "\"" + LIST + "\": shows list of flashcards\n" +
                     "\"" + VIEW_QN + "\": views the flashcard's question\n" +
                     "\"" + VIEW_ANS + "\": views the flashcard's answer\n" +
