@@ -13,6 +13,8 @@ import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -123,14 +125,12 @@ public class DeckManager {
      */
     public static String switchDeck(String arguments) throws FlashCLIArgumentException {
         String deckName = arguments.trim();
+        checkDeckNameIsEmpty(deckName);
         if (decks.isEmpty()) {
             throw new FlashCLIArgumentException(NO_DECK_TO_SWITCH);
         }
-        if (deckName.isEmpty()) {
-            throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
-        }
-        currentDeck = decks.get(deckName);
 
+        currentDeck = decks.get(deckName);
         if (currentDeck == null) {
             throw new FlashCLIArgumentException(NO_SUCH_DECK);
         }
@@ -154,5 +154,25 @@ public class DeckManager {
 
         return String.format(DELETE_DECK_SUCCESS, deckName);
     }
+
+    public static Deck shuffleDeck(String deckName) throws FlashCLIArgumentException {
+        checkDeckNameIsEmpty(deckName);
+        Deck deckToShuffle = decks.get(deckName);
+        if (deckToShuffle == null) {
+            // refactor and extract this too
+        }
+        ArrayList<Flashcard> flashcards = new ArrayList<>(deckToShuffle.getFlashcards());
+        Collections.shuffle(flashcards);
+        Deck copyOfDeckToShuffle = new Deck(deckName);
+        copyOfDeckToShuffle.setFlashcards(flashcards);
+        return copyOfDeckToShuffle;
+    }
+
+    private static void checkDeckNameIsEmpty(String deckName) throws FlashCLIArgumentException {
+        if (deckName.isEmpty()) {
+            throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
+        }
+    }
+
 }
 

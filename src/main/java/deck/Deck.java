@@ -36,7 +36,7 @@ public class Deck {
 
     private static final Logger logger = Logger.getLogger(Deck.class.getName());
     private String name;
-    private final ArrayList<Flashcard> flashcards = new ArrayList<>();
+    private ArrayList<Flashcard> flashcards = new ArrayList<>();
 
     /**
      * Creates a new deck with the specified name.
@@ -63,6 +63,10 @@ public class Deck {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setFlashcards(ArrayList<Flashcard> flashcards) {
+        this.flashcards = flashcards;
     }
 
     /**
