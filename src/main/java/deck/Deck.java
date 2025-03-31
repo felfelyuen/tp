@@ -27,6 +27,7 @@ import static constants.SuccessMessages.DELETE_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static constants.SuccessMessages.INSERT_SUCCESS;
 import static constants.SuccessMessages.LIST_SUCCESS;
+import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 
@@ -482,5 +483,48 @@ public class Deck {
         } else {
             return (String.format(CHANGED_ISLEARNED_SUCCESS, index, "unlearned"));
         }
+    }
+
+    //@@authorManZ9802
+    public String searchFlashcard(String arguments) throws FlashCLIArgumentException, EmptyListException {
+        boolean hasQuestion = arguments.contains("/q");
+        boolean hasAnswer = arguments.contains("/a");
+
+        if (!hasQuestion && !hasAnswer) {
+            throw new FlashCLIArgumentException("Missing /q or /a in search arguments.");
+        }
+
+        String queryQuestion = "";
+        String queryAnswer = "";
+
+        if (hasQuestion) {
+            int qStart = arguments.indexOf("/q") + 2;
+            int aStart = hasAnswer ? arguments.indexOf("/a") : arguments.length();
+            queryQuestion = arguments.substring(qStart, aStart).trim();
+        }
+
+        if (hasAnswer) {
+            int aStart = arguments.indexOf("/a") + 2;
+            queryAnswer = arguments.substring(aStart).trim();
+        }
+
+        ArrayList<Flashcard> matchedFlashcards = new ArrayList<>();
+
+        for (Flashcard flashcard : flashcards) {
+            boolean questionMatches = hasQuestion && flashcard.getQuestion().toLowerCase().contains(queryQuestion.toLowerCase());
+            boolean answerMatches = hasAnswer && flashcard.getAnswer().toLowerCase().contains(queryAnswer.toLowerCase());
+
+            if ((hasQuestion && hasAnswer && questionMatches && answerMatches)
+                || (hasQuestion && !hasAnswer && questionMatches)
+                || (!hasQuestion && hasAnswer && answerMatches)) {
+                matchedFlashcards.add(flashcard);
+            }
+        }
+
+        if (matchedFlashcards.isEmpty()) {
+            throw new EmptyListException("No matching flashcards found.");
+        }
+
+    return String.format(SEARCH_SUCCESS, matchedFlashcards);
     }
 }
