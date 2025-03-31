@@ -27,7 +27,6 @@ import static constants.SuccessMessages.DELETE_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static constants.SuccessMessages.INSERT_SUCCESS;
 import static constants.SuccessMessages.LIST_SUCCESS;
-import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 
@@ -485,8 +484,8 @@ public class Deck {
         }
     }
 
-    //@@authorManZ9802
-    public String searchFlashcard(String arguments) throws FlashCLIArgumentException, EmptyListException {
+    //@@author ManZ9802
+    public ArrayList<Flashcard> searchFlashcard(String arguments) throws FlashCLIArgumentException, EmptyListException {
         boolean hasQuestion = arguments.contains("/q");
         boolean hasAnswer = arguments.contains("/a");
 
@@ -500,23 +499,25 @@ public class Deck {
         if (hasQuestion) {
             int qStart = arguments.indexOf("/q") + 2;
             int aStart = hasAnswer ? arguments.indexOf("/a") : arguments.length();
-            queryQuestion = arguments.substring(qStart, aStart).trim();
+            queryQuestion = arguments.substring(qStart, aStart).trim().toLowerCase();
         }
 
         if (hasAnswer) {
             int aStart = arguments.indexOf("/a") + 2;
-            queryAnswer = arguments.substring(aStart).trim();
+            queryAnswer = arguments.substring(aStart).trim().toLowerCase();
         }
 
         ArrayList<Flashcard> matchedFlashcards = new ArrayList<>();
 
         for (Flashcard flashcard : flashcards) {
-            boolean questionMatches = hasQuestion && flashcard.getQuestion().toLowerCase().contains(queryQuestion.toLowerCase());
-            boolean answerMatches = hasAnswer && flashcard.getAnswer().toLowerCase().contains(queryAnswer.toLowerCase());
+            String question = flashcard.getQuestion();
+            String answer = flashcard.getAnswer();
+            boolean questionMatches = hasQuestion && question.toLowerCase().contains(queryQuestion);
+            boolean answerMatches = hasAnswer && answer.toLowerCase().contains(queryAnswer);
 
             if ((hasQuestion && hasAnswer && questionMatches && answerMatches)
-                || (hasQuestion && !hasAnswer && questionMatches)
-                || (!hasQuestion && hasAnswer && answerMatches)) {
+                    || (hasQuestion && !hasAnswer && questionMatches)
+                    || (!hasQuestion && hasAnswer && answerMatches)) {
                 matchedFlashcards.add(flashcard);
             }
         }
@@ -525,6 +526,6 @@ public class Deck {
             throw new EmptyListException("No matching flashcards found.");
         }
 
-    return String.format(SEARCH_SUCCESS, matchedFlashcards);
+        return matchedFlashcards;
     }
 }

@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
 /**
@@ -204,6 +205,43 @@ public class DeckManager {
         }
 
         return String.format(DELETE_DECK_SUCCESS, deckName);
+    }
+
+    /**
+     * Searches for flashcards across all decks based on the provided question and/or answer arguments.
+     *
+     * @param arguments the search query in the format "q/QUESTION a/ANSWER"
+     * @return formatted string of matching flashcards with their respective decks
+     * @throws FlashCLIArgumentException if the search arguments are invalid
+     * @throws EmptyListException if there are no decks to search in
+     */
+    //@@author ManZ9802
+    public static String globalSearch(String arguments) throws FlashCLIArgumentException, EmptyListException {
+        if (decks.isEmpty()) {
+            throw new EmptyListException("No decks available for searching.");
+        }
+
+        StringBuilder result = new StringBuilder();
+        int matchCount = 0;
+
+        for (Map.Entry<String, Deck> deckEntry : decks.entrySet()) {
+            String deckName = deckEntry.getKey();
+            Deck deck = deckEntry.getValue();
+
+            for (Flashcard flashcard : deck.searchFlashcard(arguments)) {
+                matchCount++;
+                result.append(String.format("Deck: %s\nQuestion: %s\nAnswer: %s\n\n",
+                        deckName,
+                        flashcard.getQuestion(),
+                        flashcard.getAnswer()));
+            }
+        }
+
+        if (matchCount == 0) {
+            return "No matching flashcards found in any deck.";
+        }
+
+        return result.toString().trim();
     }
 
 }

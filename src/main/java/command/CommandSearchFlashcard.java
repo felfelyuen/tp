@@ -4,7 +4,9 @@ import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
+import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static deck.DeckManager.currentDeck;
+import static deck.DeckManager.globalSearch;
 
 public class CommandSearchFlashcard extends Command {
     private final String arguments;
@@ -18,7 +20,12 @@ public class CommandSearchFlashcard extends Command {
     @Override
     public void executeCommand() {
         try {
-            String list = currentDeck.searchFlashcard(arguments);
+            String list;
+            if (currentDeck == null) {
+                list = globalSearch(arguments);
+            } else {
+                list = String.format(SEARCH_SUCCESS, currentDeck.searchFlashcard(arguments));
+            }
             Ui.showToUser(list);
         } catch (FlashCLIArgumentException | EmptyListException e) {
             Ui.showError(e.getMessage());
