@@ -20,4 +20,5 @@ public class CommandConstants {
     public static final String INSERT_CODE = "insert_code";
     public static final String MARK_UNLEARNED = "mark_unlearned";
     public static final String MARK_LEARNED = "mark_learned";
+    public static final String USER_GUIDE = "user_guide";
 }
