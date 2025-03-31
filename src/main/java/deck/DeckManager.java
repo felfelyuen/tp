@@ -8,10 +8,12 @@ import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.NO_SUCH_DECK;
+import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.DELETE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
+import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
 
@@ -213,7 +215,7 @@ public class DeckManager {
      * @param arguments the search query in the format "q/QUESTION a/ANSWER"
      * @return formatted string of matching flashcards with their respective decks
      * @throws FlashCLIArgumentException if the search arguments are invalid
-     * @throws EmptyListException if there are no decks to search in
+     * @throws EmptyListException        if there are no decks to search in
      */
     //@@author ManZ9802
     public static String globalSearch(String arguments) throws FlashCLIArgumentException, EmptyListException {
@@ -228,7 +230,7 @@ public class DeckManager {
             String deckName = deckEntry.getKey();
             Deck deck = deckEntry.getValue();
 
-            for (Flashcard flashcard : deck.searchFlashcard(arguments)) {
+            for (Flashcard flashcard : deck.searchFlashcardHelper(arguments)) {
                 matchCount++;
                 result.append(String.format("Deck: %s\nQuestion: %s\nAnswer: %s\n\n",
                         deckName,
@@ -238,10 +240,10 @@ public class DeckManager {
         }
 
         if (matchCount == 0) {
-            return "No matching flashcards found in any deck.";
+            throw new EmptyListException(SEARCH_RESULT_EMPTY);
         }
 
-        return result.toString().trim();
+        return String.format(SEARCH_SUCCESS, result.toString().trim());
     }
 
 }

@@ -27,5 +27,9 @@ public class ErrorMessages {
     public static final String INSERT_MISSING_FIELD = "Missing /c in input.";
     public static final String INSERT_MISSING_CODE = "Code snippet cannot be empty.";
     public static final String INSERT_USAGE = "Usage: insert_code {INDEX} /c {CODE_SNIPPET}";
-    public static final String CHANGE_ISLEARNED_MISSING_INDEX = "No input index detected.";
+    public static final String CHANGE_IS_LEARNED_MISSING_INDEX = "No input index detected.";
+
+    public static final String SEARCH_MISSING_FIELD = "Missing /q or /a in input.";
+    public static final String SEARCH_RESULT_EMPTY = "No matching flashcards found.";
+    public static final String SEARCH_EMPTY_DECK = "Deck is empty!";
 }

@@ -3,7 +3,7 @@ package deck;
 import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
-import static constants.ErrorMessages.CHANGE_ISLEARNED_MISSING_INDEX;
+import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
@@ -11,6 +11,9 @@ import static constants.ErrorMessages.EMPTY_LIST;
 import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.INSERT_MISSING_CODE;
 import static constants.ErrorMessages.INSERT_MISSING_FIELD;
+import static constants.ErrorMessages.SEARCH_EMPTY_DECK;
+import static constants.ErrorMessages.SEARCH_MISSING_FIELD;
+import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.QuizMessages.QUIZ_CORRECT;
@@ -27,6 +30,7 @@ import static constants.SuccessMessages.DELETE_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static constants.SuccessMessages.INSERT_SUCCESS;
 import static constants.SuccessMessages.LIST_SUCCESS;
+import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 
@@ -464,7 +468,7 @@ public class Deck {
             FlashCLIArgumentException {
         if (arguments.isEmpty()) {
             logger.warning("No input detected.");
-            throw new FlashCLIArgumentException(CHANGE_ISLEARNED_MISSING_INDEX);
+            throw new FlashCLIArgumentException(CHANGE_IS_LEARNED_MISSING_INDEX);
         }
 
         int index = Integer.parseInt(arguments.trim());
@@ -485,12 +489,12 @@ public class Deck {
     }
 
     //@@author ManZ9802
-    public ArrayList<Flashcard> searchFlashcard(String arguments) throws FlashCLIArgumentException, EmptyListException {
+    public ArrayList<Flashcard> searchFlashcardHelper(String arguments) throws FlashCLIArgumentException {
         boolean hasQuestion = arguments.contains("/q");
         boolean hasAnswer = arguments.contains("/a");
 
         if (!hasQuestion && !hasAnswer) {
-            throw new FlashCLIArgumentException("Missing /q or /a in search arguments.");
+            throw new FlashCLIArgumentException(SEARCH_MISSING_FIELD);
         }
 
         String queryQuestion = "";
@@ -522,10 +526,24 @@ public class Deck {
             }
         }
 
+        return matchedFlashcards;
+    }
+
+    public String searchFlashcard(String arguments) throws FlashCLIArgumentException, EmptyListException {
+        ArrayList<Flashcard> matchedFlashcards = searchFlashcardHelper(arguments);
+        if (flashcards.isEmpty()) {
+            throw new EmptyListException(SEARCH_EMPTY_DECK);
+        }
         if (matchedFlashcards.isEmpty()) {
-            throw new EmptyListException("No matching flashcards found.");
+            throw new EmptyListException(SEARCH_RESULT_EMPTY);
+        }
+        StringBuilder result = new StringBuilder();
+        for (Flashcard flashcard : matchedFlashcards) {
+            result.append(String.format("Question: %s\nAnswer: %s\n\n",
+                    flashcard.getQuestion(),
+                    flashcard.getAnswer()));
         }
 
-        return matchedFlashcards;
+        return String.format(SEARCH_SUCCESS, result.toString().trim());
     }
 }

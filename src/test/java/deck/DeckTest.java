@@ -1,6 +1,6 @@
 package deck;
 
-import static constants.ErrorMessages.CHANGE_ISLEARNED_MISSING_INDEX;
+import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
@@ -9,12 +9,16 @@ import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.INSERT_MISSING_CODE;
 import static constants.ErrorMessages.INSERT_MISSING_FIELD;
 import static constants.ErrorMessages.INVALID_INDEX_INPUT;
+import static constants.ErrorMessages.SEARCH_EMPTY_DECK;
+import static constants.ErrorMessages.SEARCH_MISSING_FIELD;
+import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
 import static constants.SuccessMessages.CHANGED_ISLEARNED_SUCCESS;
 import static constants.SuccessMessages.CREATE_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static constants.SuccessMessages.LIST_SUCCESS;
+import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -538,7 +542,7 @@ public class DeckTest {
         } catch (NumberFormatException e) {
             fail("Unexpected Exception was thrown: " + e.getMessage());
         } catch (FlashCLIArgumentException e) {
-            assertEquals(CHANGE_ISLEARNED_MISSING_INDEX, e.getMessage());
+            assertEquals(CHANGE_IS_LEARNED_MISSING_INDEX, e.getMessage());
         }
     }
 
@@ -557,6 +561,69 @@ public class DeckTest {
             fail("Unexpected Exception was thrown: " + e.getMessage());
         } catch (FlashCLIArgumentException e) {
             assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
+        }
+    }
+
+    @Test
+    void searchDeck_fullSearch_success() {
+        String input = "/q What is Java? /a A programming language.";
+        Command createTest = new CommandCreate(input);
+        createTest.executeCommand();
+        try {
+            String expected = "Question: What is Java?\nAnswer: A programming language.";
+            String result = deck.searchFlashcard(input);
+            assertEquals(String.format(SEARCH_SUCCESS, expected),
+                    result);
+        } catch (FlashCLIArgumentException | EmptyListException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void searchDeck_partialSearch_success() {
+        String input = "/q What is Java? /a A programming language.";
+        Command createTest = new CommandCreate(input);
+        createTest.executeCommand();
+        try {
+            String expected = "Question: What is Java?\nAnswer: A programming language.";
+            String result = deck.searchFlashcard("/q W /a p");
+            assertEquals(String.format(SEARCH_SUCCESS, expected),
+                    result);
+        } catch (FlashCLIArgumentException | EmptyListException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void searchDeck_emptySearch_flashCLIArgumentExceptionThrown() {
+        String input = "/q What is Java? /a A programming language.";
+        Command createTest = new CommandCreate(input);
+        createTest.executeCommand();
+        try {
+            String result = deck.searchFlashcard("");
+        } catch (FlashCLIArgumentException | EmptyListException e) {
+            assertEquals(SEARCH_MISSING_FIELD, e.getMessage());
+        }
+    }
+
+    @Test
+    void searchDeck_emptyResult_emptyListExceptionThrown() {
+        String input = "/q What is Java? /a A programming language.";
+        Command createTest = new CommandCreate(input);
+        createTest.executeCommand();
+        try {
+            deck.searchFlashcard("/q v /a v");
+        } catch (FlashCLIArgumentException | EmptyListException e) {
+            assertEquals(SEARCH_RESULT_EMPTY, e.getMessage());
+        }
+    }
+
+    @Test
+    void searchDeck_emptyDeck_emptyListExceptionThrown() {
+        try {
+            deck.searchFlashcard("/q v /a v");
+        } catch (FlashCLIArgumentException | EmptyListException e) {
+            assertEquals(SEARCH_EMPTY_DECK, e.getMessage());
         }
     }
 }
