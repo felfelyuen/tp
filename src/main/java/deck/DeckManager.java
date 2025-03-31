@@ -215,7 +215,7 @@ public class DeckManager {
      * @param arguments the search query in the format "q/QUESTION a/ANSWER"
      * @return formatted string of matching flashcards with their respective decks
      * @throws FlashCLIArgumentException if the search arguments are invalid
-     * @throws EmptyListException        if there are no decks to search in
+     * @throws EmptyListException        if there are no decks to search in / if there is no matching flashcards
      */
     //@@author ManZ9802
     public static String globalSearch(String arguments) throws FlashCLIArgumentException, EmptyListException {

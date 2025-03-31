@@ -12,6 +12,7 @@ import static constants.CommandConstants.MARK_UNLEARNED;
 import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.QUIZ;
 import static constants.CommandConstants.RENAME_DECK;
+import static constants.CommandConstants.SEARCH_CARD;
 import static constants.CommandConstants.SWITCH_DECK;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_DECKS;
@@ -43,6 +44,7 @@ public class UserGuideMessages {
                     "\"" + RENAME_DECK + "\": renames flashcard deck\n" +
                     "\"" + VIEW_DECKS + "\": shows list of decks\n" +
                     "\"" + SWITCH_DECK + "\": selects deck of flashcards\n" +
+                    "\"" + SEARCH_CARD + "\": searches within a deck or globally\n" +
                     "\"" + EXIT + "\": exits the program\n\n" +
                     "Go to the flashCli User Guide website for more details";
 

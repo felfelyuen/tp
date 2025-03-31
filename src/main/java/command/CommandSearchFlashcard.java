@@ -13,8 +13,10 @@ public class CommandSearchFlashcard extends Command {
         this.arguments = arguments;
     }
     /**
-     * Executes the command. The specific implementation of this method is provided
-     * by subclasses and defines what happens when the command is triggered.
+     * Executes the command to search globally/locally depending on whether the deck is selected
+     * and shows the result to the user.
+     *
+     * <p>If an error occurs during deck creation, an error message is displayed.</p>
      */
     @Override
     public void executeCommand() {

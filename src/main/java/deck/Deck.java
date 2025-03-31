@@ -488,6 +488,12 @@ public class Deck {
         }
     }
 
+    /**
+     * helper function to search for flashcards
+     * @param arguments question and/or answer to be searched
+     * @return arraylist of flashcards
+     * @throws FlashCLIArgumentException if no question or answer is provided
+     */
     //@@author ManZ9802
     public ArrayList<Flashcard> searchFlashcardHelper(String arguments) throws FlashCLIArgumentException {
         boolean hasQuestion = arguments.contains("/q");
@@ -529,6 +535,13 @@ public class Deck {
         return matchedFlashcards;
     }
 
+    /**
+     * wrapper function for searching flashcards
+     * @param arguments question and/or answer to be searched
+     * @return string of matching questions and answers
+     * @throws FlashCLIArgumentException if no question or answer is provided
+     * @throws EmptyListException if search is not a match / if the deck is empty
+     */
     public String searchFlashcard(String arguments) throws FlashCLIArgumentException, EmptyListException {
         ArrayList<Flashcard> matchedFlashcards = searchFlashcardHelper(arguments);
         if (flashcards.isEmpty()) {
