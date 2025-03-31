@@ -22,7 +22,10 @@ import static constants.CommandConstants.VIEW_RESULTS;
  */
 public class UserGuideMessages {
     public static final String USER_GUIDE_INFORMATION =
-            "Create a deck of flashcards, select it, and begin adding flashcards!\n" +
+            "Quick Start:\n" +
+                    "Create a deck of flashcards with \"" + NEW_DECK +
+                    "\", select it with \"" + SWITCH_DECK +
+                    "\", and begin adding flashcards with \"" + CREATE + "\"!\n\n" +
                     "List of commands:\n" +
                     "\"" + CREATE + "\": creates a flashcard\n" +
                     "\"" + LIST + "\": shows list of flashcards\n" +
@@ -39,7 +42,7 @@ public class UserGuideMessages {
                     "\"" + RENAME_DECK + "\": renames flashcard deck\n" +
                     "\"" + VIEW_DECKS + "\": shows list of decks\n" +
                     "\"" + SWITCH_DECK + "\": selects deck of flashcards\n" +
-                    "\"" + EXIT + "\": exits the program\n" +
+                    "\"" + EXIT + "\": exits the program\n\n" +
                     "Go to the flashCli User Guide website for more details";
 
 }
