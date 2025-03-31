@@ -24,6 +24,7 @@ import static deck.DeckManager.switchDeck;
 import static deck.DeckManager.viewDecks;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -218,5 +219,16 @@ public class DeckManagerTest {
             deleteDeck("partitioning");
         });
         assertEquals(NO_SUCH_DECK, exception.getMessage());
+    }
+
+    @Test
+    void deleteDeck_selectedDeckIsDeleted_setsCurrentDeckToNull() throws FlashCLIArgumentException {
+        Deck deck = new Deck("Equivalence");
+        decks.put("Equivalence", deck);
+        currentDeck = deck;
+
+        String result = deleteDeck("Equivalence");
+        assertEquals(String.format(DELETE_DECK_SUCCESS, "Equivalence"), result);
+        assertNull(currentDeck, "Current deck should be set to null after deletion.");
     }
 }

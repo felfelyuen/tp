@@ -168,8 +168,6 @@ public class DeckManager {
             throw new FlashCLIArgumentException(NO_DECK_TO_SWITCH);
         }
 
-        currentDeck = decks.get(deckName);
-
         if (!decks.containsKey(deckName)) {
             logger.warning("Deck '" + deckName + "' does not exist.");
             throw new FlashCLIArgumentException(NO_SUCH_DECK);
@@ -193,6 +191,12 @@ public class DeckManager {
         if (deckName.isEmpty()) {
             throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
         }
+
+        // checks if selected deck is the one that will be deleted
+        if (currentDeck == decks.get(deckName)) {
+            currentDeck = null;
+        }
+
         Deck deletedDeck = decks.remove(deckName);
 
         if (deletedDeck == null) {
