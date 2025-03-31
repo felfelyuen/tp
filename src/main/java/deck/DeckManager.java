@@ -1,5 +1,7 @@
+//@@author Betahaxer
 package deck;
 
+import static constants.ErrorMessages.DELETE_EMPTY_DECK_ERROR;
 import static constants.ErrorMessages.DUPLICATE_DECK_NAME;
 import static constants.ErrorMessages.EMPTY_DECK_NAME;
 import static constants.ErrorMessages.MISSING_DECK_NAME;
@@ -8,6 +10,7 @@ import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.NO_SUCH_DECK;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
+import static constants.SuccessMessages.DELETE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
@@ -29,9 +32,8 @@ import exceptions.FlashCLIArgumentException;
  * <p>Throws {@code FlashCLIArgumentException} for invalid input conditions.</p>
  */
 
-//@@author Betahaxer
 public class DeckManager {
-    public static Deck currentDeck;
+    public static Deck currentDeck = null;
     public static LinkedHashMap<String, Deck> decks = new LinkedHashMap<>();
     private static final Logger logger = Logger.getLogger(DeckManager.class.getName());
 
@@ -160,16 +162,10 @@ public class DeckManager {
      */
     public static String switchDeck(String arguments) throws FlashCLIArgumentException {
         logger.info("Entering switchDeck method with arguments: " + arguments);
-
         String deckName = arguments.trim();
-
         if (decks.isEmpty()) {
             logger.warning("Attempted to switch decks, but no decks are available.");
             throw new FlashCLIArgumentException(NO_DECK_TO_SWITCH);
-        }
-        if (deckName.isEmpty()) {
-            logger.warning("Deck name is empty.");
-            throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
         }
 
         if (!decks.containsKey(deckName)) {
@@ -186,5 +182,28 @@ public class DeckManager {
         logger.info("Deck switched successfully: " + currentDeck.getName());
         return String.format(SWITCH_DECK_SUCCESS, currentDeck.getName());
     }
-}
 
+    public static String deleteDeck(String arguments) throws FlashCLIArgumentException {
+        String deckName = arguments.trim();
+        if (decks.isEmpty()) {
+            throw new FlashCLIArgumentException(DELETE_EMPTY_DECK_ERROR);
+        }
+        if (deckName.isEmpty()) {
+            throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
+        }
+
+        // checks if selected deck is the one that will be deleted
+        if (currentDeck == decks.get(deckName)) {
+            currentDeck = null;
+        }
+
+        Deck deletedDeck = decks.remove(deckName);
+
+        if (deletedDeck == null) {
+            throw new FlashCLIArgumentException(NO_SUCH_DECK);
+        }
+
+        return String.format(DELETE_DECK_SUCCESS, deckName);
+    }
+
+}

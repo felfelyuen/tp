@@ -22,7 +22,9 @@ public class FlashCLI {
         while (!(fullInputLine.equals(EXIT))) {
             try {
                 Command c = Parser.parseInput(fullInputLine);
-                c.executeCommand();
+                if (c != null) {
+                    c.executeCommand();
+                }
             } catch (FlashCLIArgumentException e) {
                 Ui.showError(e.getMessage());
             } finally {

@@ -5,6 +5,7 @@ import command.CommandChangeLearned;
 import command.CommandCreate;
 import command.CommandCreateDeck;
 import command.CommandDelete;
+import command.CommandDeleteDeck;
 import command.CommandEdit;
 import command.CommandInsertCode;
 import command.CommandListQuestion;
@@ -16,12 +17,12 @@ import command.CommandViewAnswer;
 import command.CommandViewDecks;
 import command.CommandViewQuestion;
 import exceptions.FlashCLIArgumentException;
+import ui.Ui;
 
-import static constants.CommandConstants.CREATE;
-import static constants.CommandConstants.DELETE;
-import static constants.CommandConstants.EDIT;
+import static constants.CommandConstants.ADD_CARD;
+import static constants.CommandConstants.DELETE_CARD;
+import static constants.CommandConstants.DELETE_DECK;
 import static constants.CommandConstants.INSERT_CODE;
-import static constants.CommandConstants.LIST;
 import static constants.CommandConstants.MARK_LEARNED;
 import static constants.CommandConstants.MARK_UNLEARNED;
 import static constants.CommandConstants.NEW_DECK;
@@ -32,6 +33,9 @@ import static constants.CommandConstants.USER_GUIDE;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_DECKS;
 import static constants.CommandConstants.VIEW_QN;
+import static constants.CommandConstants.EDIT_CARD;
+import static constants.CommandConstants.LIST_CARDS;
+import static constants.ConfirmationMessages.CONFIRM_DELETE_DECK;
 import static constants.ErrorMessages.NO_DECK_ERROR;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
 import static deck.DeckManager.currentDeck;
@@ -61,29 +65,48 @@ public class Parser {
         assert arguments != null : "Arguments should not be null";
 
         ArrayList<String> commandsWithDeck =
-                new ArrayList<>(List.of(CREATE, VIEW_QN, VIEW_ANS, EDIT, LIST, DELETE, QUIZ, RENAME_DECK, INSERT_CODE));
+                new ArrayList<>(List.of(ADD_CARD, VIEW_QN, VIEW_ANS, EDIT_CARD, LIST_CARDS, DELETE_CARD,
+                        QUIZ, RENAME_DECK, INSERT_CODE));
         if (currentDeck == null && commandsWithDeck.contains(command)) {
             throw new FlashCLIArgumentException(NO_DECK_ERROR);
         }
 
         return switch (command) {
-        case CREATE -> new CommandCreate(arguments);
+        case ADD_CARD -> new CommandCreate(arguments);
         case VIEW_QN -> new CommandViewQuestion(arguments);
         case VIEW_ANS -> new CommandViewAnswer(arguments);
-        case EDIT -> new CommandEdit(arguments);
-        case LIST -> new CommandListQuestion();
-        case DELETE -> new CommandDelete(arguments);
+        case EDIT_CARD -> new CommandEdit(arguments);
+        case LIST_CARDS -> new CommandListQuestion();
+        case DELETE_CARD -> new CommandDelete(arguments);
+        case INSERT_CODE -> new CommandInsertCode(arguments);
+
         case NEW_DECK -> new CommandCreateDeck(arguments);
         case SWITCH_DECK -> new CommandSwitchDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks();
+        case DELETE_DECK -> handleDeleteDeckConfirmation(arguments);
+
         case QUIZ -> new CommandQuizFlashcards();
-        case INSERT_CODE -> new CommandInsertCode(arguments);
-        case MARK_LEARNED -> new CommandChangeLearned(arguments, true);
         case MARK_UNLEARNED -> new CommandChangeLearned(arguments, false);
+        case MARK_LEARNED -> new CommandChangeLearned(arguments, true);
+
         case USER_GUIDE -> new CommandUserGuide();
         default -> throw new FlashCLIArgumentException(POSSIBLE_COMMANDS);
         };
+    }
+
+    private static Command handleDeleteDeckConfirmation(String arguments) {
+        boolean isValidConfirmation;
+        String userInput;
+        do {
+            Ui.showToUser(String.format(CONFIRM_DELETE_DECK, arguments));
+            userInput = Ui.getUserCommand().toLowerCase();
+            isValidConfirmation = userInput.equals("y") || userInput.equals("n");
+        } while (!isValidConfirmation);
+        if (userInput.equals("n")) {
+            return null;
+        }
+        return new CommandDeleteDeck(arguments);
     }
 
     /**
