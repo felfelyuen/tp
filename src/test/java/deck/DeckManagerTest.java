@@ -148,7 +148,7 @@ public class DeckManagerTest {
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
             switchDeck("");
         });
-        assertEquals(EMPTY_DECK_NAME, exception.getMessage());
+        assertEquals(NO_SUCH_DECK, exception.getMessage());
     }
 
     @Test

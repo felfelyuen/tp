@@ -65,7 +65,8 @@ public class Parser {
         assert arguments != null : "Arguments should not be null";
 
         ArrayList<String> commandsWithDeck =
-                new ArrayList<>(List.of(ADD_CARD, VIEW_QN, VIEW_ANS, EDIT_CARD, LIST_CARDS, DELETE_CARD, QUIZ, RENAME_DECK, INSERT_CODE));
+                new ArrayList<>(List.of(ADD_CARD, VIEW_QN, VIEW_ANS, EDIT_CARD, LIST_CARDS, DELETE_CARD,
+                        QUIZ, RENAME_DECK, INSERT_CODE));
         if (currentDeck == null && commandsWithDeck.contains(command)) {
             throw new FlashCLIArgumentException(NO_DECK_ERROR);
         }
