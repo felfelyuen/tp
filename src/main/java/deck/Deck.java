@@ -62,6 +62,7 @@ public class Deck {
     private final ArrayList<String> incorrectAnswers = new ArrayList<>();
     private Timer timer;
 
+    private record Result(int questionStart, int answerStart) { }
 
 
     /**
@@ -105,40 +106,23 @@ public class Deck {
     }
 
     /**
-     * Creates a new flashcard
+     * Creates a new flashcard from the given input string.
      *
-     * <p>The arguments must contain both a question (denoted by "/q") and an answer (denoted by "/a").
-     * The question must appear before the answer in the input string.</p>
+     * <p>The input must include both a question ("/q") and an answer ("/a"),
+     * with the question appearing before the answer.</p>
      *
-     * @param arguments A string with the flashcard details
-     * @return A success message indicating the flashcard has been created.
+     * @param arguments The input string containing the flashcard details.
+     * @return A success message confirming the flashcard creation.
      * @throws FlashCLIArgumentException If required fields are missing,
-     *         the question and answer are in the wrong order, or either field is empty.
+     *         incorrectly ordered, or empty.
      */
-
+    //@@author Betahaxer
     public String createFlashcard(String arguments) throws FlashCLIArgumentException {
         logger.info("Starting to create a flashcard with arguments: " + arguments);
 
-        boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
-        if (!containsAllArguments) {
-            logger.warning("Missing required fields: /q or /a");
-            throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
-        }
-
-        int questionStart = arguments.indexOf("/q");
-        int answerStart = arguments.indexOf("/a");
-
-        assert questionStart >= 0 : "Index of /q should be valid";
-        assert answerStart >= 0 : "Index of /a should be valid";
-
-        logger.fine("Index of /q: " + questionStart + ", Index of /a: " + answerStart);
-
-        if (questionStart > answerStart) {
-            logger.warning("Invalid order: /q comes after /a");
-            throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
-        }
-
-        assert questionStart < answerStart : "Question should come before answer in arguments";
+        Result result = parseQuestionAndAnswer(arguments);
+        int questionStart = result.questionStart();
+        int answerStart = result.answerStart();
 
         String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
         String answer = arguments.substring(answerStart + "/a".length()).trim();
@@ -158,12 +142,45 @@ public class Deck {
     }
 
     /**
+     * Helper function that extracts the positions of the
+     * question ("/q") and answer ("/a") from the input string.
+     * Checks if the required fields are missing or in the wrong order.
+     *
+     * @param arguments The input string containing the flashcard details.
+     * @return A {@code Result} containing the start indices of "/q" and "/a".
+     * @throws FlashCLIArgumentException If required fields are missing or in the wrong order.
+     */
+    private Result parseQuestionAndAnswer(String arguments) throws FlashCLIArgumentException {
+        boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
+        if (!containsAllArguments) {
+            logger.warning("Missing required fields: /q or /a");
+            throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
+        }
+
+        int questionStart = arguments.indexOf("/q");
+        int answerStart = arguments.indexOf("/a");
+
+        assert questionStart >= 0 : "Index of /q should be valid";
+        assert answerStart >= 0 : "Index of /a should be valid";
+
+        logger.fine("Index of /q: " + questionStart + ", Index of /a: " + answerStart);
+
+        if (questionStart > answerStart) {
+            logger.warning("Invalid order: /q comes after /a");
+            throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
+        }
+
+        return new Result(questionStart, answerStart);
+    }
+
+    /**
      * Views the flashcard question
      *
      * @param index index of flashcard to view
      * @return the question in the format of VIEW_QUESTION_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
+    //@@author
     public String viewFlashcardQuestion(int index) throws ArrayIndexOutOfBoundsException {
         if (index <= 0 || index > flashcards.size()) {
             throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
