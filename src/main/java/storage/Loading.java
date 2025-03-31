@@ -17,7 +17,7 @@ public class Loading {
     /**
      * Method checks through the folder for all .txt files to create the decks
      * It will then parse through every .txt file to create the flashcard of the deck
-     * @return LinkedHashMap<String, Deck>
+     * @return LinkedHashMap
      */
     public static LinkedHashMap<String, Deck> loadAllDecks() {
         LinkedHashMap<String, Deck> decks = new LinkedHashMap<>();
