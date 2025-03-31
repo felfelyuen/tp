@@ -1,3 +1,4 @@
+//@@author ManZ9802
 package storage;
 
 import java.io.File;
@@ -8,9 +9,14 @@ import java.util.LinkedHashMap;
 import deck.Deck;
 import deck.Flashcard;
 
+/**
+ * Class to handle the saving of all decks created / deleted inside the program.
+ * Each deck will be saved to its own .txt in a specific format
+ */
 public class Saving {
     /**
-     * Saves the list to path ./data/Jerry.txt.
+     * Saves the list to path ./data/decks/
+     * Each deck is its own .txt file
      * Creates this path if it does not exist
      * @param decks decks to be saved
      * @throws IOException if there is issues saving the file
@@ -19,6 +25,16 @@ public class Saving {
         File dir = new File("./data/decks");
         if (!dir.exists()) {
             dir.mkdirs();
+        }
+
+        File[] existingFiles = dir.listFiles((d, name) -> name.endsWith(".txt"));
+        if (existingFiles != null) {
+            for (File file : existingFiles) {
+                String deckName = file.getName().replace(".txt", "");
+                if (!decks.containsKey(deckName)) {
+                    file.delete();
+                }
+            }
         }
 
         for (String deckName : decks.keySet()) {

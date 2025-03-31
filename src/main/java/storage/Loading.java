@@ -1,3 +1,4 @@
+//@@ author ManZ9802
 package storage;
 
 import java.io.BufferedReader;
@@ -9,7 +10,15 @@ import java.util.LinkedHashMap;
 import deck.Deck;
 import deck.Flashcard;
 
+/**
+ * Class to handle loading of pre-existing decks when program is first started up
+ */
 public class Loading {
+    /**
+     * Method checks through the folder for all .txt files to create the decks
+     * It will then parse through every .txt file to create the flashcard of the deck
+     * @return LinkedHashMap<String, Deck>
+     */
     public static LinkedHashMap<String, Deck> loadAllDecks() {
         LinkedHashMap<String, Deck> decks = new LinkedHashMap<>();
         File folder = new File("./data/decks");
