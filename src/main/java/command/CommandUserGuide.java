@@ -1,9 +1,12 @@
 package command;
 
-import ui.Ui;
-
 import static constants.UserGuideMessages.USER_GUIDE_INFORMATION;
 
+import ui.Ui;
+
+/**
+ * Class to print user guide information
+ */
 public class CommandUserGuide extends Command{
 
     @Override
