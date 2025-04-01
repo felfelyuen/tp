@@ -35,28 +35,119 @@ FlashCLI 2.0 is a command-line flashcard application designed specifically for C
 --------------------------------------------------------------------------------------------------------------------
 ## Features
 
-### Viewing help : `help`
-
-Shows a message explaining how to access the help page.
-
-![help message]()
-
-Format: `help`
-
 ### Viewing user guide: `user_guide`
 Displays possible instructions that can be inputted.
 
 Format: `user_guide`
-Example: ![userguide output]()
+Example: 
+```
+[INPUT]: user_guide
+[OUTPUT]:
+Quick Start:
+Create a deck of flashcards with "new", select it with "select", and begin adding flashcards with "add"!
 
+List of commands:
+"add": creates a flashcard
+"list": shows list of flashcards
+"qn": views the flashcard's question
+"view_ans": views the flashcard's answer
+"delete": deletes the flashcard
+"edit": edits the flashcard question/answer
+"insert_code": inserts code snippet for a flashcard
+"mark_learned": marks flashcard as learned
+"mark_unlearned": marks flashcard as unlearned
+"quiz": quizzes the unlearned flashcards
+"view_results": views results from quiz after quiz is completed
+"new": creates a new deck of flashcards
+"rename": renames flashcard deck
+"decks": shows list of decks
+"select": selects deck of flashcards
+"exit": exits the program
+
+Go to the flashCli User Guide website for more details
+```
 ### Create flashcards: `add`
 Creates a flashcard which consists of the fields questions and answers and adds it to the deck. All fields are required.
 
-Format: add q/QUESTION a/ANSWER
+Format: `add q/QUESTION a/ANSWER`
 Examples:
 * `add q/What language is used in CS2113? a/Java` Adds a new flashcard with the question `What language is used in CS2113?` and answer `Java` to the current selected deck. 
 
 If no deck is selected, this command cannot be used.
+
+### Summary view of the flashcard deck: `list`
+Shows a list of all the flashcards in your deck, including information about the index and question of each flashcard. Limit to only 50 flashcards per page.
+
+Format: `list`
+Examples:
+```
+[INPUT]: list
+[OUTPUT]: 
+1. q/What colour is an apple? 
+2. q/What language is used in CS2113?
+```
+
+### View question only: `qn`
+Show the question of a flashcard via its index.
+
+Format: `qn INDEX`
+INDEX must be a positive integer, ie: 1, 2, 3
+Examples:
+```
+[INPUT]: qn 3
+[OUTPUT]: What is a java interface?
+
+interface Interface{
+void method();
+}
+```
+
+### Quiz mode with timer: `quiz`
+Enters quiz mode. The unlearned flashcards in the deck would be shuffled and the user would have to enter the correct answer for each flashcard. If the flashcard is answered correctly, it would be marked as learned, and the user would not see the flashcard again if they enter quiz mode afterwards. They can re-add the question by marking the flashcard as unlearned. After the quiz, they can type `view_results` to view their results and re-quiz the unlearned flashcards.
+
+The user can type `exit_quiz` to exit the test mode, but the progress would not be saved.
+
+Format: `quiz`
+Examples: 
+```
+[INPUT]: quiz
+[OUTPUT]: Entering quiz mode... get ready!
+[OUTPUT]: You have 2 questions left:
+[OUTPUT]: What language is used in CS2113?
+[INPUT]: Java.
+[OUTPUT]: Correct!
+[OUTPUT]: You have 1 question left:
+[OUTPUT]: What colour is an apple?
+[INPUT]: Blue.
+[OUTPUT]: Incorrect.
+[OUTPUT]: You finished the test! You took: 22 seconds!
+Type view_results to check your test result
+```
+
+### Mark as learned: `mark_learned`
+Marks the question as learned. Flashcards that are correctly answered in quiz mode would be automatically marked as learned. Learned flashcards are not tested again in quiz mode.
+
+Format: `mark_learned INDEX`
+INDEX must be a positive integer, i.e: 1, 2, 3
+
+Examples:
+```
+[INPUT]:mark_learned 2
+[OUTPUT]: Changed flashcard number 2 into learned
+```
+
+### Unmark learned: `mark_unlearned`
+Marks the flashcard as unlearned. Unlearned flashcards are tested in quiz mode.
+
+Format: `mark_unlearned INDEX`
+INDEX must be a positive integer, i.e: 1, 2, 3
+
+Examples:
+```
+[INPUT]:mark_unlearned 2
+[OUTPUT]: Changed flashcard number 2 into unlearned
+```
+
 
 --------------------------------------------------------------------------------------------------------------------
 ## FAQ
