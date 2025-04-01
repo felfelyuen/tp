@@ -3,12 +3,16 @@ package flashcli;
 import static constants.CommandConstants.EXIT;
 
 import command.Command;
+import deck.DeckManager;
 import exceptions.FlashCLIArgumentException;
 import logger.LoggingSetup;
 import parser.Parser;
+import storage.Loading;
+import storage.Saving;
 import ui.Ui;
 
 import static ui.Ui.getUserCommand;
+import java.io.IOException;
 
 public class FlashCLI {
     /**
@@ -17,6 +21,7 @@ public class FlashCLI {
     public static void main(String[] args) {
         System.out.println("Welcome to FlashCLI!");
         LoggingSetup.configureGlobalLogging();
+        DeckManager.decks = Loading.loadAllDecks();
         String fullInputLine = getUserCommand();
 
         while (!(fullInputLine.equals(EXIT))) {
@@ -31,7 +36,11 @@ public class FlashCLI {
                 fullInputLine = getUserCommand();
             }
         }
-
+        try {
+            Saving.saveAllDecks(DeckManager.decks);
+        } catch (IOException e) {
+            System.out.println("Error saving decks: " + e.getMessage());
+        }
         System.out.println("Thank you for using FlashCLI!");
     }
 }
