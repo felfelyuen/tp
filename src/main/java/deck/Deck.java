@@ -109,6 +109,20 @@ public class Deck {
         return flashcards;
     }
 
+    public int getDeckSize() {
+        return flashcards.size();
+    }
+
+    /**
+     * helper function to directly insert a flashcard into the deck
+     * without having to create one
+     * @param flashcard
+     */
+    //@@ author ManZ9802
+    public void insertFlashcard (Flashcard flashcard) {
+        flashcards.add(flashcard);
+    }
+
     /**
      * Creates a new flashcard from the given input string.
      *
