@@ -186,6 +186,15 @@ public class DeckManager {
         return String.format(SWITCH_DECK_SUCCESS, currentDeck.getName());
     }
 
+    /**
+     * Deletes a deck by its name if the user has confirmed the deletion.
+     * Ensures that the deck exists before removal and updates the current deck if necessary.
+     *
+     * @param arguments the name of the deck to be deleted.
+     * @return a success message indicating that the deck has been deleted.
+     * @throws FlashCLIArgumentException if the deck list is empty, the deck name is missing,
+     *                                   or the specified deck does not exist.
+     */
     public static String deleteDeck(String arguments) throws FlashCLIArgumentException {
         String deckName = arguments.trim();
         if (decks.isEmpty()) {

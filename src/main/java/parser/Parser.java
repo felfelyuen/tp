@@ -98,6 +98,15 @@ public class Parser {
         };
     }
 
+    /**
+     * Handles the confirmation process when a user attempts to delete a deck.
+     * Prompts the user for confirmation and ensures valid input ("y" or "n").
+     * If the user confirms ("y"), a {@code CommandDeleteDeck} is returned.
+     * If the user cancels ("n"), {@code null} is returned.
+     *
+     * @param arguments the name or identifier of the deck to be deleted.
+     * @return a {@code CommandDeleteDeck} if confirmed, or {@code null} if canceled.
+     */
     private static Command handleDeleteDeckConfirmation(String arguments) {
         boolean isValidConfirmation;
         String userInput;
