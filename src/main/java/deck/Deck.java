@@ -455,7 +455,13 @@ public class Deck {
     }
 
 
-
+    /**
+     * Shuffles the given deck, including only unlearned flashcards.
+     * Filters out learned flashcards before shuffling the remaining ones.
+     *
+     * @param deck the list of flashcards to be shuffled.
+     * @return a shuffled list containing only unlearned flashcards.
+     */
     private ArrayList<Flashcard> shuffleDeck (ArrayList<Flashcard> deck) {
         //sort into unlearned ones only
         ArrayList<Flashcard> queue = new ArrayList<>();
@@ -465,7 +471,6 @@ public class Deck {
             }
         }
 
-        //add shuffle deck code here
         Collections.shuffle(queue);
         return queue;
     }
