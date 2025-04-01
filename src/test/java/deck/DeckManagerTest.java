@@ -22,7 +22,7 @@ import static deck.DeckManager.deleteDeck;
 import static deck.DeckManager.globalSearch;
 import static deck.DeckManager.renameDeck;
 
-import static deck.DeckManager.switchDeck;
+import static deck.DeckManager.selectDeck;
 import static deck.DeckManager.viewDecks;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -137,34 +137,34 @@ public class DeckManagerTest {
      */
 
     @Test
-    void switchDeck_validDeckName_success() throws FlashCLIArgumentException {
+    void selectDeck_validDeckName_success() throws FlashCLIArgumentException {
         createDeck("Quality Assurance");
-        String result = switchDeck("Quality Assurance");
+        String result = selectDeck("Quality Assurance");
         assertEquals(String.format(SWITCH_DECK_SUCCESS, "Quality Assurance"), result);
     }
 
     @Test
-    void switchDeck_noDecksAvailable_throwsException() {
+    void selectDeck_noDecksAvailable_throwsException() {
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            switchDeck("Design Patterns");
+            selectDeck("Design Patterns");
         });
         assertEquals(NO_DECK_TO_SWITCH, exception.getMessage());
     }
 
     @Test
-    void switchDeck_emptyDeckName_throwsException() throws FlashCLIArgumentException {
+    void selectDeck_emptyDeckName_throwsException() throws FlashCLIArgumentException {
         createDeck("Test Coverage");
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            switchDeck("");
+            selectDeck("");
         });
         assertEquals(NO_SUCH_DECK, exception.getMessage());
     }
 
     @Test
-    void switchDeck_nonExistentDeck_throwsException() throws FlashCLIArgumentException {
+    void selectDeck_nonExistentDeck_throwsException() throws FlashCLIArgumentException {
         createDeck("Architecture");
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            switchDeck("Mona Lisa");
+            selectDeck("Mona Lisa");
         });
         assertEquals(NO_SUCH_DECK, exception.getMessage());
     }

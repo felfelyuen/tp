@@ -22,14 +22,14 @@ import ui.Ui;
 
 import static constants.CommandConstants.ADD_CARD;
 import static constants.CommandConstants.DELETE_CARD;
-import static constants.CommandConstants.DELETE_DECK;
+import static constants.CommandConstants.REMOVE_DECK;
 import static constants.CommandConstants.INSERT_CODE;
 import static constants.CommandConstants.MARK_LEARNED;
 import static constants.CommandConstants.MARK_UNLEARNED;
 import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.QUIZ;
 import static constants.CommandConstants.RENAME_DECK;
-import static constants.CommandConstants.SWITCH_DECK;
+import static constants.CommandConstants.SELECT_DECK;
 import static constants.CommandConstants.USER_GUIDE;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_DECKS;
@@ -84,10 +84,10 @@ public class Parser {
         case SEARCH_CARD -> new CommandSearchFlashcard(arguments);
 
         case NEW_DECK -> new CommandCreateDeck(arguments);
-        case SWITCH_DECK -> new CommandSwitchDeck(arguments);
+        case SELECT_DECK -> new CommandSwitchDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks();
-        case DELETE_DECK -> handleDeleteDeckConfirmation(arguments);
+        case REMOVE_DECK -> handleDeleteDeckConfirmation(arguments);
 
         case QUIZ -> new CommandQuizFlashcards();
         case MARK_UNLEARNED -> new CommandChangeLearned(arguments, false);

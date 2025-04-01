@@ -2,7 +2,7 @@ package constants;
 
 import static constants.CommandConstants.ADD_CARD;
 import static constants.CommandConstants.DELETE_CARD;
-import static constants.CommandConstants.DELETE_DECK;
+import static constants.CommandConstants.REMOVE_DECK;
 import static constants.CommandConstants.EDIT_CARD;
 import static constants.CommandConstants.EXIT;
 import static constants.CommandConstants.INSERT_CODE;
@@ -13,7 +13,7 @@ import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.QUIZ;
 import static constants.CommandConstants.RENAME_DECK;
 import static constants.CommandConstants.SEARCH_CARD;
-import static constants.CommandConstants.SWITCH_DECK;
+import static constants.CommandConstants.SELECT_DECK;
 import static constants.CommandConstants.USER_GUIDE;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_DECKS;
@@ -38,7 +38,7 @@ public class ErrorMessages {
             "Possible commands are: " + ADD_CARD + ", " + VIEW_QN + ", " + VIEW_ANS + ", " + EDIT_CARD + ", " +
                     LIST_CARDS + ", " + DELETE_CARD + ", " + INSERT_CODE + ", " + SEARCH_CARD + ", " + QUIZ + ", " +
                     MARK_UNLEARNED + ", " + MARK_LEARNED + ", " + VIEW_RESULTS + ", " +
-                    NEW_DECK + ", " + SWITCH_DECK + ", " + RENAME_DECK + ", " + VIEW_DECKS + ", " + DELETE_DECK + ", " +
+                    NEW_DECK + ", " + SELECT_DECK + ", " + RENAME_DECK + ", " + VIEW_DECKS + ", " + REMOVE_DECK + ", " +
                     USER_GUIDE + ", " + EXIT + ".";
     public static final String NO_DECK_ERROR = "Select a deck first!";
     public static final String EMPTY_DECK_NAME = "Deck name must not be empty!";

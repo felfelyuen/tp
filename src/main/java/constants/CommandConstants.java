@@ -22,10 +22,10 @@ public class CommandConstants {
 
     // deck commands
     public static final String NEW_DECK = "new";
-    public static final String SWITCH_DECK = "select";
+    public static final String SELECT_DECK = "select";
     public static final String RENAME_DECK = "rename";
     public static final String VIEW_DECKS = "decks";
-    public static final String DELETE_DECK = "remove";
+    public static final String REMOVE_DECK = "remove";
 
     // system commands
     public static final String USER_GUIDE = "user_guide";

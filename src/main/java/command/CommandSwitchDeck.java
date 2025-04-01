@@ -1,6 +1,6 @@
 package command;
 
-import static deck.DeckManager.switchDeck;
+import static deck.DeckManager.selectDeck;
 
 import exceptions.FlashCLIArgumentException;
 import ui.Ui;
@@ -25,7 +25,7 @@ public class CommandSwitchDeck extends Command {
      */
     public void executeCommand() {
         try {
-            Ui.showToUser(switchDeck(arguments));
+            Ui.showToUser(selectDeck(arguments));
         } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
         }
