@@ -39,7 +39,7 @@ FlashCLI 2.0 is a command-line flashcard application designed specifically for C
 
 Shows a message explaining how to access the help page.
 
-![help message](images/helpMessage.png)
+![help message]()
 
 Format: `help`
 
@@ -47,7 +47,7 @@ Format: `help`
 Displays possible instructions that can be inputted.
 
 Format: `user_guide`
-Example: ![userguide output](images/helpMessage.png)
+Example: ![userguide output]()
 
 ### Create flashcards: `add`
 Creates a flashcard which consists of the fields questions and answers and adds it to the deck. All fields are required.
