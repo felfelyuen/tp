@@ -25,55 +25,13 @@ The search feature is designed with the following constraints:
 
 The following PlantUML diagram shows the key classes involved in the search operation:
 
-```plantuml
-@startuml
-class CommandSearchFlashcard {
-- String arguments
-+ executeCommand()
-  }
-
-class DeckManager {
-+ static Deck currentDeck
-+ static Map<String, Deck> decks
-+ static String globalSearch(String): String
-  }
-
-class Deck {
-+ List<Flashcard> flashcards
-+ List<Flashcard> searchFlashcardQuestion(String): List<Flashcard>
-  }
-
-class Flashcard {
-+ String question
-+ String answer
-  }
-
-CommandSearchFlashcard --> DeckManager
-DeckManager --> Deck
-Deck --> Flashcard
-@enduml
-```
+![](images/SearchClassDiagram.png)
 
 ##### Sequence Diagram
 
 Below is a simplified sequence of how a search request is handled:
 
-```plantuml
-@startuml
-actor User
-User -> CommandSearchFlashcard : executeCommand()
-alt Deck selected
-    CommandSearchFlashcard -> Deck : searchFlashcardQuestion(arguments)
-    Deck -> Deck : filter Flashcards
-    Deck -> CommandSearchFlashcard : result
-else No deck selected
-    CommandSearchFlashcard -> DeckManager : globalSearch(arguments)
-    DeckManager -> Deck : searchFlashcardQuestion(arguments) [loop over decks]
-    DeckManager -> CommandSearchFlashcard : result
-end
-CommandSearchFlashcard -> Ui : showToUser(result)
-@enduml
-```
+![](images/SearchSequenceDiagram.png)
 
 #### Implementation
 
@@ -130,40 +88,11 @@ This design allows easy access, portability, and simple debugging via text files
 
 #### Class Diagram
 
-```plantuml
-@startuml
-class Saving {
-  + saveAllDecks(Map<String, Deck>)
-}
-
-class Loading {
-  + loadAllDecks(): Map<String, Deck>
-}
-
-class DeckManager {
-  + static Map<String, Deck> decks
-}
-
-Saving --> DeckManager
-Loading --> DeckManager
-@enduml
-```
+![](images/SaveClassDiagram.png)
 
 #### Sequence Diagram
 
-```plantuml
-@startuml
-actor User
-User -> FlashCLI : main()
-FlashCLI -> Loading : loadAllDecks()
-Loading -> FileSystem : read .txt files
-Loading -> Deck : create flashcards
-FlashCLI -> User : run session
-User -> FlashCLI : exit command
-FlashCLI -> Saving : saveAllDecks(decks)
-Saving -> FileSystem : write .txt files (overwrite + delete removed)
-@enduml
-```
+![](images/SaveSequenceDiagram.png)
 
 #### Implementation
 
@@ -220,32 +149,11 @@ The delete flashcard feature allows users to remove a specific flashcard from th
 
 #### Class Diagram
 
-```plantuml
-@startuml
-class CommandDelete {
-  - String arguments
-  + executeCommand()
-}
-
-class Deck {
-  + String deleteFlashcard(int): String
-}
-
-CommandDelete --> Deck
-@enduml
-```
+![](images/DeleteClassDiagram.png)
 
 #### Sequence Diagram
 
-```plantuml
-@startuml
-actor User
-User -> CommandDelete : executeCommand()
-CommandDelete -> Deck : deleteFlashcard(index)
-Deck -> CommandDelete : confirmation message
-CommandDelete -> Ui : showToUser(message)
-@enduml
-```
+![](images/DeleteSequenceDiagram.png)
 
 #### Implementation
 
@@ -264,6 +172,36 @@ CommandDelete -> Ui : showToUser(message)
 **Edge Cases Handled:**
 - Invalid input format (e.g., not an integer) → `NumberFormatException`
 - Index out of bounds → `ArrayIndexOutOfBoundsException`
+
+### View Flashcard Answer Feature
+
+#### Design
+
+This feature enables the user to view the answer to a specific flashcard by supplying its index. It assumes the user has already selected a deck.
+
+#### Class Diagram
+
+![](images/ViewAnsClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/ViewAnsSeqDiagram.png)
+
+#### Implementation
+
+##### `Deck#viewFlashcardAnswer(int index)`
+
+- Returns the answer text of the flashcard at the given index
+
+##### `CommandViewAnswer#executeCommand()`
+
+- Parses the index
+- Validates that it's a valid number and within bounds
+- Retrieves and displays the answer
+
+**Edge Cases Handled:**
+- Invalid index format → `NumberFormatException`
+- Out-of-bounds index → `ArrayIndexOutOfBoundsException`
 
 ## Product scope
 ### Target user profile
