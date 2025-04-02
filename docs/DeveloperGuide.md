@@ -25,13 +25,55 @@ The search feature is designed with the following constraints:
 
 The following PlantUML diagram shows the key classes involved in the search operation:
 
-![](images/SearchClassDiagram.png)
+```plantuml
+@startuml
+class CommandSearchFlashcard {
+- String arguments
++ executeCommand()
+  }
+
+class DeckManager {
++ static Deck currentDeck
++ static Map<String, Deck> decks
++ static String globalSearch(String): String
+  }
+
+class Deck {
++ List<Flashcard> flashcards
++ List<Flashcard> searchFlashcardQuestion(String): List<Flashcard>
+  }
+
+class Flashcard {
++ String question
++ String answer
+  }
+
+CommandSearchFlashcard --> DeckManager
+DeckManager --> Deck
+Deck --> Flashcard
+@enduml
+```
 
 ##### Sequence Diagram
 
 Below is a simplified sequence of how a search request is handled:
 
-![](images/SearchSequenceDiagram.png)
+```plantuml
+@startuml
+actor User
+User -> CommandSearchFlashcard : executeCommand()
+alt Deck selected
+    CommandSearchFlashcard -> Deck : searchFlashcardQuestion(arguments)
+    Deck -> Deck : filter Flashcards
+    Deck -> CommandSearchFlashcard : result
+else No deck selected
+    CommandSearchFlashcard -> DeckManager : globalSearch(arguments)
+    DeckManager -> Deck : searchFlashcardQuestion(arguments) [loop over decks]
+    DeckManager -> CommandSearchFlashcard : result
+end
+CommandSearchFlashcard -> Ui : showToUser(result)
+@enduml
+```
 
 #### Implementation
 
@@ -88,11 +130,40 @@ This design allows easy access, portability, and simple debugging via text files
 
 #### Class Diagram
 
-![](images/SaveClassDiagram.png)
+```plantuml
+@startuml
+class Saving {
+  + saveAllDecks(Map<String, Deck>)
+}
+
+class Loading {
+  + loadAllDecks(): Map<String, Deck>
+}
+
+class DeckManager {
+  + static Map<String, Deck> decks
+}
+
+Saving --> DeckManager
+Loading --> DeckManager
+@enduml
+```
 
 #### Sequence Diagram
 
-![](images/SaveSequenceDiagram.png)
+```plantuml
+@startuml
+actor User
+User -> FlashCLI : main()
+FlashCLI -> Loading : loadAllDecks()
+Loading -> FileSystem : read .txt files
+Loading -> Deck : create flashcards
+FlashCLI -> User : run session
+User -> FlashCLI : exit command
+FlashCLI -> Saving : saveAllDecks(decks)
+Saving -> FileSystem : write .txt files (overwrite + delete removed)
+@enduml
+```
 
 #### Implementation
 
@@ -141,14 +212,72 @@ Saving.saveAllDecks(DeckManager.decks);
 - Current implementation assumes well-formed files
 - Future improvements: introduce backup/restore, encryption, or support for import/export formats like JSON/CSV
 
+### Delete Flashcard Feature
+
+#### Design
+
+The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on a 0-based index. The system validates the index and ensures it’s within bounds.
+
+#### Class Diagram
+
+```plantuml
+@startuml
+class CommandDelete {
+  - String arguments
+  + executeCommand()
+}
+
+class Deck {
+  + String deleteFlashcard(int): String
+}
+
+CommandDelete --> Deck
+@enduml
+```
+
+#### Sequence Diagram
+
+```plantuml
+@startuml
+actor User
+User -> CommandDelete : executeCommand()
+CommandDelete -> Deck : deleteFlashcard(index)
+Deck -> CommandDelete : confirmation message
+CommandDelete -> Ui : showToUser(message)
+@enduml
+```
+
+#### Implementation
+
+##### `Deck#deleteFlashcard(int index)`
+
+- Removes the flashcard at the given index
+- Returns a confirmation message with the deleted flashcard's content
+
+##### `CommandDelete#executeCommand()`
+
+- Parses the index from user input
+- Validates it as a number and within bounds
+- Invokes `deleteFlashcard(...)`
+- Displays confirmation or appropriate error messages
+
+**Edge Cases Handled:**
+- Invalid input format (e.g., not an integer) → `NumberFormatException`
+- Index out of bounds → `ArrayIndexOutOfBoundsException`
+
 ## Product scope
 ### Target user profile
 
-{Describe the target user profile}
+The user should:
+- be a CS2113 student
+- prefer desktop apps over other types
+- prefers typing to mouse interactions
+- is reasonably comfortable using CLI apps
 
 ### Value proposition
 
-{Describe the value proposition: what problem does it solve?}
+This app provides a no-frills solution to helping CS2113 students study and 
+practice using terminal commands while memorising key information required for the course.
 
 ## User Stories
 
