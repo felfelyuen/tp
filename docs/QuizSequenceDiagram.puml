@@ -1,0 +1,15 @@
+@startuml
+
+Parser -> CommandQuizFlashcards **: Quiz.executeCommand()
+CommandQuizFlashcards -> Deck++: quizFlashcards()
+loop [flashcards.size()]
+    alt [unlearned]
+    Deck -> Deck++: handleQuestion
+    Deck -> Deck++: handleAnswer
+    return
+    end
+end
+return
+
+
+@enduml
