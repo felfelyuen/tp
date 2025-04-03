@@ -10,9 +10,9 @@ import ui.Ui;
  * command class to create a new flashcard
  */
 
-public class CommandCreate extends Command{
+public class CommandCreateFlashcard extends Command{
     private final String arguments;
-    public CommandCreate(String arguments) {
+    public CommandCreateFlashcard(String arguments) {
         this.arguments = arguments;
     }
 

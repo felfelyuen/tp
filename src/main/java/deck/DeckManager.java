@@ -108,12 +108,14 @@ public class DeckManager {
             throw new FlashCLIArgumentException(DUPLICATE_DECK_NAME);
         }
 
+        assert currentDeck != null: "A deck must be selected before renaming!";
+
         String oldDeckName = currentDeck.getName();
         logger.info("Renaming deck: " + oldDeckName + " -> " + newDeckName);
 
+        currentDeck.setName(newDeckName);
+        decks.put(newDeckName, currentDeck);
         decks.remove(oldDeckName);
-        createDeck(newDeckName);
-        switchDeck(newDeckName);
 
         assert !decks.containsKey(oldDeckName) : "Old deck name still exists after renaming!";
         assert decks.containsKey(newDeckName) : "New deck name was not successfully added!";
@@ -163,8 +165,8 @@ public class DeckManager {
      * @return a success message indicating the active deck has changed.
      * @throws FlashCLIArgumentException if the deck does not exist or input is invalid.
      */
-    public static String switchDeck(String arguments) throws FlashCLIArgumentException {
-        logger.info("Entering switchDeck method with arguments: " + arguments);
+    public static String selectDeck(String arguments) throws FlashCLIArgumentException {
+        logger.info("Entering selectDeck method with arguments: " + arguments);
         String deckName = arguments.trim();
         if (decks.isEmpty()) {
             logger.warning("Attempted to switch decks, but no decks are available.");

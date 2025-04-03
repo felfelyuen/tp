@@ -20,8 +20,8 @@ public class LoggingSetup {
         Logger rootLogger = Logger.getLogger("");
 
         ConsoleHandler handler = new ConsoleHandler();
-        handler.setLevel(Level.WARNING);
+        handler.setLevel(Level.SEVERE);
         rootLogger.addHandler(handler);
-        rootLogger.setLevel(Level.WARNING);
+        rootLogger.setLevel(Level.SEVERE);
     }
 }

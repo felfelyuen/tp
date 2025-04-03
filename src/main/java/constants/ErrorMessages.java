@@ -1,6 +1,8 @@
 package constants;
 
 import static constants.CommandConstants.ADD_CARD;
+import static constants.CommandConstants.REMOVE_DECK;
+import static constants.CommandConstants.SELECT_DECK;
 import static constants.CommandConstants.VIEW_QN;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.EDIT_CARD;
@@ -13,10 +15,8 @@ import static constants.CommandConstants.MARK_UNLEARNED;
 import static constants.CommandConstants.MARK_LEARNED;
 import static constants.CommandConstants.VIEW_RES;
 import static constants.CommandConstants.NEW_DECK;
-import static constants.CommandConstants.SWITCH_DECK;
 import static constants.CommandConstants.RENAME_DECK;
 import static constants.CommandConstants.VIEW_DECKS;
-import static constants.CommandConstants.DELETE_DECK;
 import static constants.CommandConstants.USER_GUIDE;
 import static constants.CommandConstants.EXIT;
 
@@ -65,6 +65,6 @@ public class ErrorMessages {
             "Possible commands are: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s.",
             ADD_CARD, VIEW_QN, VIEW_ANS, EDIT_CARD, LIST_CARDS, DELETE_CARD,
             INSERT_CODE, SEARCH_CARD, QUIZ, MARK_UNLEARNED, MARK_LEARNED, VIEW_RES,
-            NEW_DECK, SWITCH_DECK, RENAME_DECK, VIEW_DECKS, DELETE_DECK, USER_GUIDE, EXIT
+            NEW_DECK, SELECT_DECK, RENAME_DECK, VIEW_DECKS, REMOVE_DECK, USER_GUIDE, EXIT
     );
 }

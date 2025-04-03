@@ -1,0 +1,44 @@
+@startuml
+
+actor User
+participant CommandCreateFlashcard
+participant Deck
+participant Flashcard
+participant Ui
+
+activate User
+create CommandCreateFlashcard
+User -> CommandCreateFlashcard
+activate CommandCreateFlashcard
+
+CommandCreateFlashcard --> User
+deactivate CommandCreateFlashcard
+
+
+User -> CommandCreateFlashcard: executeCommand()
+activate CommandCreateFlashcard
+CommandCreateFlashcard -> Deck: createFlashcard()
+
+activate Deck
+
+Deck -> Deck: checkQuestionAndAnswer()
+activate Deck
+
+Deck --> Deck: question and answer
+deactivate Deck
+
+create Flashcard
+Deck -> Flashcard
+activate Flashcard
+Flashcard-->Deck
+deactivate Flashcard
+Deck --> CommandCreateFlashcard: success message
+deactivate Deck
+CommandCreateFlashcard -> Ui: showToUser()
+activate Ui
+Ui --> CommandCreateFlashcard
+deactivate Ui
+CommandCreateFlashcard --> User
+deactivate CommandCreateFlashcard
+
+@enduml

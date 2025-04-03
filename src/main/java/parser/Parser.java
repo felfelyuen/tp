@@ -2,16 +2,16 @@ package parser;
 
 import command.Command;
 import command.CommandChangeLearned;
-import command.CommandCreate;
+import command.CommandCreateFlashcard;
 import command.CommandCreateDeck;
-import command.CommandDelete;
+import command.CommandDeleteFlashcard;
 import command.CommandDeleteDeck;
-import command.CommandEdit;
+import command.CommandEditFlashcard;
 import command.CommandInsertCode;
 import command.CommandListQuestion;
 import command.CommandQuizFlashcards;
 import command.CommandRenameDeck;
-import command.CommandSwitchDeck;
+import command.CommandSelectDeck;
 import command.CommandUserGuide;
 import command.CommandViewAnswer;
 import command.CommandViewDecks;
@@ -23,14 +23,14 @@ import ui.Ui;
 
 import static constants.CommandConstants.ADD_CARD;
 import static constants.CommandConstants.DELETE_CARD;
-import static constants.CommandConstants.DELETE_DECK;
+import static constants.CommandConstants.REMOVE_DECK;
 import static constants.CommandConstants.INSERT_CODE;
 import static constants.CommandConstants.MARK_LEARNED;
 import static constants.CommandConstants.MARK_UNLEARNED;
 import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.QUIZ;
 import static constants.CommandConstants.RENAME_DECK;
-import static constants.CommandConstants.SWITCH_DECK;
+import static constants.CommandConstants.SELECT_DECK;
 import static constants.CommandConstants.USER_GUIDE;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_DECKS;
@@ -76,20 +76,20 @@ public class Parser {
         }
 
         return switch (command) {
-        case ADD_CARD -> new CommandCreate(arguments);
+        case ADD_CARD -> new CommandCreateFlashcard(arguments);
         case VIEW_QN -> new CommandViewQuestion(arguments);
         case VIEW_ANS -> new CommandViewAnswer(arguments);
-        case EDIT_CARD -> new CommandEdit(arguments);
+        case EDIT_CARD -> new CommandEditFlashcard(arguments);
         case LIST_CARDS -> new CommandListQuestion();
-        case DELETE_CARD -> new CommandDelete(arguments);
+        case DELETE_CARD -> new CommandDeleteFlashcard(arguments);
         case INSERT_CODE -> new CommandInsertCode(arguments);
         case SEARCH_CARD -> new CommandSearchFlashcard(arguments);
 
         case NEW_DECK -> new CommandCreateDeck(arguments);
-        case SWITCH_DECK -> new CommandSwitchDeck(arguments);
+        case SELECT_DECK -> new CommandSelectDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks();
-        case DELETE_DECK -> handleDeleteDeckConfirmation(arguments);
+        case REMOVE_DECK -> handleDeleteDeckConfirmation(arguments);
 
         case QUIZ -> new CommandQuizFlashcards();
         case VIEW_RES -> new CommandViewQuizResult();

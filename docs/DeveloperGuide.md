@@ -4,7 +4,39 @@
 
 {list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
 
-## Design & Implementation
+---
+
+## Implementation
+This section describes some noteworthy details on how certain features are implemented. 
+
+### Flashcard features
+### Create a flashcard
+
+This command allows the user to create a new flashcard with compulsory `/q QUESTION` and `/a ANSWER` fields.
+
+The create flashcard mechanism is facilitated by `Deck` and `CommandCreateFlashcard`.
+
+The feature requires a deck to be selected before usage.
+
+**How the feature is implemented:**
+
+Below is the sequence diagram describing the operations for creating the flashcard:
+
+![](images/CreateFlashcardSequenceDiagram.png)
+
+1. The `CommandCreateFlashcard#executeCommand()` method is executed which calls `Deck#createFlashcard()`.
+2. A new `Flashcard` object is created when the user uses the command.
+3. When `Deck#createFlashcard()` is called by the `CommandCreateFlashcard#executeCommand()` method, it immediately checks if the input arguments (without the command) is valid. 
+4. This is achieved with the `Deck#checkQuestionAndAnswer` helper method.
+5. The `Deck#checkQuestionAndAnswer` helper method returns the valid strings of question and answer.
+6. A new flashcard is then created using the question and answer and added to the current selected deck.
+
+**Handling of edge cases:**
+* **Contains all arguments**: Arguments should have both question and answer fields
+* **Correct indices**: The index of the start of the question and answer is valid.
+* **Correct order**: The question comes before the answer.
+
+If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
 
 ### Edit Flashcard Question and Answer Feature
 
@@ -33,6 +65,64 @@ This feature enables the user to edit the question and answer to a specific flas
 - Invalid index format → `NumberFormatException`
 - Out-of-bounds index → `ArrayIndexOutOfBoundsException`
 
+### Delete Flashcard Feature
+
+#### Design
+
+The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on a 0-based index. The system validates the index and ensures it’s within bounds.
+
+#### Class Diagram
+
+![](images/DeleteClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/DeleteSequenceDiagram.png)
+
+#### Implementation
+
+##### `Deck#deleteFlashcard(int index)`
+
+- Removes the flashcard at the given index
+- Returns a confirmation message with the deleted flashcard's content
+
+##### `CommandDelete#executeCommand()`
+
+- Parses the index from user input
+- Validates it as a number and within bounds
+- Invokes `deleteFlashcard(...)`
+- Displays confirmation or appropriate error messages
+
+**Edge Cases Handled:**
+- Invalid input format (e.g., not an integer) → `NumberFormatException`
+- Index out of bounds → `ArrayIndexOutOfBoundsException`
+
+### View Flashcard Answer Feature
+
+#### Design
+
+This feature enables the user to view the answer to a specific flashcard by supplying its index. It assumes the user has already selected a deck.
+
+#### Class Diagram
+
+![](images/ViewAnsClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/ViewAnsSeqDiagram.png)
+
+#### Implementation
+
+##### `Deck#viewFlashcardAnswer(int index)`
+
+- Returns the answer text of the flashcard at the given index
+
+##### `CommandViewAnswer#executeCommand()`
+
+- Parses the index
+- Validates that it's a valid number and within bounds
+- Retrieves and displays the answer
+
 ### Insert Code Snippet
 
 #### Design
@@ -60,6 +150,88 @@ This feature enables the user to insert a code snippet to a specific flashcard b
 - Invalid index format → `NumberFormatException`
 - Out-of-bounds index → `ArrayIndexOutOfBoundsException`
 
+### Deck features
+### Creating a New Deck
+
+The `new` command is implemented using the `Deck` class, which represents a collection of flashcards, and the `CommandCreateDeck` class, which processes user input to create a new deck. To ensure deck names are unique, a hashmap is used to track existing deck names.
+
+#### Implementation of `DeckManager.createDeck()`
+Below shows the sequence diagram of the operations of creating a deck:
+![](images/CreateDeckSequenceDiagram.png)
+
+1. The user issues the command to create a new deck.
+2. The `DeckManager.createDeck()` method checks whether the deck name already exists in the hashmap.
+3. If the name is unique, a new `Deck` object is created and stored in the hashmap, with the name as the key and the `Deck` object as the value.
+4. If the name already exists, an error message is shown to the user.
+
+#### Handling Edge Cases
+* **Duplicate Deck Name**: If the user attempts to create a deck with a name that already exists, an error message is displayed, and the command is not executed.
+* **Empty Deck Name**: Empty deck names are considered invalid.
+* **Whitespace-Only Names**: Deck names consisting solely of spaces are considered invalid.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+### Renaming decks
+
+The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. Similar to creating decks, a hashmap is used to track existing deck names. A deck has to be selected before being able to use this command.
+
+
+#### Implementation of `DeckManager.renameDeck()`
+Below shows the sequence diagram for the operations of rename deck:
+![](images/RenameDeckSequenceDiagram.png)
+
+1. The user issues the command to rename an existing deck.
+2. The `DeckManager.renameDeck()` method checks whether the deck name already exists in the hashmap.
+3. If the new name is unique, the `name` attribute of `Deck` object will be updated to the new name. Then, the new name with the renamed `Deck` object will be added to the hashmap as a new entry. 
+4. The old entry will then be removed from the hashmap.
+
+#### Handling Edge Cases
+* **Unchanged Name**: If the user renames back to the same name as previous, it will not be allowed.
+* **Duplicate Deck Name**: The user will not be able to rename the selected deck to deck names that are already created.
+* **Empty Deck Name / Whitespace-Only Names**: Empty deck names or names consisting solely of spaces are considered invalid.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+### Listing all decks
+
+The `decks` command is implemented using the `Deck` class and the `CommandViewDecks` class. 
+
+#### Implementation of `DeckManager.viewDecks()`
+* Using the `StringBuilder` class from `java.lang`, the method prints the name of each deck in the hashmap, along with a counter index that goes from 1 to n.
+
+#### Handling Edge Cases
+* **No Decks**: If there are no decks available, the user will not be able to list them.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+### Selecting a deck
+
+The `select` command is implemented using the `Deck` class and the `CommandSelectDeck` class.
+
+#### Implementation of `DeckManager.selectDeck()`
+* Updates `currentDeck` to the selected `Deck` object if deck exists.
+
+#### Handling Edge Cases
+* **No Decks**: If there are no decks available, the user will not be able to select any decks.
+* * **Deck not found**: If the deck name is not found in the keys of the hashmap, the user will not be able to select the deck.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+### Deleting a deck
+
+The `remove` command is implemented using the `Deck` class and the `CommandDeleteDeck` class.
+
+#### Implementation of `DeckManager.deleteDeck()`
+* Removes the selected deck from the hashmap via its key if the deck exists.
+* Also deselects the deck if the currentDeck is the deck being deleted. 
+* A confirmation message is raised to the user before deletion. This can be found in `Parser`.
+
+#### Handling Edge Cases
+* **No Decks**: There are no decks to delete.
+* **Deck not found**: The deck does not exists as it is not in the hashmap. 
+* **Empty Deck Name / Whitespace-Only Names**: The deck name is empty or consists of only whitespace, which is not a valid deck name.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
 ### Search Feature
 
@@ -194,157 +366,6 @@ Saving.saveAllDecks(DeckManager.decks);
 - Current implementation assumes well-formed files
 - Future improvements: introduce backup/restore, encryption, or support for import/export formats like JSON/CSV
 
-### Delete Flashcard Feature
-
-#### Design
-
-The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on index. 
-The system validates the index and ensures it’s within bounds.
-
-#### Class Diagram
-
-![](images/DeleteClassDiagram.png)
-
-#### Sequence Diagram
-
-![](images/DeleteSequenceDiagram.png)
-
-#### Implementation
-
-##### `Deck#deleteFlashcard(int index)`
-
-- Removes the flashcard at the given index
-- Returns a confirmation message with the deleted flashcard's content
-
-##### `CommandDelete#executeCommand()`
-
-- Parses the index from user input
-- Validates it as a number and within bounds
-- Invokes `deleteFlashcard(...)`
-- Displays confirmation or appropriate error messages
-
-**Edge Cases Handled:**
-- Invalid input format (e.g., not an integer) → `NumberFormatException`
-- Index out of bounds → `ArrayIndexOutOfBoundsException`
-
-### Quiz method
-#### Design
-This feature allows the user to enter a timed quiz mode, by asking only the unlearned flashcards. It assumes that the user has already selected a desk.
-
-In timed quiz mode, the flashcard's question would appear and wait for the user's input answer. If the answer is correct, the user is shown "Correct!", and then proceeds to the next question. If the question is answered incorrectly, the user is shown "Incorrect.", and proceeds to the next question.
-
-At the start of the quiz mode, a timer object is instantiated, and its duration would be retrieved after quiz mode ends.
-
-If the question is answered correctly, the flashcard would be mark as learned.
-
-After the quiz is finished, the user would be shown how long he took, and an option to view results.
-
-#### Sequence Diagram
-![](images/QuizSequenceDiagram.png)
-#### Implementation
-
-`quizFlashcards()`
-- Quizzes through the unlearned flashcards in a deck.
-- Prints the "end quiz" statement to output
-
-`handleQuestionForQuiz`
-- Outputs the question and waits for the input to be inputted by the user.
-
-`handleAnswerForFlashcard`
-- Checks if inputted value is correct.
-- Returns boolean value true if answer is correct.
-
-**Edge Cases Handled:**
-- Empty deck/no unlearned flashcards in deck. → throws `EmptyListException`
-- If the quiz is cancelled midway through (through exit_quiz) → throws `QuizCancelledException`
-
-#### Future updates:
-- Mass quiz mode: (quiz through all unlearned flashcards)
-- Endless mode: (continuously quizzing, stops when there are 3 mistakes)
-- Against the clock mod: (quiz must be done by a certain timing)
-
-### Mark learned/ Mark unlearned method
-
-#### Design
-Allows the user to mark the flashcard as learned or unlearned, by supplying the index of the flashcard they wish to change. It assumes that the user has already selected a deck.
-
-#### Sequence Diagram
-![](images/ChangeIsLearnedSequenceDiagram.png)
-
-#### Implementation
-`changeIsLearned`
-- changes the isLearned value of target flashcard.
-- returns a string of whether it is now learned or unlearned. 
-
-**Edge Cases Handled:**
-- If index for flashcard to be changed is not a number → throws `NumberFormatException`
-- If index for flashcard is outside of deck size. (lower or equals to 0, and more than the size of the deck) → throws `FlashCliArgumentException`
-- If no index is inputted → throws `FlashCLIArgumentException`
-
-### View Flashcard Question Feature
-
-#### Design
-This feature enables the user to view the question to a specific flashcard by supplying its index. It assumes the user has already selected a deck.
-
-#### Sequence Diagram
-![](images/ViewQuestionSequenceDiagram.png)
-
-#### Implementation
-`viewFlashcardQuestion`
-- Fetches the question from the target flashcard with its index
-- Returns the question as a String.
-
-**Edge cases handled:**
-- If index for flashcard to be viewed is not a number → throws `NumberFormatException`
-- If index for flashcard is outside of deck size. (lower or equals to 0, and more than the size of the deck) → throws `FlashCliArgumentException`
-- If no index is inputted → throws `FlashCLIArgumentException`
-### View Flashcard Answer Feature
-
-#### Design
-
-This feature enables the user to view the answer to a specific flashcard by supplying its index. It assumes the user has already selected a deck.
-
-#### Class Diagram
-
-![](images/ViewAnsClassDiagram.png)
-
-#### Sequence Diagram
-
-![](images/ViewAnsSeqDiagram.png)
-
-#### Implementation
-
-##### `Deck#viewFlashcardAnswer(int index)`
-
-- Returns the answer text of the flashcard at the given index
-
-##### `CommandViewAnswer#executeCommand()`
-
-- Parses the index
-- Validates that it's a valid number and within bounds
-- Retrieves and displays the answer
-
-**Edge Cases Handled:**
-- Invalid index format → `NumberFormatException`
-- Out-of-bounds index → `ArrayIndexOutOfBoundsException`
-
-### List Flashcard Questions Feature
-Allows the user to list out all the flashcard questions in the current deck. It assumes that the user is currently in a deck.
-
-#### Design
-Iterates through the deck, and prints out the question for each flashcard.
-
-#### Sequence Diagram
-![](images/ListSequenceDiagram.png)
-
-#### Implementation
-`listFlashcards`
-- appends to a string with each flashcard question, and a "\n"
-- returns aforementioned string
-
-**Edge cases handled:**
-- If the deck is empty → throws `EmptyListException`
-
 ## Product scope
 ### Target user profile
 
@@ -361,10 +382,27 @@ practice using terminal commands while memorising key information required for t
 
 ## User Stories
 
-|Version| As a ... | I want to ... | So that I can ...|
-|--------|----------|---------------|------------------|
-|v1.0|new user|see usage instructions|refer to them when I forget how to use the application|
-|v2.0|user|find a to-do item by name|locate a to-do without having to go through the entire list|
+| Version | As a ... | I want to ...                                                    | So that I can ...                                      |
+|---------|----------|------------------------------------------------------------------|--------------------------------------------------------|
+| v1.0    | student  | create flashcards with CS2113 information on them                | memorise information in digestible quantities          |
+| v1.0    | student  | view all my flashcards created                                   | see how many of them are created                       |
+| v1.0    | student  | view the questions without answers                               | test my understanding of a specific question           |
+| v1.0    | student  | delete flashcards                                                | remove outdated information                            |
+| v1.0    | student  | edit my flashcards                                               | make updates to flashcards when necessary              |
+| v1.0    | student  | show the answer after answering the questions                    | check my answers                                       |
+| v2.0    | student  | mark each flashcard according to how well I remember the content | review concepts I get wrong often                      |
+| v2.0    | student  | search for specific flashcards by keywords                       | revise certain questions I have trouble with           |
+| v2.0    | student  | see what functions the flashcard app has                         | know how to use the commands effectively               |
+| v2.0    | student  | test all cards in a deck                                         | revise the concepts related to the deck's topic        |
+| v2.0    | student  | shuffle the deck                                                 | prevent memorizing answers based on order              |
+| v2.0    | student  | view flashcards that I got wrong after testing                   | identify my mistakes and improve my understanding      |
+| v2.0    | student  | add code snippets into flashcards                                | properly format code in questions to aid understanding |
+| v2.0    | student  | organise flashcards into different decks                         | study them by topic                                    |
+| v2.0    | student  | rename decks                                                     | make updates to the deck's topic                       |
+| v2.0    | student  | view all decks                                                   | easily navigate and manage my flashcards               |
+| v2.0    | student  | search for specific flashcards                                   | find the flashcard I want quickly                      |
+| v2.0    | student  | access my flashcards and decks across sessions                   | continue my revision without losing progress           |
+| v2.0    | student  | see a nice UI                                                    | have a comfortable viewing experience                  |
 
 ## Non-Functional Requirements
 1. Should be compatible on any mainstream OS as long as it has Java 17 or above installed. 
@@ -373,8 +411,7 @@ practice using terminal commands while memorising key information required for t
 4. End-users should be able to set up and run the flashcard quizzes within 3 steps (create deck, add flashcard, quiz).
 5. The system has automated logging after the end of every session, and be able to store up to a casual amount of usage.
 
-
-## Glossary 
+## Glossary
 
 * *Mainstream OS* - Windows, Linux, Unix, macOS
 * *Flashcard* - An Object with parameters *index*, *question*, *answer*, *codeSnippet*, *isLearned*

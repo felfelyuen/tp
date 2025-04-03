@@ -8,10 +8,10 @@ import static constants.ErrorMessages.INVALID_INDEX_INPUT;
 import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static deck.DeckManager.currentDeck;
 
-public class CommandEdit extends Command {
+public class CommandEditFlashcard extends Command {
     private final String arguments;
 
-    public CommandEdit(String arguments) {
+    public CommandEditFlashcard(String arguments) {
         this.arguments = arguments;
     }
 
