@@ -84,7 +84,7 @@ If no deck is selected, this command cannot be used.
 | **View Question**    | `qn INDEX` e.g. `qn 3`                                                                          |
 | **View Answer**      | `ans INDEX` e.g. `ans 3`                                                                        |
 | **Delete Flashcard** | `delete INDEX` e.g. `delete 3`                                                                  |
-| **Edit Flashcard**   | `edit INDEX [q/QUESTION] [a/ANSWER]` e.g.  `edit 2 q/What is substitutability?`                 |
+| **Edit Flashcard**   | `edit INDEX [q/QUESTION] [a/ANSWER]` e.g.  `edit 2 q/What is substitutability? a/A method`      |
 | **Search Flashcard** | `search SEARCHTERM` e.g.  `search apple`                                                        |
 | **New Deck**         | `new DECKNAME` e.g.  `new testDeck`                                                             |
 | **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                        |
