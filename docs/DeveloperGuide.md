@@ -8,6 +8,15 @@
 
 {Describe the design and implementation of the product. Use UML diagrams and short code snippets where applicable.}
 
+### UI Component
+### Parser Component
+### Command Component
+### Deck Component
+### Storage Component
+### Logger Component
+### Timer Component
+### Exceptions Component
+
 ## Implementation
 
 ## Product scope
