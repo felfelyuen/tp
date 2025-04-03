@@ -4,19 +4,6 @@
 
 {list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
 
-## Design 
-
-{Describe the design and implementation of the product. Use UML diagrams and short code snippets where applicable.}
-
-### UI Component
-### Parser Component
-### Command Component
-### Deck Component
-### Storage Component
-### Logger Component
-### Timer Component
-### Exceptions Component
-
 ---
 
 ## Implementation
@@ -29,9 +16,7 @@ This command allows the user to create a new flashcard with compulsory `/q QUEST
 
 The create flashcard mechanism is facilitated by `Deck` and `CommandCreateFlashcard`.
 
-The feature requires a deck to be selected before usage. 
-
-
+The feature requires a deck to be selected before usage.
 
 **How the feature is implemented:**
 
@@ -52,6 +37,122 @@ Below is the sequence diagram describing the operations for creating the flashca
 * **Correct order**: The question comes before the answer.
 
 If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
+
+### Edit Flashcard Question and Answer Feature
+
+#### Design
+
+This feature enables the user to edit the question and answer to a specific flashcard by supplying its index and updated question and answer. It assumes the user has already selected a deck.
+
+#### Sequence Diagram
+
+![](images/EditSequenceDiagram.png)
+
+#### Implementation
+
+##### `Deck#editFlashcard(int index, String arguments)`
+
+- Replaces the existing flashcard at index with updated question and answer
+- Returns a confirmation of the updated flashcard that was edited
+
+##### `CommandEdit#executeCommand()`
+
+- Parses the index
+- Validates that it's a valid number and within bounds
+- Replaces and updates the existing flashcard and displays the updated flashcard
+
+**Edge Cases Handled:**
+- Invalid index format → `NumberFormatException`
+- Out-of-bounds index → `ArrayIndexOutOfBoundsException`
+
+### Delete Flashcard Feature
+
+#### Design
+
+The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on a 0-based index. The system validates the index and ensures it’s within bounds.
+
+#### Class Diagram
+
+![](images/DeleteClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/DeleteSequenceDiagram.png)
+
+#### Implementation
+
+##### `Deck#deleteFlashcard(int index)`
+
+- Removes the flashcard at the given index
+- Returns a confirmation message with the deleted flashcard's content
+
+##### `CommandDelete#executeCommand()`
+
+- Parses the index from user input
+- Validates it as a number and within bounds
+- Invokes `deleteFlashcard(...)`
+- Displays confirmation or appropriate error messages
+
+**Edge Cases Handled:**
+- Invalid input format (e.g., not an integer) → `NumberFormatException`
+- Index out of bounds → `ArrayIndexOutOfBoundsException`
+
+### View Flashcard Answer Feature
+
+#### Design
+
+This feature enables the user to view the answer to a specific flashcard by supplying its index. It assumes the user has already selected a deck.
+
+#### Class Diagram
+
+![](images/ViewAnsClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/ViewAnsSeqDiagram.png)
+
+#### Implementation
+
+##### `Deck#viewFlashcardAnswer(int index)`
+
+- Returns the answer text of the flashcard at the given index
+
+##### `CommandViewAnswer#executeCommand()`
+
+- Parses the index
+- Validates that it's a valid number and within bounds
+- Retrieves and displays the answer
+
+**Edge Cases Handled:**
+- Invalid index format → `NumberFormatException`
+- Out-of-bounds index → `ArrayIndexOutOfBoundsException`
+
+### Insert Code Snippet
+
+#### Design
+
+This feature enables the user to insert a code snippet to a specific flashcard by supplying its index and code snippet. It assumes the user has already selected a deck.
+
+#### Sequence Diagram
+
+![](images/InsertSequenceDiagram.png)
+
+#### Implementation
+
+##### `Deck#insertCodeSnippet(int index, String arguments)`
+
+- Formats and adds a code snippet into an existing flashcard
+- Returns a confirmation of the updated flashcard with the code snippet
+
+##### `CommandInsertCode#executeCommand()`
+
+- Parses the index
+- Validates that it's a valid number and within bounds
+- Inserts the provided code snippet into the existing flashcard and displays the updated flashcard with code snippet
+
+**Edge Cases Handled:**
+- Invalid index format → `NumberFormatException`
+- Out-of-bounds index → `ArrayIndexOutOfBoundsException`
 
 ### Deck features
 ### Creating a New Deck
@@ -269,68 +370,6 @@ Saving.saveAllDecks(DeckManager.decks);
 - Current implementation assumes well-formed files
 - Future improvements: introduce backup/restore, encryption, or support for import/export formats like JSON/CSV
 
-### Delete Flashcard Feature
-
-#### Design
-
-The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on a 0-based index. The system validates the index and ensures it’s within bounds.
-
-#### Class Diagram
-
-![](images/DeleteClassDiagram.png)
-
-#### Sequence Diagram
-
-![](images/DeleteSequenceDiagram.png)
-
-#### Implementation
-
-##### `Deck#deleteFlashcard(int index)`
-
-- Removes the flashcard at the given index
-- Returns a confirmation message with the deleted flashcard's content
-
-##### `CommandDelete#executeCommand()`
-
-- Parses the index from user input
-- Validates it as a number and within bounds
-- Invokes `deleteFlashcard(...)`
-- Displays confirmation or appropriate error messages
-
-**Edge Cases Handled:**
-- Invalid input format (e.g., not an integer) → `NumberFormatException`
-- Index out of bounds → `ArrayIndexOutOfBoundsException`
-
-### View Flashcard Answer Feature
-
-#### Design
-
-This feature enables the user to view the answer to a specific flashcard by supplying its index. It assumes the user has already selected a deck.
-
-#### Class Diagram
-
-![](images/ViewAnsClassDiagram.png)
-
-#### Sequence Diagram
-
-![](images/ViewAnsSeqDiagram.png)
-
-#### Implementation
-
-##### `Deck#viewFlashcardAnswer(int index)`
-
-- Returns the answer text of the flashcard at the given index
-
-##### `CommandViewAnswer#executeCommand()`
-
-- Parses the index
-- Validates that it's a valid number and within bounds
-- Retrieves and displays the answer
-
-**Edge Cases Handled:**
-- Invalid index format → `NumberFormatException`
-- Out-of-bounds index → `ArrayIndexOutOfBoundsException`
-
 ## Product scope
 ### Target user profile
 
@@ -370,8 +409,11 @@ practice using terminal commands while memorising key information required for t
 | v2.0    | student  | see a nice UI                                                    | have a comfortable viewing experience                  |
 
 ## Non-Functional Requirements
-
-{Give non-functional requirements}
+1. Should be compatible on any mainstream OS as long as it has Java 17 or above installed. 
+2. The system should respond to user input within 5 seconds for most commands under typical usage.
+3. Should be intuitive for most users familiar with a command line user interface .
+4. End-users should be able to set up and run the flashcard quizzes within 3 steps (create deck, add flashcard, quiz).
+5. The system has automated logging after the end of every session, and be able to store up to a casual amount of usage.
 
 ## Glossary
 

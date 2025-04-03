@@ -1,0 +1,11 @@
+@startuml
+actor User
+activate Flashcard
+User -> CommandInsertCode : executeCommand()
+activate CommandInsertCode
+CommandInsertCode -> UI : showToUser()
+activate UI
+return
+CommandInsertCode -> Flashcard : insertCodeSnippet(int, String)
+deactivate CommandInsertCode
+@enduml
