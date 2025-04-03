@@ -1,0 +1,17 @@
+@startuml
+
+actor User
+User -> CommandListQuestion **: executeCommand()
+CommandListQuestion++
+CommandListQuestion -> Deck++: listFlashcards()
+alt [deck is not empty]
+loop [flashcards.size()]
+    Deck -> Ui++: showToUser(question)
+    return
+end
+end
+return
+CommandListQuestion --> User
+
+
+@enduml

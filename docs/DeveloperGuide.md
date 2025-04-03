@@ -1,4 +1,4 @@
-# Developer Guide
+# FlashCLI Developer Guide
 
 ## Acknowledgements
 
@@ -122,10 +122,6 @@ This feature enables the user to view the answer to a specific flashcard by supp
 - Parses the index
 - Validates that it's a valid number and within bounds
 - Retrieves and displays the answer
-
-**Edge Cases Handled:**
-- Invalid index format → `NumberFormatException`
-- Out-of-bounds index → `ArrayIndexOutOfBoundsException`
 
 ### Insert Code Snippet
 
@@ -417,7 +413,15 @@ practice using terminal commands while memorising key information required for t
 
 ## Glossary
 
-* *glossary item* - Definition
+* *Mainstream OS* - Windows, Linux, Unix, macOS
+* *Flashcard* - An Object with parameters *index*, *question*, *answer*, *codeSnippet*, *isLearned*
+* *Deck* - An Object that holds array of Flashcards, as well as other parameters.
+
+* *CLI* - Command Line Interface
+
+* *EmptyListException* - thrown if there is an empty list present
+* *FlashCLIArgumentException* - thrown if an invalid input is inputted
+* *QuizCancelledException* - thrown if the quiz is cancelled halfway
 
 ## Instructions for manual testing
 

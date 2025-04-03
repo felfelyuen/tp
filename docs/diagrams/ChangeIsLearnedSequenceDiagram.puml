@@ -1,0 +1,14 @@
+@startuml
+
+actor User
+User -> CommandChangeLearned **: executeCommand()
+CommandChangeLearned++
+CommandChangeLearned -> Deck++: changeIsLearned()
+
+    Deck -> Ui++: showToUser(changed isLearned value)
+return
+return
+CommandChangeLearned --> User
+
+
+@enduml
