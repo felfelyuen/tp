@@ -4,7 +4,8 @@
 
 FlashCLI 2.0 is a command-line flashcard application designed specifically for CS2113 Software Engineering students. It helps students create, manage, and review flashcards efficiently, making it easier to retain important concepts in Java, software design, and coding best practices.
 
---------------------------------------------------------------------------------------------------------------------
+---
+
 ## Quick Start
 
 1. Ensure you have Java `17` or above installed in your Computer.<br>
@@ -32,7 +33,8 @@ FlashCLI 2.0 is a command-line flashcard application designed specifically for C
 
 6. Refer to the [Features](#features) below for details of each command.
 
---------------------------------------------------------------------------------------------------------------------
+---
+
 ## Features
 
 ### Viewing user guide: `user_guide`
@@ -67,13 +69,52 @@ List of commands:
 Go to the flashCli User Guide website for more details
 ```
 ### Create flashcards: `add`
-Creates a flashcard which consists of the fields questions and answers and adds it to the deck. All fields are required.
+Creates a flashcard which consists of the fields questions and answers and adds it to the selected deck. All fields are required. A deck must be selected first before using this command.
 
-Format: `add q/QUESTION a/ANSWER`
+Format: `add q/QUESTION a/ANSWER`<br>
 Examples:
-* `add q/What language is used in CS2113? a/Java` Adds a new flashcard with the question `What language is used in CS2113?` and answer `Java` to the current selected deck. 
-
+* `add q/What language is used in CS2113? a/Java` → Adds a new flashcard with the question **What language is used in CS2113?** and answer **Java** to the current selected deck.
+  
 If no deck is selected, this command cannot be used.
+
+### Create a new deck: `new`
+Creates a new deck with the given deck name. Deck name should not be already in use.
+
+**Format:** `new DECKNAME`<br>
+**Examples:**
+* `new testDeck` → Creates a new deck named **testDeck** (if the name is not already taken).
+
+### **Select a Deck: `select`**
+Switches to the specified deck via the deck name. There must be an available deck to select.
+
+**Format:** `select DECKNAME`
+
+**Examples:**
+* **`select testDeck`** → Selects the deck named **testDeck**.
+
+### **Rename a Deck: `rename`**
+Renames the currently selected deck to a new name. A deck must be selected before using this command.
+
+**Format:** `rename NEWNAME`
+
+**Examples:**
+* **`rename testDeck2`** → Renames the current deck to **testDeck2**.
+
+### **View All Decks: `decks`**
+Displays a list of all available decks.
+
+**Format:** `decks`
+
+**Examples:**
+* **`decks`** → Lists all existing decks.
+
+### **Delete a Deck: `remove`**
+Deletes the specified deck. This action is **permanent** and **cannot be undone**.
+
+**Format:** `remove DECKNAME`
+
+**Examples:**
+* **`remove testDeck`** → Deletes the deck named **testDeck** permanently.
 
 ### Summary view of the flashcard deck: `list`
 Shows a list of all the flashcards in your deck, including information about the index and question of each flashcard. Limit to only 50 flashcards per page.
@@ -148,7 +189,6 @@ Examples:
 [OUTPUT]: Changed flashcard number 2 into unlearned
 ```
 
-
 --------------------------------------------------------------------------------------------------------------------
 ## FAQ
 
@@ -160,11 +200,12 @@ Examples:
 
 **A**: It's easy, simply install FlashCLI using the instructions given in [Quick Start](#Quick-Start). Then, overwrite the txt file located in `./data/decks/` on the new computer.
 
---------------------------------------------------------------------------------------------------------------------
+---
 
 ## Known Issues
 
---------------------------------------------------------------------------------------------------------------------
+---
+
 ## Command Summary
 
 | Action               | Format, Examples                                                                                |
@@ -178,8 +219,10 @@ Examples:
 | **Edit Flashcard**   | `edit INDEX [q/QUESTION] [a/ANSWER]` e.g.  `edit 2 q/What is substitutability? a/A method`      |
 | **Search Flashcard** | `search SEARCHTERM` e.g.  `search apple`                                                        |
 | **New Deck**         | `new DECKNAME` e.g.  `new testDeck`                                                             |
-| **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                        |
 | **Select Deck**      | `select DECKNAME` e.g. `select testDeck`                                                        |
+| **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                        |
+| **View Decks**       | `decks`                                                                                         |
+| **Delete Deck**      | `remove DECKNAME` e.g. `remove testDeck`                                                        |
 | **Quiz Mode**        | `quiz`                                                                                          |
 | **View Results**     | `view_results` , `redo`                                                                         |
 | **Code Snippet**     | `insert_code INDEX c/CODE_SNIPPET` e.g. `insert_code 3 c/interface Interface{ void method(); }` |

@@ -71,7 +71,7 @@ public class Deck {
     private final ArrayList<String> incorrectAnswers = new ArrayList<>();
     private Timer timer;
 
-    private record Result(int questionStart, int answerStart) { }
+    private record Result(String question, String answer) { }
 
     /**
      * Creates a new deck with the specified name.
@@ -142,17 +142,9 @@ public class Deck {
     public String createFlashcard(String arguments) throws FlashCLIArgumentException {
         logger.info("Starting to create a flashcard with arguments: " + arguments);
 
-        Result result = parseQuestionAndAnswer(arguments);
-        int questionStart = result.questionStart();
-        int answerStart = result.answerStart();
-
-        String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
-        String answer = arguments.substring(answerStart + "/a".length()).trim();
-
-        if (question.isEmpty() || answer.isEmpty()) {
-            logger.warning("Missing description: question or answer is empty");
-            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
-        }
+        Result result = checkQuestionAndAnswer(arguments);
+        String question = result.question;
+        String answer = result.answer;
 
         int flashcardIndex = flashcards.size();
         Flashcard newFlashcard = new Flashcard(flashcardIndex, question, answer);
@@ -172,7 +164,7 @@ public class Deck {
      * @return A {@code Result} containing the start indices of "/q" and "/a".
      * @throws FlashCLIArgumentException If required fields are missing or in the wrong order.
      */
-    private Result parseQuestionAndAnswer(String arguments) throws FlashCLIArgumentException {
+    private Result checkQuestionAndAnswer(String arguments) throws FlashCLIArgumentException {
         boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
         if (!containsAllArguments) {
             logger.warning("Missing required fields: /q or /a");
@@ -192,7 +184,15 @@ public class Deck {
             throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
         }
 
-        return new Result(questionStart, answerStart);
+        String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
+        String answer = arguments.substring(answerStart + "/a".length()).trim();
+
+        if (question.isEmpty() || answer.isEmpty()) {
+            logger.warning("Missing description: question or answer is empty");
+            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
+        }
+
+        return new Result(question, answer);
     }
 
     /**
