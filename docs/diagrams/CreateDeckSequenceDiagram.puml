@@ -1,0 +1,41 @@
+@startuml
+
+actor User
+participant CommandCreateDeck
+participant DeckManager
+participant FlashCLIArgumentException
+participant Deck
+
+activate User
+create CommandCreateDeck
+User -> CommandCreateDeck
+activate CommandCreateDeck
+
+CommandCreateDeck --> User
+deactivate CommandCreateDeck
+
+
+User -> CommandCreateDeck: executeCommand()
+activate CommandCreateDeck
+CommandCreateDeck -> DeckManager: createDeck()
+activate DeckManager
+
+alt deck name is empty or duplicate
+    DeckManager -> FlashCLIArgumentException
+    activate FlashCLIArgumentException
+    FlashCLIArgumentException --> User
+    deactivate FlashCLIArgumentException
+
+else else
+    create Deck
+    DeckManager -> Deck
+    activate Deck
+    Deck --> DeckManager
+    deactivate Deck
+    DeckManager --> CommandCreateDeck : success message
+    deactivate DeckManager
+    CommandCreateDeck --> User
+    deactivate CommandCreateDeck
+end alt
+
+@enduml

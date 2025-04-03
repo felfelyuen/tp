@@ -66,7 +66,7 @@ public class Deck {
     private final ArrayList<String> incorrectAnswers = new ArrayList<>();
     private Timer timer;
 
-    private record Result(int questionStart, int answerStart) { }
+    private record Result(String question, String answer) { }
 
 
     /**
@@ -139,16 +139,8 @@ public class Deck {
         logger.info("Starting to create a flashcard with arguments: " + arguments);
 
         Result result = checkQuestionAndAnswer(arguments);
-        int questionStart = result.questionStart();
-        int answerStart = result.answerStart();
-
-        String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
-        String answer = arguments.substring(answerStart + "/a".length()).trim();
-
-        if (question.isEmpty() || answer.isEmpty()) {
-            logger.warning("Missing description: question or answer is empty");
-            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
-        }
+        String question = result.question;
+        String answer = result.answer;
 
         int flashcardIndex = flashcards.size();
         Flashcard newFlashcard = new Flashcard(flashcardIndex, question, answer);
@@ -188,7 +180,15 @@ public class Deck {
             throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
         }
 
-        return new Result(questionStart, answerStart);
+        String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
+        String answer = arguments.substring(answerStart + "/a".length()).trim();
+
+        if (question.isEmpty() || answer.isEmpty()) {
+            logger.warning("Missing description: question or answer is empty");
+            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
+        }
+
+        return new Result(question, answer);
     }
 
     /**

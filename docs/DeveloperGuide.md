@@ -31,21 +31,25 @@ The create flashcard mechanism is facilitated by `Deck` and `CommandCreateFlashc
 
 The feature requires a deck to be selected before usage. 
 
-## TO ADD SEQUENCE DIAGRAM
+
 
 **How the feature is implemented:**
-1. A new `Flashcard` object is created when the user uses the command. 
-2. The `CommandCreateFlashcard#executeCommand()` method is executed which calls `Deck#createFlashcard()`.
+
+Below is the sequence diagram describing the operations for creating the flashcard:
+
+![](images/CreateFlashcardSequenceDiagram.png)
+
+1. The `CommandCreateFlashcard#executeCommand()` method is executed which calls `Deck#createFlashcard()`.
+2. A new `Flashcard` object is created when the user uses the command.
 3. When `Deck#createFlashcard()` is called by the `CommandCreateFlashcard#executeCommand()` method, it immediately checks if the input arguments (without the command) is valid. 
-4. This is achieved with the `Deck#checkQuestionAndAnswer` helper method, which checks if:
-   * The arguments contain both question and answer
-   * The index of the start of the question and answer is valid
-   * The question comes before the answer
-5. The `Deck#checkQuestionAndAnswer` helper method returns the valid indices of question and answer. Then, the question and answer fields check if they are empty.
-6. A new flashcard is then created and added to the current deck.
-7. A success message is shown.
+4. This is achieved with the `Deck#checkQuestionAndAnswer` helper method.
+5. The `Deck#checkQuestionAndAnswer` helper method returns the valid strings of question and answer.
+6. A new flashcard is then created using the question and answer and added to the current selected deck.
 
 **Handling of edge cases:**
+* **Contains all arguments**: Arguments should have both question and answer fields
+* **Correct indices**: The index of the start of the question and answer is valid.
+* **Correct order**: The question comes before the answer.
 
 If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
 
@@ -54,8 +58,10 @@ If the arguments are invalid, the exception `FlashCLIArgumentException` will be 
 
 The `new` command is implemented using the `Deck` class, which represents a collection of flashcards, and the `CommandCreateDeck` class, which processes user input to create a new deck. To ensure deck names are unique, a hashmap is used to track existing deck names.
 
-## ADD OBJECT/sequence diagram
 #### Implementation of `DeckManager.createDeck()`
+Below shows the sequence diagram of the operations of creating a deck:
+![](images/CreateDeckSequenceDiagram.png)
+
 1. The user issues the command to create a new deck.
 2. The `DeckManager.createDeck()` method checks whether the deck name already exists in the hashmap.
 3. If the name is unique, a new `Deck` object is created and stored in the hashmap, with the name as the key and the `Deck` object as the value.
@@ -72,8 +78,11 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 
 The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. Similar to creating decks, a hashmap is used to track existing deck names. A deck has to be selected before being able to use this command.
 
-## ADD OBJECT/sequence diagram
+
 #### Implementation of `DeckManager.renameDeck()`
+Below shows the sequence diagram for the operations of rename deck:
+![](images/RenameDeckSequenceDiagram.png)
+
 1. The user issues the command to rename an existing deck.
 2. The `DeckManager.renameDeck()` method checks whether the deck name already exists in the hashmap.
 3. If the new name is unique, the `name` attribute of `Deck` object will be updated to the new name. Then, the new name with the renamed `Deck` object will be added to the hashmap as a new entry. 
@@ -90,7 +99,6 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 
 The `decks` command is implemented using the `Deck` class and the `CommandViewDecks` class. 
 
-## ADD OBJECT/sequence diagram
 #### Implementation of `DeckManager.viewDecks()`
 * Using the `StringBuilder` class from `java.lang`, the method prints the name of each deck in the hashmap, along with a counter index that goes from 1 to n.
 
@@ -103,7 +111,6 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 
 The `select` command is implemented using the `Deck` class and the `CommandSelectDeck` class.
 
-## ADD OBJECT/sequence diagram
 #### Implementation of `DeckManager.selectDeck()`
 * Updates `currentDeck` to the selected `Deck` object if deck exists.
 
@@ -117,7 +124,6 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 
 The `remove` command is implemented using the `Deck` class and the `CommandDeleteDeck` class.
 
-## ADD OBJECT/sequence diagram
 #### Implementation of `DeckManager.deleteDeck()`
 * Removes the selected deck from the hashmap via its key if the deck exists.
 * Also deselects the deck if the currentDeck is the deck being deleted. 
