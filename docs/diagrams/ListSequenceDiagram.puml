@@ -6,7 +6,8 @@ CommandListQuestion++
 CommandListQuestion -> Deck++: listFlashcards()
 alt [deck is not empty]
 loop [flashcards.size()]
-    Deck -> Deck: show the question
+    Deck -> Ui++: showToUser(question)
+    return
 end
 end
 return

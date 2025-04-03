@@ -1,12 +1,10 @@
-# Developer Guide
+# FlashCLI Developer Guide
 
 ## Acknowledgements
 
 {list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
 
-### Design & Implementation
-
-{Describe the design and implementation of the product. Use UML diagrams and short code snippets where applicable.}
+## Design & Implementation
 
 ### Search Feature
 
@@ -173,18 +171,77 @@ The delete flashcard feature allows users to remove a specific flashcard from th
 - Invalid input format (e.g., not an integer) → `NumberFormatException`
 - Index out of bounds → `ArrayIndexOutOfBoundsException`
 
-## Quiz method
+### Quiz method
+#### Design
+This feature allows the user to enter a timed quiz mode, by asking only the unlearned flashcards. It assumes that the user has already selected a desk.
 
-### Design
+In timed quiz mode, the flashcard's question would appear and wait for the user's input answer. If the answer is correct, the user is shown "Correct!", and then proceeds to the next question. If the question is answered incorrectly, the user is shown "Incorrect.", and proceeds to the next question.
 
-### Implementation
+At the start of the quiz mode, a timer object is instantiated, and its duration would be retrieved after quiz mode ends.
 
-## Mark learned/ Mark unlearned method
+If the question is answered correctly, the flashcard would be mark as learned.
 
-### Design
+After the quiz is finished, the user would be shown how long he took, and an option to view results.
 
-### Implementation
+#### Sequence Diagram
+![](images/QuizSequenceDiagram.png)
+#### Implementation
 
+`quizFlashcards()`
+- Quizzes through the unlearned flashcards in a deck.
+- Prints the "end quiz" statement to output
+
+`handleQuestionForQuiz`
+- Outputs the question and waits for the input to be inputted by the user.
+
+`handleAnswerForFlashcard`
+- Checks if inputted value is correct.
+- Returns boolean value true if answer is correct.
+
+**Edge Cases Handled:**
+- Empty deck/no unlearned flashcards in deck. → throws `EmptyListException`
+- If the quiz is cancelled midway through (through exit_quiz) → throws `QuizCancelledException`
+
+#### Future updates:
+- Mass quiz mode: (quiz through all unlearned flashcards)
+- Endless mode: (continuously quizzing, stops when there are 3 mistakes)
+- Against the clock mod: (quiz must be done by a certain timing)
+
+### Mark learned/ Mark unlearned method
+
+#### Design
+Allows the user to mark the flashcard as learned or unlearned, by supplying the index of the flashcard they wish to change. It assumes that the user has already selected a deck.
+
+#### Sequence Diagram
+![](images/ChangeIsLearnedSequenceDiagram.png)
+
+#### Implementation
+`changeIsLearned`
+- changes the isLearned value of target flashcard.
+- returns a string of whether it is now learned or unlearned. 
+
+**Edge Cases Handled:**
+- If index for flashcard to be changed is not a number → throws `NumberFormatException`
+- If index for flashcard is outside of deck size. (lower or equals to 0, and more than the size of the deck) → throws `FlashCliArgumentException`
+- If no index is inputted → throws `FlashCLIArgumentException`
+
+### View Flashcard Question Feature
+
+#### Design
+This feature enables the user to view the question to a specific flashcard by supplying its index. It assumes the user has already selected a deck.
+
+#### Sequence Diagram
+![](images/ViewQuestionSequenceDiagram.png)
+
+#### Implementation
+`viewFlashcardQuestion`
+- Fetches the question from the target flashcard with its index
+- Returns the question as a String.
+
+**Edge cases handled:**
+- If index for flashcard to be viewed is not a number → throws `NumberFormatException`
+- If index for flashcard is outside of deck size. (lower or equals to 0, and more than the size of the deck) → throws `FlashCliArgumentException`
+- If no index is inputted → throws `FlashCLIArgumentException`
 ### View Flashcard Answer Feature
 
 #### Design
@@ -215,6 +272,23 @@ This feature enables the user to view the answer to a specific flashcard by supp
 - Invalid index format → `NumberFormatException`
 - Out-of-bounds index → `ArrayIndexOutOfBoundsException`
 
+### List Flashcard Questions Feature
+Allows the user to list out all the flashcard questions in the current deck. It assumes that the user is currently in a deck.
+
+#### Design
+Iterates through the deck, and prints out the question for each flashcard.
+
+#### Sequence Diagram
+![](images/ListSequenceDiagram.png)
+
+#### Implementation
+`listFlashcards`
+- appends to a string with each flashcard question, and a "\n"
+- returns aforementioned string
+
+**Edge cases handled:**
+- If the deck is empty → throws `EmptyListException`
+
 ## Product scope
 ### Target user profile
 
@@ -242,7 +316,15 @@ practice using terminal commands while memorising key information required for t
 
 ## Glossary 
 
-* *glossary item* - Definition
+* *Mainstream OS* - Windows, Linux, Unix, macOS
+* *Flashcard* - An Object with parameters *index*, *question*, *answer*, *codeSnippet*, *isLearned*
+* *Deck* - An Object that holds array of Flashcards, as well as other parameters.
+
+* *CLI* - Command Line Interface
+
+* *EmptyListException* - thrown if there is an empty list present
+* *FlashCLIArgumentException* - thrown if an invalid input is inputted
+* *QuizCancelledException* - thrown if the quiz is cancelled halfway
 
 ## Instructions for manual testing
 

@@ -3,16 +3,25 @@ actor User
 User -> CommandQuizFlashcards **: executeCommand()
 CommandQuizFlashcards++
 CommandQuizFlashcards -> Deck++: quizFlashcards()
+Deck -> Timer **
+Timer ++
 loop [flashcards.size()]
     alt [unlearned]
     Deck -> Deck++: handleQuestion
+    Deck -> Ui++: showToUser(question)
+    return
     Deck -> Deck++: handleAnswer
+    return
+    Deck -> Ui++ : showToUser(correct? statement)
     return
     return
     end
 end
-return
+return duration
 
+Deck -> Ui++ : showToUser(quiz ended + duration)
+return
+Deck --> CommandQuizFlashcards
 CommandQuizFlashcards --> User
 
 

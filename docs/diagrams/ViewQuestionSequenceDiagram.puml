@@ -3,7 +3,9 @@ actor User
 User -> CommandViewQuestion **: executeCommand()
 CommandViewQuestion++
 CommandViewQuestion -> Deck++: viewFlashcardQuestion()
-return
+Deck -> CommandViewQuestion: String question
+CommandViewQuestion -> Ui++: showToUser(question)
+
 
 CommandViewQuestion -> User
 
