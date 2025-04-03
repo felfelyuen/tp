@@ -138,7 +138,7 @@ public class Deck {
     public String createFlashcard(String arguments) throws FlashCLIArgumentException {
         logger.info("Starting to create a flashcard with arguments: " + arguments);
 
-        Result result = parseQuestionAndAnswer(arguments);
+        Result result = checkQuestionAndAnswer(arguments);
         int questionStart = result.questionStart();
         int answerStart = result.answerStart();
 
@@ -168,7 +168,7 @@ public class Deck {
      * @return A {@code Result} containing the start indices of "/q" and "/a".
      * @throws FlashCLIArgumentException If required fields are missing or in the wrong order.
      */
-    private Result parseQuestionAndAnswer(String arguments) throws FlashCLIArgumentException {
+    private Result checkQuestionAndAnswer(String arguments) throws FlashCLIArgumentException {
         boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
         if (!containsAllArguments) {
             logger.warning("Missing required fields: /q or /a");

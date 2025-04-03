@@ -2,16 +2,16 @@ package parser;
 
 import command.Command;
 import command.CommandChangeLearned;
-import command.CommandCreate;
+import command.CommandCreateFlashcard;
 import command.CommandCreateDeck;
-import command.CommandDelete;
+import command.CommandDeleteFlashcard;
 import command.CommandDeleteDeck;
-import command.CommandEdit;
+import command.CommandEditFlashcard;
 import command.CommandInsertCode;
 import command.CommandListQuestion;
 import command.CommandQuizFlashcards;
 import command.CommandRenameDeck;
-import command.CommandSwitchDeck;
+import command.CommandSelectDeck;
 import command.CommandUserGuide;
 import command.CommandViewAnswer;
 import command.CommandViewDecks;
@@ -74,17 +74,17 @@ public class Parser {
         }
 
         return switch (command) {
-        case ADD_CARD -> new CommandCreate(arguments);
+        case ADD_CARD -> new CommandCreateFlashcard(arguments);
         case VIEW_QN -> new CommandViewQuestion(arguments);
         case VIEW_ANS -> new CommandViewAnswer(arguments);
-        case EDIT_CARD -> new CommandEdit(arguments);
+        case EDIT_CARD -> new CommandEditFlashcard(arguments);
         case LIST_CARDS -> new CommandListQuestion();
-        case DELETE_CARD -> new CommandDelete(arguments);
+        case DELETE_CARD -> new CommandDeleteFlashcard(arguments);
         case INSERT_CODE -> new CommandInsertCode(arguments);
         case SEARCH_CARD -> new CommandSearchFlashcard(arguments);
 
         case NEW_DECK -> new CommandCreateDeck(arguments);
-        case SELECT_DECK -> new CommandSwitchDeck(arguments);
+        case SELECT_DECK -> new CommandSelectDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks();
         case REMOVE_DECK -> handleDeleteDeckConfirmation(arguments);

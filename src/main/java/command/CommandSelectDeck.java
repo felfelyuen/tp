@@ -11,10 +11,10 @@ import ui.Ui;
  * <p>Switches to a deck that is available.
  * Displays either the success message or an error message based on the result.</p>
  */
-public class CommandSwitchDeck extends Command {
+public class CommandSelectDeck extends Command {
     private final String arguments;
 
-    public CommandSwitchDeck(String arguments) {
+    public CommandSelectDeck(String arguments) {
         this.arguments = arguments;
     }
 

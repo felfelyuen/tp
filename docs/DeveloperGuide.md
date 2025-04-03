@@ -17,7 +17,119 @@
 ### Timer Component
 ### Exceptions Component
 
+---
+
 ## Implementation
+This section describes some noteworthy details on how certain features are implemented. 
+
+### Flashcard features
+### Create a flashcard
+
+This command allows the user to create a new flashcard with compulsory `/q QUESTION` and `/a ANSWER` fields.
+
+The create flashcard mechanism is facilitated by `Deck` and `CommandCreateFlashcard`.
+
+The feature requires a deck to be selected before usage. 
+
+## TO ADD SEQUENCE DIAGRAM
+
+**How the feature is implemented:**
+1. A new `Flashcard` object is created when the user uses the command. 
+2. The `CommandCreateFlashcard#executeCommand()` method is executed which calls `Deck#createFlashcard()`.
+3. When `Deck#createFlashcard()` is called by the `CommandCreateFlashcard#executeCommand()` method, it immediately checks if the input arguments (without the command) is valid. 
+4. This is achieved with the `Deck#checkQuestionAndAnswer` helper method, which checks if:
+   * The arguments contain both question and answer
+   * The index of the start of the question and answer is valid
+   * The question comes before the answer
+5. The `Deck#checkQuestionAndAnswer` helper method returns the valid indices of question and answer. Then, the question and answer fields check if they are empty.
+6. A new flashcard is then created and added to the current deck.
+7. A success message is shown.
+
+**Handling of edge cases:**
+
+If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
+
+### Deck features
+### Creating a New Deck
+
+The `new` command is implemented using the `Deck` class, which represents a collection of flashcards, and the `CommandCreateDeck` class, which processes user input to create a new deck. To ensure deck names are unique, a hashmap is used to track existing deck names.
+
+## ADD OBJECT/sequence diagram
+#### Implementation of `DeckManager.createDeck()`
+1. The user issues the command to create a new deck.
+2. The `DeckManager.createDeck()` method checks whether the deck name already exists in the hashmap.
+3. If the name is unique, a new `Deck` object is created and stored in the hashmap, with the name as the key and the `Deck` object as the value.
+4. If the name already exists, an error message is shown to the user.
+
+#### Handling Edge Cases
+* **Duplicate Deck Name**: If the user attempts to create a deck with a name that already exists, an error message is displayed, and the command is not executed.
+* **Empty Deck Name**: Empty deck names are considered invalid.
+* **Whitespace-Only Names**: Deck names consisting solely of spaces are considered invalid.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+### Renaming decks
+
+The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. Similar to creating decks, a hashmap is used to track existing deck names. A deck has to be selected before being able to use this command.
+
+## ADD OBJECT/sequence diagram
+#### Implementation of `DeckManager.renameDeck()`
+1. The user issues the command to rename an existing deck.
+2. The `DeckManager.renameDeck()` method checks whether the deck name already exists in the hashmap.
+3. If the new name is unique, the `name` attribute of `Deck` object will be updated to the new name. Then, the new name with the renamed `Deck` object will be added to the hashmap as a new entry. 
+4. The old entry will then be removed from the hashmap.
+
+#### Handling Edge Cases
+* **Unchanged Name**: If the user renames back to the same name as previous, it will not be allowed.
+* **Duplicate Deck Name**: The user will not be able to rename the selected deck to deck names that are already created.
+* **Empty Deck Name / Whitespace-Only Names**: Empty deck names or names consisting solely of spaces are considered invalid.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+### Listing all decks
+
+The `decks` command is implemented using the `Deck` class and the `CommandViewDecks` class. 
+
+## ADD OBJECT/sequence diagram
+#### Implementation of `DeckManager.viewDecks()`
+* Using the `StringBuilder` class from `java.lang`, the method prints the name of each deck in the hashmap, along with a counter index that goes from 1 to n.
+
+#### Handling Edge Cases
+* **No Decks**: If there are no decks available, the user will not be able to list them.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+### Selecting a deck
+
+The `select` command is implemented using the `Deck` class and the `CommandSelectDeck` class.
+
+## ADD OBJECT/sequence diagram
+#### Implementation of `DeckManager.selectDeck()`
+* Updates `currentDeck` to the selected `Deck` object if deck exists.
+
+#### Handling Edge Cases
+* **No Decks**: If there are no decks available, the user will not be able to select any decks.
+* * **Deck not found**: If the deck name is not found in the keys of the hashmap, the user will not be able to select the deck.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+### Deleting a deck
+
+The `remove` command is implemented using the `Deck` class and the `CommandDeleteDeck` class.
+
+## ADD OBJECT/sequence diagram
+#### Implementation of `DeckManager.deleteDeck()`
+* Removes the selected deck from the hashmap via its key if the deck exists.
+* Also deselects the deck if the currentDeck is the deck being deleted. 
+* A confirmation message is raised to the user before deletion. This can be found in `Parser`.
+
+#### Handling Edge Cases
+* **No Decks**: There are no decks to delete.
+* **Deck not found**: The deck does not exists as it is not in the hashmap. 
+* **Empty Deck Name / Whitespace-Only Names**: The deck name is empty or consists of only whitespace, which is not a valid deck name.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
 ### Search Feature
 
 #### Design
