@@ -8,6 +8,61 @@
 
 {Describe the design and implementation of the product. Use UML diagrams and short code snippets where applicable.}
 
+### Edit Flashcard Question and Answer Feature
+
+#### Design
+
+This feature enables the user to edit the question and answer to a specific flashcard by supplying its index and updated question and answer. It assumes the user has already selected a deck.
+
+#### Sequence Diagram
+
+![](images/EditSequenceDiagram.png)
+
+#### Implementation
+
+##### `Deck#editFlashcard(int index, String arguments)`
+
+- Replaces the existing flashcard at index with updated question and answer
+- Returns a confirmation of the updated flashcard that was edited
+
+##### `CommandEdit#executeCommand()`
+
+- Parses the index
+- Validates that it's a valid number and within bounds
+- Replaces and updates the existing flashcard and displays the updated flashcard
+
+**Edge Cases Handled:**
+- Invalid index format → `NumberFormatException`
+- Out-of-bounds index → `ArrayIndexOutOfBoundsException`
+
+### Insert Code Snippet
+
+#### Design
+
+This feature enables the user to insert a code snippet to a specific flashcard by supplying its index and code snippet. It assumes the user has already selected a deck.
+
+#### Sequence Diagram
+
+![](images/InsertSequenceDiagram.png)
+
+#### Implementation
+
+##### `Deck#insertCodeSnippet(int index, String arguments)`
+
+- Formats and adds a code snippet into an existing flashcard
+- Returns a confirmation of the updated flashcard with the code snippet
+
+##### `CommandInsertCode#executeCommand()`
+
+- Parses the index
+- Validates that it's a valid number and within bounds
+- Inserts the provided code snippet into the existing flashcard and displays the updated flashcard with code snippet
+
+**Edge Cases Handled:**
+- Invalid index format → `NumberFormatException`
+- Out-of-bounds index → `ArrayIndexOutOfBoundsException`
+
+
 ### Search Feature
 
 #### Design
@@ -225,8 +280,12 @@ practice using terminal commands while memorising key information required for t
 |v2.0|user|find a to-do item by name|locate a to-do without having to go through the entire list|
 
 ## Non-Functional Requirements
+1. Should be compatible on any mainstream OS as long as it has Java 17 or above installed. 
+2. The system should respond to user input within 5 seconds for most commands under typical usage.
+3. Should be intuitive for most users familiar with a command line user interface .
+4. End-users should be able to set up and run the flashcard quizzes within 3 steps (create deck, add flashcard, quiz).
+5. The system has automated logging after the end of every session, and be able to store up to a casual amount of usage.
 
-{Give non-functional requirements}
 
 ## Glossary
 
