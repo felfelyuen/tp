@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import command.Command;
-import command.CommandCreate;
+import command.CommandCreateFlashcard;
 import deck.Deck;
 import deck.DeckManager;
 import exceptions.FlashCLIArgumentException;
@@ -24,7 +24,7 @@ public class ParserTest {
     @Test
     void parseInput_addFlashcard_success() throws FlashCLIArgumentException {
         String input = "add /q What is Java? /a A programming language.";
-        parseAndAssertCommandType(input, CommandCreate.class);
+        parseAndAssertCommandType(input, CommandCreateFlashcard.class);
     }
 
     @Test

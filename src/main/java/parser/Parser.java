@@ -2,34 +2,35 @@ package parser;
 
 import command.Command;
 import command.CommandChangeLearned;
-import command.CommandCreate;
+import command.CommandCreateFlashcard;
 import command.CommandCreateDeck;
-import command.CommandDelete;
+import command.CommandDeleteFlashcard;
 import command.CommandDeleteDeck;
-import command.CommandEdit;
+import command.CommandEditFlashcard;
 import command.CommandInsertCode;
 import command.CommandListQuestion;
 import command.CommandQuizFlashcards;
 import command.CommandRenameDeck;
-import command.CommandSwitchDeck;
+import command.CommandSelectDeck;
 import command.CommandUserGuide;
 import command.CommandViewAnswer;
 import command.CommandViewDecks;
 import command.CommandViewQuestion;
 import command.CommandSearchFlashcard;
+import command.CommandViewQuizResult;
 import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
 import static constants.CommandConstants.ADD_CARD;
 import static constants.CommandConstants.DELETE_CARD;
-import static constants.CommandConstants.DELETE_DECK;
+import static constants.CommandConstants.REMOVE_DECK;
 import static constants.CommandConstants.INSERT_CODE;
 import static constants.CommandConstants.MARK_LEARNED;
 import static constants.CommandConstants.MARK_UNLEARNED;
 import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.QUIZ;
 import static constants.CommandConstants.RENAME_DECK;
-import static constants.CommandConstants.SWITCH_DECK;
+import static constants.CommandConstants.SELECT_DECK;
 import static constants.CommandConstants.USER_GUIDE;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_DECKS;
@@ -38,6 +39,7 @@ import static constants.CommandConstants.EDIT_CARD;
 import static constants.CommandConstants.LIST_CARDS;
 import static constants.CommandConstants.SEARCH_CARD;
 import static constants.ConfirmationMessages.CONFIRM_DELETE_DECK;
+import static constants.CommandConstants.VIEW_RES;
 import static constants.ErrorMessages.NO_DECK_ERROR;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
 import static deck.DeckManager.currentDeck;
@@ -67,29 +69,30 @@ public class Parser {
         assert arguments != null : "Arguments should not be null";
 
         ArrayList<String> commandsWithDeck =
-                new ArrayList<>(List.of(ADD_CARD, VIEW_QN, VIEW_ANS, EDIT_CARD, LIST_CARDS, DELETE_CARD,
+                new ArrayList<>(List.of(ADD_CARD, VIEW_QN, VIEW_ANS, VIEW_RES, EDIT_CARD, LIST_CARDS, DELETE_CARD,
                         QUIZ, RENAME_DECK, INSERT_CODE));
         if (currentDeck == null && commandsWithDeck.contains(command)) {
             throw new FlashCLIArgumentException(NO_DECK_ERROR);
         }
 
         return switch (command) {
-        case ADD_CARD -> new CommandCreate(arguments);
+        case ADD_CARD -> new CommandCreateFlashcard(arguments);
         case VIEW_QN -> new CommandViewQuestion(arguments);
         case VIEW_ANS -> new CommandViewAnswer(arguments);
-        case EDIT_CARD -> new CommandEdit(arguments);
+        case EDIT_CARD -> new CommandEditFlashcard(arguments);
         case LIST_CARDS -> new CommandListQuestion();
-        case DELETE_CARD -> new CommandDelete(arguments);
+        case DELETE_CARD -> new CommandDeleteFlashcard(arguments);
         case INSERT_CODE -> new CommandInsertCode(arguments);
         case SEARCH_CARD -> new CommandSearchFlashcard(arguments);
 
         case NEW_DECK -> new CommandCreateDeck(arguments);
-        case SWITCH_DECK -> new CommandSwitchDeck(arguments);
+        case SELECT_DECK -> new CommandSelectDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks();
-        case DELETE_DECK -> handleDeleteDeckConfirmation(arguments);
+        case REMOVE_DECK -> handleDeleteDeckConfirmation(arguments);
 
         case QUIZ -> new CommandQuizFlashcards();
+        case VIEW_RES -> new CommandViewQuizResult();
         case MARK_UNLEARNED -> new CommandChangeLearned(arguments, false);
         case MARK_LEARNED -> new CommandChangeLearned(arguments, true);
 
@@ -131,5 +134,4 @@ public class Parser {
     public static String parseCodeSnippet(String codeSnippet) {
         return codeSnippet;
     }
-
 }

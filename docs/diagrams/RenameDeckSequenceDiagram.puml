@@ -1,0 +1,45 @@
+@startuml
+
+actor User
+participant CommandRenameDeck
+participant DeckManager
+participant FlashCLIArgumentException
+participant Deck
+
+activate User
+create CommandRenameDeck
+User -> CommandRenameDeck
+activate CommandRenameDeck
+
+CommandRenameDeck --> User
+deactivate CommandRenameDeck
+
+
+User -> CommandRenameDeck: executeCommand()
+activate CommandRenameDeck
+CommandRenameDeck -> DeckManager: renameDeck()
+activate DeckManager
+
+alt invalid deck name
+    DeckManager -> FlashCLIArgumentException
+    activate FlashCLIArgumentException
+    FlashCLIArgumentException --> User
+    deactivate FlashCLIArgumentException
+
+else else
+    DeckManager -> DeckManager:getName()
+    activate DeckManager
+    DeckManager --> DeckManager: current deck name
+    deactivate DeckManager
+
+    DeckManager -> Deck:setName()
+    activate Deck
+    Deck --> DeckManager
+    deactivate Deck
+    DeckManager --> CommandRenameDeck: success message
+    deactivate DeckManager
+    CommandRenameDeck --> User
+    deactivate CommandRenameDeck
+end alt
+
+@enduml

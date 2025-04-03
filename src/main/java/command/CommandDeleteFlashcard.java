@@ -9,9 +9,9 @@ import ui.Ui;
 /**
  * Class to handle deleting of flashcards
  */
-public class CommandDelete extends Command{
+public class CommandDeleteFlashcard extends Command{
     private final String arguments;
-    public CommandDelete(String arguments) {
+    public CommandDeleteFlashcard(String arguments) {
         this.arguments = arguments;
     }
 

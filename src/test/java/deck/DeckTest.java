@@ -27,9 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import command.Command;
-import command.CommandCreate;
-import command.CommandDelete;
-import command.CommandEdit;
+import command.CommandCreateFlashcard;
+import command.CommandDeleteFlashcard;
+import command.CommandEditFlashcard;
 import command.CommandInsertCode;
 import command.CommandViewQuestion;
 import exceptions.EmptyListException;
@@ -165,7 +165,7 @@ public class DeckTest {
     void viewFlashcardQuestion_validInputs_success() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             String viewOutput = deck.viewFlashcardQuestion(1);
             assertEquals(1, deck.getFlashcards().size());
@@ -179,7 +179,7 @@ public class DeckTest {
     void viewFlashcardQuestion_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             assertEquals(1, deck.getFlashcards().size());
             deck.viewFlashcardQuestion(3);
@@ -193,7 +193,7 @@ public class DeckTest {
     void viewFlashcardQuestion_indexNotANumber_numberFormatExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             assertEquals(1, deck.getFlashcards().size());
             int index = Integer.parseInt("sjd");
@@ -207,7 +207,7 @@ public class DeckTest {
     @Test
     void viewFlashcardAnswer_validInputs_success() {
         String createInput = "/q What is Java? /a A programming language.";
-        Command createTest = new CommandCreate(createInput);
+        Command createTest = new CommandCreateFlashcard(createInput);
         createTest.executeCommand();
         String viewOutput = deck.viewFlashcardAnswer(1);
         assertEquals(1, deck.getFlashcards().size());
@@ -218,7 +218,7 @@ public class DeckTest {
     void viewFlashcardAnswer_indexNotANumber_numberFormatExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("sjd");
@@ -231,7 +231,7 @@ public class DeckTest {
     void viewFlashcardAnswer_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             assertEquals(1, deck.getFlashcards().size());
             new CommandViewQuestion("72");
@@ -244,7 +244,7 @@ public class DeckTest {
     void editFlashcard_validInputs_success() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             String editInput = "1 /q What is Python? /a A different programming language.";
             String editOutput = deck.editFlashcard(1, editInput);
@@ -264,10 +264,10 @@ public class DeckTest {
     void editFlashcard_indexNotANumber_numberFormatExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             assertEquals(1, deck.getFlashcards().size());
-            new CommandEdit("sjd /q What is Python? /a A different programming language.");
+            new CommandEditFlashcard("sjd /q What is Python? /a A different programming language.");
         } catch (NumberFormatException e) {
             assertEquals(INVALID_INDEX_INPUT, e.getMessage());
         }
@@ -277,10 +277,10 @@ public class DeckTest {
     void editFlashcard_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             assertEquals(1, deck.getFlashcards().size());
-            new CommandEdit("4 /q What is Python? /a A different programming language.");
+            new CommandEditFlashcard("4 /q What is Python? /a A different programming language.");
         } catch (ArrayIndexOutOfBoundsException e) {
             assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
         }
@@ -290,7 +290,7 @@ public class DeckTest {
     void listFlashcards_validInputs_success() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
             createTest.executeCommand();
@@ -320,13 +320,13 @@ public class DeckTest {
     void deleteFlashcard_validInputs_success() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
             String listOutput = deck.listFlashcards();
             assertEquals(2, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
-            Command deleteTest = new CommandDelete("1");
+            Command deleteTest = new CommandDeleteFlashcard("1");
             deleteTest.executeCommand();
             String listAfterDeleteOutput = deck.listFlashcards();
             assertEquals(1, deck.getFlashcards().size());
@@ -340,13 +340,13 @@ public class DeckTest {
     void deleteFlashcard_indexNotANumber_numberFormatExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
             String listOutput = deck.listFlashcards();
             assertEquals(2, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
-            Command deleteTest = new CommandDelete("sdsd");
+            Command deleteTest = new CommandDeleteFlashcard("sdsd");
             deleteTest.executeCommand();
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
@@ -359,13 +359,13 @@ public class DeckTest {
     void deleteFlashcard_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
             String listOutput = deck.listFlashcards();
             assertEquals(2, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
-            Command deleteTest = new CommandDelete("72");
+            Command deleteTest = new CommandDeleteFlashcard("72");
             deleteTest.executeCommand();
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
@@ -378,7 +378,7 @@ public class DeckTest {
     void quizFlashcards_correctAnswer_success() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
 
             ArrayList<Flashcard> flashcards = deck.getFlashcards();
@@ -394,7 +394,7 @@ public class DeckTest {
     void quizFlashcards_wrongAnswer_success() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
 
             ArrayList<Flashcard> flashcards = deck.getFlashcards();
@@ -422,7 +422,7 @@ public class DeckTest {
     void quizFlashcards_cancelQuiz_quizCancelledExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
 
@@ -440,7 +440,7 @@ public class DeckTest {
     @Test
     void insertCodeSnippet_validInputs_success() {
         String createInput = "/q What is Java? /a A programming language.";
-        Command createTest = new CommandCreate(createInput);
+        Command createTest = new CommandCreateFlashcard(createInput);
         createTest.executeCommand();
         String insertCodeSnippet = "1 /c Class Java { void method() {...} }";
         Command insertTest = new CommandInsertCode(insertCodeSnippet);
@@ -476,7 +476,7 @@ public class DeckTest {
     void insertCodeSnippet_invalidIndex_arrayIndexOutOfBoundsExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             assertEquals(1, deck.getFlashcards().size());
             new CommandInsertCode("72 /c somecode");
@@ -489,7 +489,7 @@ public class DeckTest {
     void markIsLearned_validInputs_success() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
             assertEquals(2, deck.getFlashcards().size());
@@ -514,7 +514,7 @@ public class DeckTest {
     void markIsLearned_invalidIndex_numberFormatExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
             assertEquals(2, deck.getFlashcards().size());
@@ -532,7 +532,7 @@ public class DeckTest {
     void markIsLearned_emptyInputs_illegalArgumentExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
             assertEquals(2, deck.getFlashcards().size());
@@ -550,7 +550,7 @@ public class DeckTest {
     void markIsLearned_inputOutOfBounds_illegalArgumentExceptionThrown() {
         try {
             String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreate(createInput);
+            Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             createTest.executeCommand();
             assertEquals(2, deck.getFlashcards().size());
@@ -567,7 +567,7 @@ public class DeckTest {
     @Test
     void searchDeck_fullSearch_success() {
         String input = "/q What is Java? /a A programming language.";
-        Command createTest = new CommandCreate(input);
+        Command createTest = new CommandCreateFlashcard(input);
         createTest.executeCommand();
         try {
             String expected = "Question: What is Java?\nAnswer: A programming language.";
@@ -582,7 +582,7 @@ public class DeckTest {
     @Test
     void searchDeck_partialSearch_success() {
         String input = "/q What is Java? /a A programming language.";
-        Command createTest = new CommandCreate(input);
+        Command createTest = new CommandCreateFlashcard(input);
         createTest.executeCommand();
         try {
             String expected = "Question: What is Java?\nAnswer: A programming language.";
@@ -597,7 +597,7 @@ public class DeckTest {
     @Test
     void searchDeck_emptySearch_flashCLIArgumentExceptionThrown() {
         String input = "/q What is Java? /a A programming language.";
-        Command createTest = new CommandCreate(input);
+        Command createTest = new CommandCreateFlashcard(input);
         createTest.executeCommand();
         try {
             String result = deck.searchFlashcard("");
@@ -609,7 +609,7 @@ public class DeckTest {
     @Test
     void searchDeck_emptyResult_emptyListExceptionThrown() {
         String input = "/q What is Java? /a A programming language.";
-        Command createTest = new CommandCreate(input);
+        Command createTest = new CommandCreateFlashcard(input);
         createTest.executeCommand();
         try {
             deck.searchFlashcard("/q v /a v");
