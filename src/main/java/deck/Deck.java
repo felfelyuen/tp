@@ -396,7 +396,6 @@ public class Deck {
      * @return boolean value of whether the answer is correct
      * @throws QuizCancelledException if the user wants to cancel the quiz half-way.
      */
-    //@@author felfelyuen
     public boolean handleAnswerForFlashcard (Flashcard indexCard, String userAnswer)
             throws QuizCancelledException {
         assert (!userAnswer.isEmpty()) : "userAnswer should not be empty";
