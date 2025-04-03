@@ -398,6 +398,36 @@ Saving.saveAllDecks(DeckManager.decks);
 - Current implementation assumes well-formed files
 - Future improvements: introduce backup/restore, encryption, or support for import/export formats like JSON/CSV
 
+### View Quiz Result Functionality
+
+#### Design
+
+The quiz result system tracks and displays user performance after completing a flashcard quiz. It maintains three parallel collections during quizzes:
+
+    incorrectFlashcards - Stores flashcards answered incorrectly
+
+    incorrectIndexes - Tracks original positions of incorrect answers
+
+    incorrectAnswers - Records the user's wrong responses
+
+This design enables detailed post-quiz analysis while maintaining data consistency between the collections.
+#### Class Diagram
+
+![](images/QuizResultClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/QuizresultSequence-Quiz_result_Display_Sequence.png)
+
+#### Key operations:
+
+1. Validates quiz completion status 
+2. Ensures collection sizes match
+3. Calculates and displays:
+4. Total questions answered
+5. Correct/incorrect counts
+6. Calls showMistakes() for detailed review
+
 ## Product scope
 ### Target user profile
 

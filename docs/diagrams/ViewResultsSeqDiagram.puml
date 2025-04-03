@@ -1,0 +1,44 @@
+@startuml QuizResultSequence
+
+title Quiz Result Display Sequence
+
+actor User
+participant UI
+participant Deck
+participant Flashcard
+
+group showQuizResult()
+    User -> UI: enters "quiz-result" command
+    UI -> Deck: showQuizResult()
+
+    alt Quiz not completed
+        Deck -> UI: throws FlashCLIArgumentException\n"Quiz not completed"
+    else Arrays mismatched
+        Deck -> UI: throws FlashCLIArgumentException\n"Arrays size mismatch"
+    else Valid case
+        Deck -> Deck: get incorrectAnswersSize\nincorrectIndexesSize\nincorrectFlashcardsSize\ntotalQuestionsSize
+        Deck -> UI: "You answered X questions"
+
+        alt All correct
+            Deck -> UI: "Full marks! No mistakes"
+        else Has mistakes
+            Deck -> UI: "You got Y correct, Z incorrect"
+            Deck -> UI: "Review your mistakes:"
+            Deck -> Deck: showMistakes()
+        end
+    end
+    Deck -> User: returns success message
+end
+
+group showMistakes()
+    loop for each incorrect index
+        Deck -> Deck: get index from incorrectIndexes
+        Deck -> Flashcard: getQuestion()\ngetAnswer()
+        Deck -> Deck: get user's wrong answer\nfrom incorrectAnswers
+        Deck -> UI: "Flashcard X: Q:...\nCorrect:...\nYour answer:..."
+    end
+end
+
+
+
+@enduml
