@@ -1,0 +1,16 @@
+@startuml
+
+actor User
+User -> CommandListQuestion **: executeCommand()
+CommandListQuestion++
+CommandListQuestion -> Deck++: listFlashcards()
+alt [deck is not empty]
+loop [flashcards.size()]
+    Deck -> Deck: show the question
+end
+end
+return
+CommandListQuestion --> User
+
+
+@enduml

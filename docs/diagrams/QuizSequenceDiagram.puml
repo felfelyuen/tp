@@ -1,15 +1,19 @@
 @startuml
-
-Parser -> CommandQuizFlashcards **: Quiz.executeCommand()
+actor User
+User -> CommandQuizFlashcards **: executeCommand()
+CommandQuizFlashcards++
 CommandQuizFlashcards -> Deck++: quizFlashcards()
 loop [flashcards.size()]
     alt [unlearned]
     Deck -> Deck++: handleQuestion
     Deck -> Deck++: handleAnswer
     return
+    return
     end
 end
 return
+
+CommandQuizFlashcards --> User
 
 
 @enduml

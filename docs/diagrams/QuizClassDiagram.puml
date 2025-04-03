@@ -1,0 +1,14 @@
+@startuml
+class CommandQuizFlashcards {
+  + executeCommand()
+}
+
+class Deck {
+  +  quizFlashcards(): boolean
+  +  ShuffleDeck(): void
+  +  HandleQuestionForQuiz(Flashcard): void
+  +  HandleAnswerForFlashcard(Flashcard, String): boolean
+}
+
+CommandQuizFlashcards -- Deck
+@enduml

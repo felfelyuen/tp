@@ -198,7 +198,7 @@ public class Deck {
      * @return the question in the format of VIEW_QUESTION_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
-    //@@author
+    //@@author felfelyuen
     public String viewFlashcardQuestion(int index) throws ArrayIndexOutOfBoundsException {
         if (index <= 0 || index > flashcards.size()) {
             throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
@@ -278,6 +278,7 @@ public class Deck {
      * @return list of questions in the format of LIST_SUCCESS
      * @throws EmptyListException if the list is empty
      */
+    //@@author felfelyuen
     public String listFlashcards() throws EmptyListException {
         if (flashcards.isEmpty()) {
             throw new EmptyListException(EMPTY_LIST);
