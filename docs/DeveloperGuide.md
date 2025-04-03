@@ -69,7 +69,7 @@ The flashcard application supports searching for flashcards either within the cu
 
 The search feature is designed with the following constraints:
 
-- Users may search by question (`q/`) and/or answer (`a/`)
+- Users may search by question (`/q`) and/or answer (`/a`)
 - If no deck is selected, the search is performed globally across all decks
 - If a deck is selected, only that deck is searched
 - The system is case-insensitive and supports partial matches
@@ -93,7 +93,7 @@ Below is a simplified sequence of how a search request is handled:
 This method parses the search arguments for `/q` and `/a` prefixes and returns flashcards that match either (or both) the question or answer. It supports edge cases such as:
 
 - Only `/q` or only `/a` provided
-- Input in any order (`a/first q/second` works too)
+- Input in any order (`/a first /qsecond` works too)
 - Case insensitivity
 
 The method throws a `FlashCLIArgumentException` if neither `/q` nor `/a` is present.
@@ -198,7 +198,8 @@ Saving.saveAllDecks(DeckManager.decks);
 
 #### Design
 
-The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on a 0-based index. The system validates the index and ensures it’s within bounds.
+The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on index. 
+The system validates the index and ensures it’s within bounds.
 
 #### Class Diagram
 

@@ -12,7 +12,7 @@ public class SuccessMessages {
             "Question: %s\n" +
             "%s";
 
-    public static final String VIEW_ANSWER_SUCCESS = "Answer of flashcard: %s\n" +
+    public static final String VIEW_ANSWER_SUCCESS = "Answer of flashcard %s\n" +
             "Answer: %s\n";
 
     public static final String EDIT_SUCCESS = "Updated flashcard.\n" +
@@ -23,7 +23,9 @@ public class SuccessMessages {
 
     public static final String LIST_SUCCESS = "List of flashcards:\n%s";
 
-    public static final String DELETE_SUCCESS = "Deleted flashcard: %s";
+    public static final String DELETE_SUCCESS = "Deleted flashcard %s\n" +
+            "Question: %s\n" +
+            "Answer: %s\n";
     public static final String CREATE_DECK_SUCCESS = "Deck \"%s\" created, number of decks: %d";
     public static final String SWITCH_DECK_SUCCESS = "Switched to deck \"%s\"";
     public static final String RENAME_DECK_SUCCESS = "Renamed deck \"%s\" to \"%s\" ";

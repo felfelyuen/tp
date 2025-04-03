@@ -316,7 +316,7 @@ public class Deck {
         Flashcard flashcardToDelete = flashcards.get(arrayIndex);
         assert flashcardToDelete != null : "flashcard object should not be null";
         flashcards.remove(arrayIndex);
-        return String.format(DELETE_SUCCESS, flashcardToDelete);
+        return String.format(DELETE_SUCCESS, index, flashcardToDelete.getQuestion(), flashcardToDelete.getAnswer());
     }
 
     /**
