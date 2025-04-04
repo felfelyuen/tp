@@ -1,6 +1,6 @@
 # FlashCLI Developer Guide
 
-# FlashCLI Developer Guide
+---
 
 ## Table of Contents
 1. [Acknowledgements](#1-acknowledgements)
@@ -27,6 +27,8 @@
 7. [Appendix D: Glossary](#appendix-d-glossary)
 8. [Appendix E: Instructions for manual testing](#appendix-e-instructions-for-manual-testing)
 
+---
+
 ## 1. Acknowledgements
 
 Third-party libraries used:
@@ -36,9 +38,13 @@ Third-party libraries used:
 
 This project's structure was inspired by the SE-EDU AddressBook-Level3 project.
 
+---
+
 ## 2. Notes
 
 This Developer Guide documents the core architecture and key components of FlashCLI, but does not exhaustively cover all implemented classes
+
+---
 
 ## 3. Implementation
 This section describes some noteworthy details on how certain features are implemented. 
@@ -430,6 +436,8 @@ This design enables detailed post-quiz analysis while maintaining data consisten
 5. Correct/incorrect counts
 6. Calls showMistakes() for detailed review
 
+---
+
 ## Appendix A: Product scope
 **Target user profile:**
 - CS2113 student
@@ -441,6 +449,8 @@ This design enables detailed post-quiz analysis while maintaining data consisten
 
 This app provides a no-frills solution to helping CS2113 students study and 
 practice using terminal commands while memorising key information required for the course.
+
+---
 
 ## Appendix B: User Stories
 
@@ -466,12 +476,16 @@ practice using terminal commands while memorising key information required for t
 | v2.0    | student  | access my flashcards and decks across sessions                   | continue my revision without losing progress           |
 | v2.0    | student  | see a nice UI                                                    | have a comfortable viewing experience                  |
 
+---
+
 ## Appendix C: Non-Functional Requirements
 1. Should be compatible on any mainstream OS as long as it has Java 17 or above installed. 
 2. The system should respond to user input within 5 seconds for most commands under typical usage.
 3. Should be intuitive for most users familiar with a command line user interface .
 4. End-users should be able to set up and run the flashcard quizzes within 3 steps (create deck, add flashcard, quiz).
 5. The system has automated logging after the end of every session, and be able to store up to a casual amount of usage.
+
+---
 
 ## Appendix D: Glossary
 
@@ -484,6 +498,8 @@ practice using terminal commands while memorising key information required for t
 * *EmptyListException* - thrown if there is an empty list present
 * *FlashCLIArgumentException* - thrown if an invalid input is inputted
 * *QuizCancelledException* - thrown if the quiz is cancelled halfway
+
+---
 
 ## Appendix E: Instructions for manual testing
 
