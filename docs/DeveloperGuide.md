@@ -1,10 +1,42 @@
 # FlashCLI Developer Guide
 
+## Table of Contents
+1. [Acknowledgements](#acknowledgements)
+2. [Implementation](#implementation)
+    - [Flashcard Features](#flashcard-features)
+        - [Create Flashcard](#create-a-flashcard)
+        - [Edit Flashcard](#edit-flashcard-question-and-answer-feature)
+        - [Delete Flashcard](#delete-flashcard-feature)
+        - [View Answer](#view-flashcard-answer-feature)
+        - [Insert Code Snippet](#insert-code-snippet)
+    - [Deck Features](#deck-features)
+        - [Create Deck](#creating-a-new-deck)
+        - [Rename Deck](#renaming-decks)
+        - [List Decks](#listing-all-decks)
+        - [Select Deck](#selecting-a-deck)
+        - [Delete Deck](#deleting-a-deck)
+    - [Search Feature](#search-feature)
+    - [Save/Load Functionality](#saveload-functionality)
+3. [Product Scope](#product-scope)
+    - [Target User Profile](#target-user-profile)
+    - [Value Proposition](#value-proposition)
+4. [User Stories](#user-stories)
+5. [Non-Functional Requirements](#non-functional-requirements)
+6. [Glossary](#glossary)
+7. [Testing Instructions](#instructions-for-manual-testing)
+
 ## Acknowledgements
 
-{list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
+Third-party libraries used:
+- Java SE 17 - Core Java platform
+- JUnit 5 - Unit testing framework
+- PlantUML - For generating UML diagrams
 
----
+This project's structure was inspired by the SE-EDU AddressBook-Level3 project.
+
+## Notes
+
+This Developer Guide documents the core architecture and key components of FlashCLI, but does not exhaustively cover all implemented classes
 
 ## Implementation
 This section describes some noteworthy details on how certain features are implemented. 
@@ -241,7 +273,7 @@ The flashcard application supports searching for flashcards either within the cu
 
 The search feature is designed with the following constraints:
 
-- Users may search by question (`q/`) and/or answer (`a/`)
+- Users may search by question (`/q`) and/or answer (`/a`)
 - If no deck is selected, the search is performed globally across all decks
 - If a deck is selected, only that deck is searched
 - The system is case-insensitive and supports partial matches
@@ -265,7 +297,7 @@ Below is a simplified sequence of how a search request is handled:
 This method parses the search arguments for `/q` and `/a` prefixes and returns flashcards that match either (or both) the question or answer. It supports edge cases such as:
 
 - Only `/q` or only `/a` provided
-- Input in any order (`a/first q/second` works too)
+- Input in any order (`/a first /qsecond` works too)
 - Case insensitivity
 
 The method throws a `FlashCLIArgumentException` if neither `/q` nor `/a` is present.
@@ -366,6 +398,36 @@ Saving.saveAllDecks(DeckManager.decks);
 - Current implementation assumes well-formed files
 - Future improvements: introduce backup/restore, encryption, or support for import/export formats like JSON/CSV
 
+### View Quiz Result Functionality
+
+#### Design
+
+The quiz result system tracks and displays user performance after completing a flashcard quiz. It maintains three parallel collections during quizzes:
+
+    incorrectFlashcards - Stores flashcards answered incorrectly
+
+    incorrectIndexes - Tracks original positions of incorrect answers
+
+    incorrectAnswers - Records the user's wrong responses
+
+This design enables detailed post-quiz analysis while maintaining data consistency between the collections.
+#### Class Diagram
+
+![](images/QuizResultClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/QuizresultSequence-Quiz_result_Display_Sequence.png)
+
+#### Key operations:
+
+1. Validates quiz completion status 
+2. Ensures collection sizes match
+3. Calculates and displays:
+4. Total questions answered
+5. Correct/incorrect counts
+6. Calls showMistakes() for detailed review
+
 ## Product scope
 ### Target user profile
 
@@ -425,4 +487,201 @@ practice using terminal commands while memorising key information required for t
 
 ## Instructions for manual testing
 
-{Give instructions on how to do a manual product testing e.g., how to load sample data to be used for testing}
+### Notes
+* *Testing Purpose* - These instructions are for basic testing only
+* *Expected Output* - Describes system behavior, not exact console output
+
+### Setup
+* *Java Requirement* - Ensure Java 17+ is installed
+* *Download* - Get latest FlashCLI.jar
+* *Run Command* - Execute `java -jar FlashCLI_2.0.jar`
+
+---
+
+### Test Cases
+
+#### 1. Userguide Command
+* *Test Case 1 - Valid Input*
+* *Prerequisites*: the user is under a deck named "computer science"
+* *Input*:
+  ```
+  user_guide:
+  ```
+* *Expected*:
+  Quick Start:
+  Create a deck of flashcards with "new", select it with "select", and begin adding flashcards with "add"!
+
+    List of commands
+
+#### 2. Add Flashcard Command
+* *Test Case 1 - Valid Input*
+* *Prerequisites*: the user is under a deck named "computer science"
+* *Input*:
+  ```
+  add /q What is binary number 1101's decimal Equivalent? /a 13
+  ```
+* *Expected*:
+  Added a new flashcard.
+  Question: What is binary number 1101's decimal Equivalent?
+  Answer: 13
+  You have 1 flashcard(s) in your deck.
+
+* *Test Case 2 - Missing deck*
+* *Prerequisites*: None
+* *Input*:
+  ```
+  add /q What is binary number 1101's decimal Equivalent? /a 13
+  ```
+* *Expected*: Prompts for category input
+  Select a deck first!
+
+* *Test Case 3 - Reversed order*
+* *Prerequisites*: the user is under a deck named "computer science"
+* *Input*:
+  ```
+  add /a What is binary number 1101's decimal Equivalent? /q 13
+  ```
+* *Expected*:
+  /a Answer first /q Question later
+  Usage: add /q {QUESTION} /a {ANSWER}
+
+#### 3. Create deck Command
+* *Test Case 1 - Valid Input*
+* *Prerequisites*: None
+* *Input*:
+  ```
+  new computer science
+  ```
+* *Expected*: Deck "computer science" created, number of decks: 1
+
+#### 4. Show Decks Command
+* *Test Case 1 - Valid Input*
+* *Prerequisites*: At least 1 deck exists
+* *Input*:
+  ```
+  decks
+  ```
+* *Expected*: List of decks:
+1. computer science
+
+#### 5. Show Flashcards Command
+* *Test Case 1 - Valid Input*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+* *Input*:
+  ```
+  list
+  ```
+* *Expected*: List of flashcards:
+1. Is ant a type of insect?
+
+#### 6. View Category Command
+* *Test Case*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+* *Input*:
+  ```
+  view-category
+  ```
+* *Expected*: Displays all categories
+
+#### 7. Learn and unlearn Command
+* *Test Case
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+* *Input1*:
+  ```
+  mark_learned 1
+  ```
+* *Expected1*: Changed flashcard number 1 into learned
+* 
+* *Input2*:
+  ```
+  mark_unlearned 1
+  ```
+* *Expected1*: Changed flashcard number 1 into unlearned
+
+#### 8. Insert code snippet
+* *Test Case*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+* *Input*:
+  ```
+  insert_code 1 /c printf(hello world)
+  ```
+* *Expected*: Inserted code snippet to flashcard.
+  Question: hello
+  Answer: world
+  Code Snippet: printf(hello world)
+
+#### 8. Quiz mode
+* *Test Case*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+* *Input*:
+  ```
+  quiz
+  ```
+* *Expected*: Entering quiz mode... get ready!
+  Type 'exit_quiz' to cancel the quiz and leave at anytime
+  Cancelling the quiz would not save your results
+  You have 1 question left:
+  What is binary number 1101's decimal Equivalent? 
+* 
+* *Input*:
+  ```
+    13
+  ```
+* *Expected*:
+  Correct!
+  You finished the test! You took: 15 seconds!
+  Type view_res to check your test result
+* *Input*:
+  ```
+    view_res
+  ```
+* *Expected*:
+  Correct!
+  You have answered 1 questions in the quiz.
+  Great job! You have answered all of questions correctly.
+
+#### 9. Edit flashcard command
+* *Test Case*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+* *Input*:
+  ```
+  edit 1 /q what is binary number 1001's decimal Equivalent? /a 9
+  ```
+* *Expected*: Inserted code snippet to flashcard.
+  Question: hello
+  Answer: world
+  Code Snippet: Updated flashcard.
+  Edit Question: hello
+  Updated: what is binary number 1001's decimal Equivalent?
+  Edit Answer: world
+  Updated: 9
+
+#### 10. search flashcard
+* *Test Case1 - search by question*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+* *Input*:
+  ```
+  search /q What is OOP?
+  ```
+
+* *Expected*: Flashcards matched:
+  Question: What is OOP?
+  Answer: Object-Oriented Prog
+
+* *Test Case2 - search by answer*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+* *Input*:
+  ```
+  search /a Object-Oriented Prog
+  ```
+
+* *Expected*: Flashcards matched:
+  Question: What is OOP?
+  Answer: Object-Oriented Prog
+
+### Command Prefix Key
+| Prefix | Purpose          | Example                  |
+|--------|------------------|--------------------------|
+| /q     | Question         | `/q What is OOP?`        |
+| /a     | Answer           | `/a Object-Oriented Prog`|
+| /c     | Code snippet     | `/c System.out.println()`|

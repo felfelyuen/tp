@@ -4,8 +4,7 @@
 
 FlashCLI 2.0 is a command-line flashcard application designed specifically for CS2113 Software Engineering students. It helps students create, manage, and review flashcards efficiently, making it easier to retain important concepts in Java, software design, and coding best practices.
 
----
-
+--------------------------------------------------------------------------------------------------------------------
 ## Quick Start
 
 1. Ensure you have Java `17` or above installed in your Computer.<br>
@@ -52,7 +51,7 @@ List of commands:
 "add": creates a flashcard
 "list": shows list of flashcards
 "qn": views the flashcard's question
-"view_ans": views the flashcard's answer
+"ans": views the flashcard's answer
 "delete": deletes the flashcard
 "edit": edits the flashcard question/answer
 "insert_code": inserts code snippet for a flashcard
@@ -64,6 +63,7 @@ List of commands:
 "rename": renames flashcard deck
 "decks": shows list of decks
 "select": selects deck of flashcards
+"search": searches within a deck or globally
 "exit": exits the program
 
 Go to the flashCli User Guide website for more details
@@ -71,9 +71,9 @@ Go to the flashCli User Guide website for more details
 ### Create flashcards: `add`
 Creates a flashcard which consists of the fields questions and answers and adds it to the selected deck. All fields are required. A deck must be selected first before using this command.
 
-Format: `add q/QUESTION a/ANSWER`<br>
+Format: `add /q QUESTION /a ANSWER`<br>
 Examples:
-* `add q/What language is used in CS2113? a/Java` → Adds a new flashcard with the question **What language is used in CS2113?** and answer **Java** to the current selected deck.
+* `add /q What language is used in CS2113? /a Java` → Adds a new flashcard with the question **What language is used in CS2113?** and answer **Java** to the current selected deck.
   
 If no deck is selected, this command cannot be used.
 
@@ -124,8 +124,8 @@ Examples:
 ```
 [INPUT]: list
 [OUTPUT]: 
-1. q/What colour is an apple? 
-2. q/What language is used in CS2113?
+1. /q What colour is an apple? 
+2. /q What language is used in CS2113?
 ```
 
 ### View question only: `qn`
@@ -141,6 +141,33 @@ Examples:
 interface Interface{
 void method();
 }
+```
+
+### View answer only: `ans`
+Show the answer of a flashcard via its index.
+
+Format: `ans INDEX`
+INDEX must be a positive integer, ie: 1, 2, 3
+Examples:
+```
+[INPUT]: ans 3
+[OUTPUT]:
+Answer of flashcard 3
+Answer: Java
+```
+
+### Delete flashcard: `delete`
+Delete the flashcard in the deck via its index
+
+Format: `delete INDEX`
+INDEX must be a positive integer, ie: 1, 2, 3
+Examples:
+```
+[INPUT]: delete 3
+[OUTPUT]:
+Deleted flashcard 3
+Question: What language is used in CS2113?
+Answer: Java
 ```
 
 ### Quiz mode with timer: `quiz`
@@ -189,6 +216,33 @@ Examples:
 [OUTPUT]: Changed flashcard number 2 into unlearned
 ```
 
+### Search Flashcards: `search`
+Searches for the specified flashcard. If no deck is selected, the search will be across all decks.
+However, if a deck is selected, then the search will only be specific to that deck.
+
+Format: `search /q QUESTION /a ANSWER` either /q or /a can be omitted if required. Non-case specific.
+
+Examples:
+```
+[INPUT]: search /q What language is used in CS2113? /a Java
+[OUTPUT]: 
+Flashcards matched: 
+Deck: CS2113
+Question: What language is used in CS2113?
+Answer: Java
+[INPUT]: select CS2113
+[INPUT]: search /q What language is used in CS2113?
+[OUTPUT]: 
+Flashcards matched: 
+Question: What language is used in CS2113?
+Answer: Java
+[INPUT]: search /a java
+[OUTPUT]: 
+Flashcards matched: 
+Question: What language is used in CS2113?
+Answer: Java
+```
+
 --------------------------------------------------------------------------------------------------------------------
 ## FAQ
 
@@ -211,13 +265,13 @@ Examples:
 | Action               | Format, Examples                                                                                |
 |----------------------|-------------------------------------------------------------------------------------------------|
 | **View User Guide**  | `user_guide`                                                                                    |
-| **Create Flashcard** | `add q/QUESTION a/ANSWER` e.g. `add q/What language is used in CS2113? a/Java`                  |
+| **Create Flashcard** | `add /q QUESTION /a ANSWER` e.g. `add /q What language is used in CS2113? /a Java`              |
 | **List Flashcards**  | `list`                                                                                          |
 | **View Question**    | `qn INDEX` e.g. `qn 3`                                                                          |
 | **View Answer**      | `ans INDEX` e.g. `ans 3`                                                                        |
 | **Delete Flashcard** | `delete INDEX` e.g. `delete 3`                                                                  |
-| **Edit Flashcard**   | `edit INDEX [q/QUESTION] [a/ANSWER]` e.g.  `edit 2 q/What is substitutability? a/A method`      |
-| **Search Flashcard** | `search SEARCHTERM` e.g.  `search apple`                                                        |
+| **Edit Flashcard**   | `edit INDEX [/q QUESTION] [/a ANSWER]` e.g.  `edit 2 /q What is substitutability? /a A method`  |
+| **Search Flashcard** | `search /q QUESTION /a ANSWER` e.g. `search /q What language is used in CS2113? /a Java`        |       |
 | **New Deck**         | `new DECKNAME` e.g.  `new testDeck`                                                             |
 | **Select Deck**      | `select DECKNAME` e.g. `select testDeck`                                                        |
 | **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                        |
