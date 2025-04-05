@@ -4,6 +4,8 @@ import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
+import static constants.ErrorMessages.CREATE_MULTIPLE_ANSWERS_ERROR;
+import static constants.ErrorMessages.CREATE_MULTIPLE_QUESTIONS_ERROR;
 import static constants.ErrorMessages.EMPTY_LIST;
 import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.INSERT_MISSING_CODE;
@@ -23,6 +25,7 @@ import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -159,6 +162,30 @@ public class DeckTest {
         } catch (FlashCLIArgumentException e) {
             assertEquals(CREATE_INVALID_ORDER, e.getMessage());
         }
+    }
+
+    @Test
+    public void createFlashcard_multipleQTags_throwsException() {
+        String input = "add /q What is Java? /q Extra question /a A programming language.";
+
+        FlashCLIArgumentException thrown = assertThrows(
+                FlashCLIArgumentException.class,
+                () -> deck.createFlashcard(input)
+        );
+
+        assertEquals(CREATE_MULTIPLE_QUESTIONS_ERROR, thrown.getMessage());
+    }
+
+    @Test
+    public void createFlashcard_multipleATags_throwsException() {
+        String input = "add /q What is Java? /a A programming language. /a Extra answer";
+
+        FlashCLIArgumentException thrown = assertThrows(
+                FlashCLIArgumentException.class,
+                () -> deck.createFlashcard(input)
+        );
+
+        assertEquals(CREATE_MULTIPLE_ANSWERS_ERROR, thrown.getMessage());
     }
 
     @Test

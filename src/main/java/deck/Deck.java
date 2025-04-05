@@ -7,6 +7,8 @@ import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
+import static constants.ErrorMessages.CREATE_MULTIPLE_ANSWERS_ERROR;
+import static constants.ErrorMessages.CREATE_MULTIPLE_QUESTIONS_ERROR;
 import static constants.ErrorMessages.EMPTY_LIST;
 import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.INSERT_MISSING_CODE;
@@ -171,13 +173,8 @@ public class Deck {
             throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
         }
 
-        int questionStart = arguments.indexOf("/q");
-        int answerStart = arguments.indexOf("/a");
-
-        assert questionStart >= 0 : "Index of /q should be valid";
-        assert answerStart >= 0 : "Index of /a should be valid";
-
-        logger.fine("Index of /q: " + questionStart + ", Index of /a: " + answerStart);
+        int questionStart = validateSingleTag(arguments, "/q", CREATE_MULTIPLE_QUESTIONS_ERROR);
+        int answerStart = validateSingleTag(arguments, "/a", CREATE_MULTIPLE_ANSWERS_ERROR);
 
         if (questionStart > answerStart) {
             logger.warning("Invalid order: /q comes after /a");
@@ -194,6 +191,27 @@ public class Deck {
 
         return new Result(question, answer);
     }
+
+    /**
+     * Validates that a tag appears exactly once in the input and returns its index.
+     *
+     * @param arguments The input string.
+     * @param tag The tag to search for (e.g., "/q", "/a").
+     * @param errorMessage The error message to throw if the tag occurs more than once.
+     * @return The index of the first occurrence of the tag.
+     * @throws FlashCLIArgumentException If the tag appears more than once.
+     */
+    private int validateSingleTag(String arguments, String tag, String errorMessage) throws FlashCLIArgumentException {
+        int firstIndex = arguments.indexOf(tag);
+        int lastIndex = arguments.lastIndexOf(tag);
+        if (firstIndex != lastIndex) {
+            logger.warning("Multiple " + tag + " tags detected.");
+            throw new FlashCLIArgumentException(errorMessage);
+        }
+        assert firstIndex >= 0 : "Index of " + tag + " should be valid";
+        return firstIndex;
+    }
+
 
     /**
      * Views the flashcard question
