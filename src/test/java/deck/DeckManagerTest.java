@@ -132,7 +132,10 @@ public class DeckManagerTest {
     @Test
     void viewDecks_noDecks_throwsException() {
         String arguments = "";
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> DeckManager.viewDecks(arguments));
+        FlashCLIArgumentException exception = assertThrows(
+                FlashCLIArgumentException.class,
+                () -> DeckManager.viewDecks(arguments)
+        );
         assertEquals(NO_DECK_TO_VIEW, exception.getMessage());
     }
 

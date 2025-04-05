@@ -88,7 +88,7 @@ Creates a new deck with the given deck name. Deck name should not already be in 
 * `new testDeck` → Creates a new deck named **testDeck** (if the name is not already taken).
 
 ### **Select a Deck: `select`**
-Selects the specified deck via the index. There must be an available deck to select to use this command.
+Selects the specified deck via the index. There must be an available deck to select to use this command. You can view decks to select using the `decks` command.
 
 **Format:** `select INDEX`
 
@@ -112,12 +112,12 @@ Displays a list of all available decks.
 * **`decks`** → Lists all existing decks.
 
 ### **Delete a Deck: `remove`**
-Deletes the specified deck. This action is **permanent** and **cannot be undone**.
+Deletes the specified deck. This action is **permanent** and **cannot be undone**. You can view decks to delete using the `decks` command.
 
-**Format:** `remove DECKNAME`
+**Format:** `remove INDEX`
 
 **Examples:**
-* **`remove testDeck`** → Deletes the deck named **testDeck** permanently.
+* **`remove 2`** → Deletes the second deck in the list. 
 
 ### Summary view of the flashcard deck: `list`
 Shows a list of all the flashcards in your deck, including information about the index and question of each flashcard. Limit to only 50 flashcards per page.

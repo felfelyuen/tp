@@ -31,7 +31,8 @@ public class ErrorMessages {
     public static final String CREATE_INVALID_ORDER = "/a Answer first /q Question later";
     public static final String CREATE_MULTIPLE_QUESTIONS_ERROR = "Only one /q tag is allowed.";
     public static final String CREATE_MULTIPLE_ANSWERS_ERROR = "Only one /a tag is allowed.";
-    public static final String CREATE_INVALID_INPUT_ERROR = "Invalid input: Text found before the /q tag. Please start your input with /q.";
+    public static final String CREATE_INVALID_INPUT_ERROR = "Invalid input: Text found before the /q tag. " +
+            "Please start your input with /q.";
 
     public static final String INVALID_INDEX_INPUT = "Input is not a number";
     public static final String INDEX_OUT_OF_BOUNDS = "Input is out of bounds of current list of flashcards";

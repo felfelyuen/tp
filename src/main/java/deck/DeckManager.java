@@ -18,7 +18,6 @@ import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.SELECT_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
-import static java.lang.Integer.parseInt;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -233,17 +232,7 @@ public class DeckManager {
     public static String selectDeck(String arguments) throws FlashCLIArgumentException {
         logger.info("Entering selectDeck method with arguments: " + arguments);
 
-        String trimmedArguments = arguments.trim();
-        if (trimmedArguments.isEmpty()) {
-            throw new FlashCLIArgumentException(DECK_EMPTY_INPUT);
-        }
-
-        int listIndex;
-        try {
-            listIndex = Integer.parseInt(trimmedArguments) - 1;
-        } catch (NumberFormatException e) {
-            throw new FlashCLIArgumentException(INVALID_INDEX_INPUT);
-        }
+        int listIndex = checkAndGetListIndex(arguments);
 
         if (decks.isEmpty()) {
             logger.warning("Attempted to switch decks, but no decks are available.");
@@ -259,6 +248,21 @@ public class DeckManager {
         assert decks.containsKey(currentDeck.getName()) : "Switched deck does not exist in decks!";
         logger.info("Switched to deck: " + currentDeck.getName());
         return String.format(SELECT_DECK_SUCCESS, currentDeck.getName());
+    }
+
+    public static int checkAndGetListIndex(String arguments) throws FlashCLIArgumentException {
+        String trimmedArguments = arguments.trim();
+        if (trimmedArguments.isEmpty()) {
+            throw new FlashCLIArgumentException(DECK_EMPTY_INPUT);
+        }
+
+        int listIndex;
+        try {
+            listIndex = Integer.parseInt(trimmedArguments) - 1;
+        } catch (NumberFormatException e) {
+            throw new FlashCLIArgumentException(INVALID_INDEX_INPUT);
+        }
+        return listIndex;
     }
 
     /**

@@ -40,11 +40,11 @@ import static constants.CommandConstants.LIST_CARDS;
 import static constants.CommandConstants.SEARCH_CARD;
 import static constants.ConfirmationMessages.CONFIRM_DELETE_DECK;
 import static constants.CommandConstants.VIEW_RES;
+import static constants.ErrorMessages.DECK_INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.DELETE_EMPTY_DECK_ERROR;
-import static constants.ErrorMessages.EMPTY_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_ERROR;
-import static constants.ErrorMessages.NO_SUCH_DECK;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
+import static deck.DeckManager.checkAndGetListIndex;
 import static deck.DeckManager.currentDeck;
 import static deck.DeckManager.decks;
 
@@ -115,17 +115,16 @@ public class Parser {
      * @throws FlashCLIArgumentException if validation fails due to missing or invalid deck.
      */
     public static Command validateDeckExistsForDelete(String arguments) throws FlashCLIArgumentException {
-        String trimmedDeckName = arguments.trim();
+        int listIndex = checkAndGetListIndex(arguments);
 
         if (decks.isEmpty()) {
             throw new FlashCLIArgumentException(DELETE_EMPTY_DECK_ERROR);
         }
-        if (trimmedDeckName.isEmpty()) {
-            throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
+
+        if (listIndex < 0 || listIndex >= decks.size()) {
+            throw new FlashCLIArgumentException(DECK_INDEX_OUT_OF_BOUNDS);
         }
-        if (!decks.containsKey(trimmedDeckName)) {
-            throw new FlashCLIArgumentException(NO_SUCH_DECK);
-        }
+
         return handleDeleteDeckConfirmation(arguments);
     }
 
