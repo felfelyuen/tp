@@ -4,11 +4,10 @@ import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
 import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
+import static constants.ErrorMessages.CREATE_INVALID_INPUT_ERROR;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
-import static constants.ErrorMessages.CREATE_MULTIPLE_ANSWERS_ERROR;
-import static constants.ErrorMessages.CREATE_MULTIPLE_QUESTIONS_ERROR;
 import static constants.ErrorMessages.EMPTY_LIST;
 import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.INSERT_MISSING_CODE;
@@ -167,51 +166,34 @@ public class Deck {
      * @throws FlashCLIArgumentException If required fields are missing or in the wrong order.
      */
     private Result checkQuestionAndAnswer(String arguments) throws FlashCLIArgumentException {
-        boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
-        if (!containsAllArguments) {
-            logger.warning("Missing required fields: /q or /a");
+        int qIndex = arguments.indexOf("/q");
+        int aIndex = arguments.indexOf("/a");
+
+        if (qIndex == -1 || aIndex == -1) {
+            logger.warning("Missing /q or /a tag.");
             throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
         }
 
-        int questionStart = validateSingleTag(arguments, "/q", CREATE_MULTIPLE_QUESTIONS_ERROR);
-        int answerStart = validateSingleTag(arguments, "/a", CREATE_MULTIPLE_ANSWERS_ERROR);
-
-        if (questionStart > answerStart) {
-            logger.warning("Invalid order: /q comes after /a");
+        if (qIndex > aIndex) {
+            logger.warning("/q must come before /a.");
             throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
         }
 
-        String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
-        String answer = arguments.substring(answerStart + "/a".length()).trim();
+        boolean hasTextBeforeQTag = !arguments.substring(0, qIndex).trim().isEmpty();
+        if (hasTextBeforeQTag) {
+            logger.warning("Text found before /q tag.");
+            throw new FlashCLIArgumentException(CREATE_INVALID_INPUT_ERROR);
+        }
+
+        String question = arguments.substring(qIndex + "/q".length(), aIndex).trim();
+        String answer = arguments.substring(aIndex + "/a".length()).trim();
 
         if (question.isEmpty() || answer.isEmpty()) {
-            logger.warning("Missing description: question or answer is empty");
+            logger.warning("Question or answer is empty.");
             throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
         }
-
         return new Result(question, answer);
     }
-
-    /**
-     * Validates that a tag appears exactly once in the input and returns its index.
-     *
-     * @param arguments The input string.
-     * @param tag The tag to search for (e.g., "/q", "/a").
-     * @param errorMessage The error message to throw if the tag occurs more than once.
-     * @return The index of the first occurrence of the tag.
-     * @throws FlashCLIArgumentException If the tag appears more than once.
-     */
-    private int validateSingleTag(String arguments, String tag, String errorMessage) throws FlashCLIArgumentException {
-        int firstIndex = arguments.indexOf(tag);
-        int lastIndex = arguments.lastIndexOf(tag);
-        if (firstIndex != lastIndex) {
-            logger.warning("Multiple " + tag + " tags detected.");
-            throw new FlashCLIArgumentException(errorMessage);
-        }
-        assert firstIndex >= 0 : "Index of " + tag + " should be valid";
-        return firstIndex;
-    }
-
 
     /**
      * Views the flashcard question

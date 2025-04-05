@@ -1,6 +1,7 @@
 package deck;
 
 import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
+import static constants.ErrorMessages.CREATE_INVALID_INPUT_ERROR;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
@@ -11,6 +12,7 @@ import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.INSERT_MISSING_CODE;
 import static constants.ErrorMessages.INSERT_MISSING_FIELD;
 import static constants.ErrorMessages.INVALID_INDEX_INPUT;
+import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.SEARCH_EMPTY_DECK;
 import static constants.ErrorMessages.SEARCH_MISSING_FIELD;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
@@ -71,7 +73,7 @@ public class DeckTest {
     }
 
     @Test
-    void createFlashcard_invalidQuestionField_flashCLIillegalArgumentExceptionThrown() {
+    void createFlashcard_invalidQuestionField_flashCLIArgumentExceptionThrown() {
         try {
             String input = "/q /a A programming language.";
             deck.createFlashcard(input);
@@ -165,27 +167,21 @@ public class DeckTest {
     }
 
     @Test
-    public void createFlashcard_multipleQTags_throwsException() {
-        String input = "add /q What is Java? /q Extra question /a A programming language.";
+    public void createFlashcard_multipleQTags_QuestionCreatedSuccessfully() throws FlashCLIArgumentException {
+        String input = "/q What is Java? /q Extra question /a A programming language.";
+        deck.createFlashcard(input);
 
-        FlashCLIArgumentException thrown = assertThrows(
-                FlashCLIArgumentException.class,
-                () -> deck.createFlashcard(input)
-        );
-
-        assertEquals(CREATE_MULTIPLE_QUESTIONS_ERROR, thrown.getMessage());
+        assertEquals(1, deck.getFlashcards().size());
+        Flashcard createdFlashcard = deck.getFlashcards().get(0);
+        assertEquals(" What is Java? /q Extra question ".trim(), createdFlashcard.getQuestion());
+        assertEquals(" A programming language.".trim(), createdFlashcard.getAnswer());
     }
 
     @Test
-    public void createFlashcard_multipleATags_throwsException() {
-        String input = "add /q What is Java? /a A programming language. /a Extra answer";
-
-        FlashCLIArgumentException thrown = assertThrows(
-                FlashCLIArgumentException.class,
-                () -> deck.createFlashcard(input)
-        );
-
-        assertEquals(CREATE_MULTIPLE_ANSWERS_ERROR, thrown.getMessage());
+    public void createFlashcard_hasTextBeforeQ_throwsException() {
+        String input = "afljafja/q What is Java? /a A programming language.";
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> deck.createFlashcard(input));
+        assertEquals(CREATE_INVALID_INPUT_ERROR, exception.getMessage());
     }
 
     @Test
