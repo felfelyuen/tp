@@ -422,6 +422,7 @@ public class Deck {
             incorrectIndexes.clear();
             incorrectFlashcards.clear();
             incorrectAnswers.clear();
+            isQuizCompleted = false;
             throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
         }
 
