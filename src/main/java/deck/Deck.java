@@ -4,6 +4,7 @@ import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
 import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
+import static constants.ErrorMessages.CREATE_INVALID_INPUT_ERROR;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
@@ -165,33 +166,32 @@ public class Deck {
      * @throws FlashCLIArgumentException If required fields are missing or in the wrong order.
      */
     private Result checkQuestionAndAnswer(String arguments) throws FlashCLIArgumentException {
-        boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
-        if (!containsAllArguments) {
-            logger.warning("Missing required fields: /q or /a");
+        int qIndex = arguments.indexOf("/q");
+        int aIndex = arguments.indexOf("/a");
+
+        if (qIndex == -1 || aIndex == -1) {
+            logger.warning("Missing /q or /a tag.");
             throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
         }
 
-        int questionStart = arguments.indexOf("/q");
-        int answerStart = arguments.indexOf("/a");
-
-        assert questionStart >= 0 : "Index of /q should be valid";
-        assert answerStart >= 0 : "Index of /a should be valid";
-
-        logger.fine("Index of /q: " + questionStart + ", Index of /a: " + answerStart);
-
-        if (questionStart > answerStart) {
-            logger.warning("Invalid order: /q comes after /a");
+        if (qIndex > aIndex) {
+            logger.warning("/q must come before /a.");
             throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
         }
 
-        String question = arguments.substring(questionStart + "/q".length(), answerStart).trim();
-        String answer = arguments.substring(answerStart + "/a".length()).trim();
-
-        if (question.isEmpty() || answer.isEmpty()) {
-            logger.warning("Missing description: question or answer is empty");
-            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
+        boolean hasTextBeforeQTag = !arguments.substring(0, qIndex).trim().isEmpty();
+        if (hasTextBeforeQTag) {
+            logger.warning("Text found before /q tag.");
+            throw new FlashCLIArgumentException(CREATE_INVALID_INPUT_ERROR);
         }
 
+        String question = arguments.substring(qIndex + "/q".length(), aIndex).trim();
+        String answer = arguments.substring(aIndex + "/a".length()).trim();
+
+        if (question.isEmpty() || answer.isEmpty()) {
+            logger.warning("Question or answer is empty.");
+            throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
+        }
         return new Result(question, answer);
     }
 

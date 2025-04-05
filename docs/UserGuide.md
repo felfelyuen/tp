@@ -22,7 +22,7 @@ FlashCLI 2.0 is a command-line flashcard application designed specifically for C
 
     * `new testDeck` : Creates a new deck named "testDeck".
 
-    * `select testDeck` : Selects the deck "testDeck".
+    * `select 1` : Selects the first deck.
 
     * `add /q What is an assertion? /a Assertions are used to...` : Creates a new flashcard with the question and answer provided.
 
@@ -63,6 +63,7 @@ List of commands:
 "rename": renames flashcard deck
 "decks": shows list of decks
 "select": selects deck of flashcards
+"remove": deletes a deck
 "search": searches within a deck or globally
 "exit": exits the program
 
@@ -71,6 +72,8 @@ Go to the flashCli User Guide website for more details
 ### Create flashcards: `add`
 Creates a flashcard which consists of the fields questions and answers and adds it to the selected deck. All fields are required. A deck must be selected first before using this command.
 
+Refer to the Developer's Guide for more information on the command.
+
 Format: `add /q QUESTION /a ANSWER`<br>
 Examples:
 * `add /q What language is used in CS2113? /a Java` → Adds a new flashcard with the question **What language is used in CS2113?** and answer **Java** to the current selected deck.
@@ -78,19 +81,19 @@ Examples:
 If no deck is selected, this command cannot be used.
 
 ### Create a new deck: `new`
-Creates a new deck with the given deck name. Deck name should not be already in use.
+Creates a new deck with the given deck name. Deck name should not already be in use.
 
 **Format:** `new DECKNAME`<br>
 **Examples:**
 * `new testDeck` → Creates a new deck named **testDeck** (if the name is not already taken).
 
 ### **Select a Deck: `select`**
-Switches to the specified deck via the deck name. There must be an available deck to select.
+Selects the specified deck via the index. There must be an available deck to select to use this command. You can view decks to select using the `decks` command.
 
-**Format:** `select DECKNAME`
+**Format:** `select INDEX`
 
 **Examples:**
-* **`select testDeck`** → Selects the deck named **testDeck**.
+* **`select 1`** → Selects the first deck.
 
 ### **Rename a Deck: `rename`**
 Renames the currently selected deck to a new name. A deck must be selected before using this command.
@@ -109,12 +112,12 @@ Displays a list of all available decks.
 * **`decks`** → Lists all existing decks.
 
 ### **Delete a Deck: `remove`**
-Deletes the specified deck. This action is **permanent** and **cannot be undone**.
+Deletes the specified deck. This action is **permanent** and **cannot be undone**. You can view decks to delete using the `decks` command.
 
-**Format:** `remove DECKNAME`
+**Format:** `remove INDEX`
 
 **Examples:**
-* **`remove testDeck`** → Deletes the deck named **testDeck** permanently.
+* **`remove 2`** → Deletes the second deck in the list. 
 
 ### Summary view of the flashcard deck: `list`
 Shows a list of all the flashcards in your deck, including information about the index and question of each flashcard. Limit to only 50 flashcards per page.
