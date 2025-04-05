@@ -71,6 +71,8 @@ Go to the flashCli User Guide website for more details
 ### Create flashcards: `add`
 Creates a flashcard which consists of the fields questions and answers and adds it to the selected deck. All fields are required. A deck must be selected first before using this command.
 
+Refer to the Developer's Guide for more information on the command.
+
 Format: `add /q QUESTION /a ANSWER`<br>
 Examples:
 * `add /q What language is used in CS2113? /a Java` → Adds a new flashcard with the question **What language is used in CS2113?** and answer **Java** to the current selected deck.

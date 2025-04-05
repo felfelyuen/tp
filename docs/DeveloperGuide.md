@@ -52,11 +52,28 @@ This section describes some noteworthy details on how certain features are imple
 ### 3.1. Flashcard features
 ### 3.1.1. Create a flashcard
 
-This command allows the user to create a new flashcard with compulsory `/q QUESTION` and `/a ANSWER` fields.
+This command allows the user to create a new flashcard with compulsory `QUESTION` and `ANSWER` fields, denoted by `/q` and `/a` tags.
 
 The create flashcard mechanism is facilitated by `Deck` and `CommandCreateFlashcard`.
 
 The feature requires a deck to be selected before usage.
+
+**Before creating the flashcard, these conditions must be satisfied:**
+* **Contains all arguments**: Arguments should have both tags `/q` and `/a`.
+* **Correct order**: The `/q` tag comes before the `a` tag.
+* **No text before `/q` tag**: There must be no text before the `/q` tag, i.e. `hello/q QUESTION /a ANSWER` is not permitted.
+* **No empty fields**: Neither `QUESTION` nor `ANSWER` field can be empty. This includes having only whitespaces in the fields.
+
+In addition, any text after the first `/q` tag will be considered as `QUESTION`, same for `/a` tags. 
+
+E.g. `/q What is the weather today? /q extra question /a Sunny /a extra answer` will create a flashcard with the following fields:
+
+**Question**: `What is the weather today? /q extra question`<br>
+**Answer**: `Sunny /a extra answer`
+
+Note that the question and answer fields are trimmed.
+
+If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
 
 **How the feature is implemented:**
 
@@ -70,13 +87,6 @@ Below is the sequence diagram describing the operations for creating the flashca
 4. This is achieved with the `Deck#checkQuestionAndAnswer` helper method.
 5. The `Deck#checkQuestionAndAnswer` helper method returns the valid strings of question and answer.
 6. A new flashcard is then created using the question and answer and added to the current selected deck.
-
-**Handling of edge cases:**
-* **Contains all arguments**: Arguments should have both question and answer fields
-* **Correct indices**: The index of the start of the question and answer is valid.
-* **Correct order**: The question comes before the answer.
-
-If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
 
 ### 3.1.2. Edit a flashcard
 
