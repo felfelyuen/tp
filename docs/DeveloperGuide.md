@@ -58,6 +58,8 @@ The create flashcard mechanism is facilitated by `Deck` and `CommandCreateFlashc
 
 The feature requires a deck to be selected before usage.
 
+Duplicates of the same flashcard are allowed.
+
 #### **Before creating the flashcard, these conditions must be satisfied:**
 
 * **Contains all arguments**: Arguments should have both tags `/q` and `/a`.
@@ -95,6 +97,7 @@ If the arguments are invalid, the exception `FlashCLIArgumentException` will be 
 - Each command eg `CommandCreateFlashcard` is a separate class, allowing the code to achieve the **Separation of Concerns** design principle.
 - The tags `/q` and `/a` are compulsory to prevent improper creation of Flashcard objects.
 - Any text after the first `/q` or `/a` tag will be considered as `QUESTION` or `ANSWER` respectively, to simplify the usage of the command and allow for a greater range of characters in the question.
+- Allowing duplicates gives users the flexibility to structure their decks according to their study preferences. For example, repeating a flashcard can help reinforce a key concept by increasing exposure during review.
 
 #### Alternatives Considered:
 

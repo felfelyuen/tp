@@ -22,7 +22,7 @@ FlashCLI 2.0 is a command-line flashcard application designed specifically for C
 
     * `new testDeck` : Creates a new deck named "testDeck".
 
-    * `select testDeck` : Selects the deck "testDeck".
+    * `select 1` : Selects the first deck.
 
     * `add /q What is an assertion? /a Assertions are used to...` : Creates a new flashcard with the question and answer provided.
 
@@ -63,6 +63,7 @@ List of commands:
 "rename": renames flashcard deck
 "decks": shows list of decks
 "select": selects deck of flashcards
+"remove": deletes a deck
 "search": searches within a deck or globally
 "exit": exits the program
 
@@ -80,19 +81,19 @@ Examples:
 If no deck is selected, this command cannot be used.
 
 ### Create a new deck: `new`
-Creates a new deck with the given deck name. Deck name should not be already in use.
+Creates a new deck with the given deck name. Deck name should not already be in use.
 
 **Format:** `new DECKNAME`<br>
 **Examples:**
 * `new testDeck` → Creates a new deck named **testDeck** (if the name is not already taken).
 
 ### **Select a Deck: `select`**
-Switches to the specified deck via the deck name. There must be an available deck to select.
+Selects the specified deck via the index. There must be an available deck to select to use this command.
 
-**Format:** `select DECKNAME`
+**Format:** `select INDEX`
 
 **Examples:**
-* **`select testDeck`** → Selects the deck named **testDeck**.
+* **`select 1`** → Selects the first deck.
 
 ### **Rename a Deck: `rename`**
 Renames the currently selected deck to a new name. A deck must be selected before using this command.

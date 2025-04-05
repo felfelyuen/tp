@@ -49,6 +49,8 @@ public class ErrorMessages {
     public static final String NO_SUCH_DECK = "Deck does not exist!";
     public static final String NO_DECK_TO_VIEW = "No decks available. Create a deck to start.";
     public static final String DELETE_EMPTY_DECK_ERROR = "No decks available. Unable to delete.";
+    public static final String DECK_INDEX_OUT_OF_BOUNDS = "Index is out of bounds of the current list of decks.";
+    public static final String DECK_EMPTY_INPUT = "Index cannot be empty.";
 
     // Code insertion error messages
     public static final String INSERT_MISSING_FIELD = "Missing /c in input.";

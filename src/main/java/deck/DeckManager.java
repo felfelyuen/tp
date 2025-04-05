@@ -1,13 +1,14 @@
 //@@author Betahaxer
 package deck;
 
-import static constants.ErrorMessages.DELETE_EMPTY_DECK_ERROR;
+import static constants.ErrorMessages.DECK_EMPTY_INPUT;
+import static constants.ErrorMessages.DECK_INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.DUPLICATE_DECK_NAME;
 import static constants.ErrorMessages.EMPTY_DECK_NAME;
+import static constants.ErrorMessages.INVALID_INDEX_INPUT;
 import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
-import static constants.ErrorMessages.NO_SUCH_DECK;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
 import static constants.ErrorMessages.VIEW_DECKS_NO_ARGUMENTS_ALLOWED;
@@ -15,10 +16,13 @@ import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.DELETE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SEARCH_SUCCESS;
-import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
+import static constants.SuccessMessages.SELECT_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
+import static java.lang.Integer.parseInt;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -48,6 +52,28 @@ public class DeckManager {
      */
     public static int getDeckSize() {
         return decks.size();
+    }
+
+    public static Deck getDeckByIndex(int index) {
+        // Convert the entry set to a list to enable index-based access
+        List<Map.Entry<String, Deck>> entryList = new ArrayList<>(decks.entrySet());
+        return entryList.get(index).getValue();  // Returns the Deck at the specified index
+    }
+
+    public static void removeDeckByIndex(int index) {
+        // Convert the entry set to a list to enable index-based access
+        List<Map.Entry<String, Deck>> entryList = new ArrayList<>(decks.entrySet());
+        Map.Entry<String, Deck> entryToRemove = entryList.get(index);
+
+        decks.remove(entryToRemove.getKey());
+    }
+
+    public static void updateDeckByIndex(int index, String newKey, Deck newDeck) {
+        // Convert the entry set to a list to enable index-based access
+        List<Map.Entry<String, Deck>> entryList = new ArrayList<>(decks.entrySet());
+        Map.Entry<String, Deck> entry = entryList.get(index);
+        decks.remove(entry.getKey());
+        decks.put(newKey, newDeck);
     }
 
     /**
@@ -198,33 +224,41 @@ public class DeckManager {
     }
 
     /**
-     * Switches the current deck to the specified deck.
+     * Selects the deck with the index provided
      *
-     * @param arguments the name of the deck to switch to.
+     * @param arguments the index of the deck to switch to.
      * @return a success message indicating the active deck has changed.
      * @throws FlashCLIArgumentException if the deck does not exist or input is invalid.
      */
     public static String selectDeck(String arguments) throws FlashCLIArgumentException {
         logger.info("Entering selectDeck method with arguments: " + arguments);
-        String deckName = arguments.trim();
+
+        String trimmedArguments = arguments.trim();
+        if (trimmedArguments.isEmpty()) {
+            throw new FlashCLIArgumentException(DECK_EMPTY_INPUT);
+        }
+
+        int listIndex;
+        try {
+            listIndex = Integer.parseInt(trimmedArguments) - 1;
+        } catch (NumberFormatException e) {
+            throw new FlashCLIArgumentException(INVALID_INDEX_INPUT);
+        }
+
         if (decks.isEmpty()) {
             logger.warning("Attempted to switch decks, but no decks are available.");
             throw new FlashCLIArgumentException(NO_DECK_TO_SWITCH);
         }
 
-        if (!decks.containsKey(deckName)) {
-            logger.warning("Deck '" + deckName + "' does not exist.");
-            throw new FlashCLIArgumentException(NO_SUCH_DECK);
+        if (listIndex < 0 || listIndex >= decks.size()) {
+            throw new FlashCLIArgumentException(DECK_INDEX_OUT_OF_BOUNDS);
         }
 
-        currentDeck = decks.get(deckName);
-        logger.info("Switched to deck: " + currentDeck.getName());
-
+        currentDeck = getDeckByIndex(listIndex);
         assert currentDeck != null : "Current deck should not be null after switching!";
         assert decks.containsKey(currentDeck.getName()) : "Switched deck does not exist in decks!";
-
-        logger.info("Deck switched successfully: " + currentDeck.getName());
-        return String.format(SWITCH_DECK_SUCCESS, currentDeck.getName());
+        logger.info("Switched to deck: " + currentDeck.getName());
+        return String.format(SELECT_DECK_SUCCESS, currentDeck.getName());
     }
 
     /**
