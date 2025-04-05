@@ -1,4 +1,3 @@
-//@@ ManZ9802
 package storage;
 
 import java.io.File;
@@ -77,6 +76,20 @@ public class Saving {
             if (!file.delete()) {
                 System.out.println("Failed to delete deck file: " + deckName);
             }
+        }
+    }
+
+    public static void renameDeckFile(String oldName, String newName) throws IOException {
+        File oldFile = new File("./data/decks/" + oldName.toLowerCase() + ".txt");
+        File newFile = new File("./data/decks/" + newName.toLowerCase() + ".txt");
+
+        if (oldFile.exists()) {
+            boolean success = oldFile.renameTo(newFile);
+            if (!success) {
+                System.out.println("Failed to rename deck file from " + oldName + " to " + newName);
+            }
+        } else {
+            System.out.println("Deck file to rename not found: " + oldName);
         }
     }
 }

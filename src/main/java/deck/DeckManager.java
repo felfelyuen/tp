@@ -17,6 +17,7 @@ import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
 import static storage.Saving.deleteDeckFile;
+import static storage.Saving.renameDeckFile;
 import static storage.Saving.saveDeck;
 
 import java.io.IOException;
@@ -124,6 +125,11 @@ public class DeckManager {
         currentDeck.setName(newDeckName);
         decks.put(newDeckName, currentDeck);
         decks.remove(oldDeckName);
+        try {
+            renameDeckFile(oldDeckName, newDeckName);
+        } catch (IOException e) {
+            System.out.println("Error renaming deck file: " + e.getMessage());
+        }
 
         assert !decks.containsKey(oldDeckName) : "Old deck name still exists after renaming!";
         assert decks.containsKey(newDeckName) : "New deck name was not successfully added!";
