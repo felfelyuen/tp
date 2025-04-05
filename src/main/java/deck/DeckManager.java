@@ -91,6 +91,24 @@ public class DeckManager {
         logger.info("Entering renameDeck method with arguments: " + arguments);
 
         String newDeckName = arguments.trim();
+        validateNewDeckName(newDeckName);
+
+        String oldDeckName = currentDeck.getName();
+        logger.info("Renaming deck: " + oldDeckName + " -> " + newDeckName);
+
+        renameDeckInCollection(oldDeckName, newDeckName);
+
+        logger.info("Deck renamed successfully: " + oldDeckName + " -> " + newDeckName);
+        return String.format(RENAME_DECK_SUCCESS, oldDeckName, currentDeck.getName());
+    }
+
+    /**
+     * Validates the new deck name by ensuring it is not empty, unchanged, or a duplicate.
+     *
+     * @param newDeckName The new name for the deck.
+     * @throws FlashCLIArgumentException If the new deck name is invalid.
+     */
+    private static void validateNewDeckName(String newDeckName) throws FlashCLIArgumentException {
         if (newDeckName.isEmpty()) {
             logger.warning("Deck name is empty.");
             throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
@@ -108,11 +126,16 @@ public class DeckManager {
             logger.warning("Attempt to rename deck to an existing deck name: " + newDeckName);
             throw new FlashCLIArgumentException(DUPLICATE_DECK_NAME);
         }
+    }
 
-        assert currentDeck != null: "A deck must be selected before renaming!";
-
-        String oldDeckName = currentDeck.getName();
-        logger.info("Renaming deck: " + oldDeckName + " -> " + newDeckName);
+    /**
+     * Renames the deck in the collection, updating the deck name and removing the old name.
+     *
+     * @param oldDeckName The old name of the deck.
+     * @param newDeckName The new name of the deck.
+     */
+    private static void renameDeckInCollection(String oldDeckName, String newDeckName) {
+        assert currentDeck != null : "A deck must be selected before renaming!";
 
         currentDeck.setName(newDeckName);
         decks.put(newDeckName, currentDeck);
@@ -121,9 +144,6 @@ public class DeckManager {
         assert !decks.containsKey(oldDeckName) : "Old deck name still exists after renaming!";
         assert decks.containsKey(newDeckName) : "New deck name was not successfully added!";
         assert currentDeck.getName().equals(newDeckName) : "Current deck name was not updated properly!";
-
-        logger.info("Deck renamed successfully: " + oldDeckName + " -> " + newDeckName);
-        return String.format(RENAME_DECK_SUCCESS, oldDeckName, currentDeck.getName());
     }
 
     /**
