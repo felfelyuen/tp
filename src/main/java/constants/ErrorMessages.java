@@ -29,6 +29,11 @@ public class ErrorMessages {
     public static final String CREATE_MISSING_FIELD = "Missing /q or /a in input.";
     public static final String CREATE_MISSING_DESCRIPTION = "Question or Answer cannot be empty.";
     public static final String CREATE_INVALID_ORDER = "/a Answer first /q Question later";
+    public static final String CREATE_MULTIPLE_QUESTIONS_ERROR = "Only one /q tag is allowed.";
+    public static final String CREATE_MULTIPLE_ANSWERS_ERROR = "Only one /a tag is allowed.";
+    public static final String CREATE_INVALID_INPUT_ERROR = "Invalid input: Text found before the /q tag. " +
+            "Please start your input with /q.";
+
     public static final String INVALID_INDEX_INPUT = "Input is not a number";
     public static final String INDEX_OUT_OF_BOUNDS = "Input is out of bounds of current list of flashcards";
     public static final String EDIT_USAGE = "Usage: " + EDIT_CARD + " {INDEX} /q {QUESTION} /a {ANSWER}";
@@ -38,12 +43,15 @@ public class ErrorMessages {
     public static final String MISSING_DECK_NAME = "Deck must have a name.";
     public static final String NO_DECK_TO_SWITCH = "No decks available. Create a deck before selecting.";
     public static final String NO_DECK_ERROR = "Select a deck first!";
+    public static final String VIEW_DECKS_NO_ARGUMENTS_ALLOWED = "The 'decks' command does not take any arguments.";
     public static final String EMPTY_DECK_NAME = "Deck name must not be empty!";
     public static final String DUPLICATE_DECK_NAME = "Deck name already exists!";
     public static final String UNCHANGED_DECK_NAME = "Deck name is unchanged!";
     public static final String NO_SUCH_DECK = "Deck does not exist!";
     public static final String NO_DECK_TO_VIEW = "No decks available. Create a deck to start.";
     public static final String DELETE_EMPTY_DECK_ERROR = "No decks available. Unable to delete.";
+    public static final String DECK_INDEX_OUT_OF_BOUNDS = "Index is out of bounds of the current list of decks.";
+    public static final String DECK_EMPTY_INPUT = "Index cannot be empty.";
 
     // Code insertion error messages
     public static final String INSERT_MISSING_FIELD = "Missing /c in input.";

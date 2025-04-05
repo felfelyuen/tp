@@ -1,19 +1,21 @@
 package deck;
 
-import static constants.ErrorMessages.DELETE_EMPTY_DECK_ERROR;
+import static constants.ErrorMessages.DECK_EMPTY_INPUT;
+import static constants.ErrorMessages.DECK_INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.DUPLICATE_DECK_NAME;
 import static constants.ErrorMessages.EMPTY_DECK_NAME;
+import static constants.ErrorMessages.INVALID_INDEX_INPUT;
 import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
-import static constants.ErrorMessages.NO_SUCH_DECK;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
+import static constants.ErrorMessages.VIEW_DECKS_NO_ARGUMENTS_ALLOWED;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.DELETE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SEARCH_SUCCESS;
-import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
+import static constants.SuccessMessages.SELECT_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
 import static deck.DeckManager.createDeck;
 import static deck.DeckManager.currentDeck;
@@ -122,51 +124,104 @@ public class DeckManagerTest {
         createDeck("Object Diagrams");
         createDeck("Sequence Diagrams");
         String expectedOutput = "1. Class Diagrams\n2. Object Diagrams\n3. Sequence Diagrams";
-        String result = viewDecks();
+        String arguments = "";
+        String result = viewDecks(arguments);
         assertEquals(String.format(VIEW_DECKS_SUCCESS, expectedOutput), result);
     }
 
     @Test
     void viewDecks_noDecks_throwsException() {
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, DeckManager::viewDecks);
+        String arguments = "";
+        FlashCLIArgumentException exception = assertThrows(
+                FlashCLIArgumentException.class,
+                () -> DeckManager.viewDecks(arguments)
+        );
         assertEquals(NO_DECK_TO_VIEW, exception.getMessage());
     }
 
+    @Test
+    public void viewDecks_unexpectedArguments_throwsException() throws FlashCLIArgumentException {
+        createDeck("Class Diagrams");
+        String invalidArgs = "some extra text";
+        FlashCLIArgumentException exception = assertThrows(
+                FlashCLIArgumentException.class,
+                () -> viewDecks(invalidArgs)
+        );
+        assertEquals(VIEW_DECKS_NO_ARGUMENTS_ALLOWED, exception.getMessage());
+    }
+
     /*
-     * Tests for switch decks command ==============================================================================
+     * Tests for select decks command ==============================================================================
      */
 
     @Test
-    void selectDeck_validDeckName_success() throws FlashCLIArgumentException {
+    void selectDeck_validDeckIndex_success() throws FlashCLIArgumentException {
         createDeck("Quality Assurance");
-        String result = selectDeck("Quality Assurance");
-        assertEquals(String.format(SWITCH_DECK_SUCCESS, "Quality Assurance"), result);
+        String result = selectDeck("1");
+        assertEquals(String.format(SELECT_DECK_SUCCESS, "Quality Assurance"), result);
     }
 
     @Test
     void selectDeck_noDecksAvailable_throwsException() {
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            selectDeck("Design Patterns");
+            selectDeck("1");
         });
         assertEquals(NO_DECK_TO_SWITCH, exception.getMessage());
     }
 
     @Test
-    void selectDeck_emptyDeckName_throwsException() throws FlashCLIArgumentException {
+    void selectDeck_emptyInput_throwsException() throws FlashCLIArgumentException {
         createDeck("Test Coverage");
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
             selectDeck("");
         });
-        assertEquals(NO_SUCH_DECK, exception.getMessage());
+        assertEquals(DECK_EMPTY_INPUT, exception.getMessage());
     }
 
     @Test
     void selectDeck_nonExistentDeck_throwsException() throws FlashCLIArgumentException {
         createDeck("Architecture");
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            selectDeck("Mona Lisa");
+            selectDeck("5");
         });
-        assertEquals(NO_SUCH_DECK, exception.getMessage());
+        assertEquals(DECK_INDEX_OUT_OF_BOUNDS, exception.getMessage());
+    }
+
+    @Test
+    void selectDeck_multipleDecks_selectsCorrectDeck() throws FlashCLIArgumentException {
+        createDeck("Deck1");
+        createDeck("Deck2");
+        createDeck("Deck3");
+        createDeck("Last Deck");
+        String result = selectDeck("3");
+        assertEquals(String.format(SELECT_DECK_SUCCESS, "Deck3"), result);
+    }
+
+    @Test
+    void selectDeck_negativeIndex_throwsException() throws FlashCLIArgumentException {
+        createDeck("Deck1");
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            selectDeck("-1");
+        });
+        assertEquals(DECK_INDEX_OUT_OF_BOUNDS, exception.getMessage());
+    }
+
+    @Test
+    void selectDeck_nonNumericInput_throwsException() throws FlashCLIArgumentException {
+        createDeck("Deck1");
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            selectDeck("abc");
+        });
+        assertEquals(INVALID_INDEX_INPUT, exception.getMessage());
+    }
+
+    @Test
+    void selectDeck_onlySpacesInput_throwsException() throws FlashCLIArgumentException {
+        createDeck("Spaces Input Deck");
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            selectDeck("   ");  // Spaces input
+        });
+        assertEquals(DECK_EMPTY_INPUT, exception.getMessage());
     }
 
     /*
@@ -182,46 +237,11 @@ public class DeckManagerTest {
     }
 
     @Test
-    void deleteDeck_emptyDeckList_throwsException() {
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            deleteDeck("System Testing");
-        });
-        assertEquals(DELETE_EMPTY_DECK_ERROR, exception.getMessage());
-    }
-
-    @Test
-    void deleteDeck_nonExistentDeck_throwsException() {
-        decks.put("Unit Testing", new Deck("Unit Testing"));
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            deleteDeck("Test Case Design");
-        });
-        assertEquals(NO_SUCH_DECK, exception.getMessage());
-    }
-
-    @Test
-    void deleteDeck_emptyDeckName_throwsException() {
-        decks.put("System Testing", new Deck("System Testing"));
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            deleteDeck(" ");
-        });
-        assertEquals(EMPTY_DECK_NAME, exception.getMessage());
-    }
-
-    @Test
     void deleteDeck_trimsInputBeforeDeletion_successMessage() throws FlashCLIArgumentException {
         decks.put("Alpha/Beta Testing", new Deck("Alpha/Beta Testing"));
         String result = deleteDeck("  Alpha/Beta Testing  ");
         assertEquals(String.format(DELETE_DECK_SUCCESS, "Alpha/Beta Testing"), result);
         assertFalse(decks.containsKey("Alpha/Beta Testing"));
-    }
-
-    @Test
-    void deleteDeck_caseSensitiveDeletion_throwsException() {
-        decks.put("Partitioning", new Deck("Partitioning"));
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            deleteDeck("partitioning");
-        });
-        assertEquals(NO_SUCH_DECK, exception.getMessage());
     }
 
     @Test

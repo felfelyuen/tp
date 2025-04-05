@@ -40,9 +40,13 @@ import static constants.CommandConstants.LIST_CARDS;
 import static constants.CommandConstants.SEARCH_CARD;
 import static constants.ConfirmationMessages.CONFIRM_DELETE_DECK;
 import static constants.CommandConstants.VIEW_RES;
+import static constants.ErrorMessages.DECK_INDEX_OUT_OF_BOUNDS;
+import static constants.ErrorMessages.DELETE_EMPTY_DECK_ERROR;
 import static constants.ErrorMessages.NO_DECK_ERROR;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
+import static deck.DeckManager.checkAndGetListIndex;
 import static deck.DeckManager.currentDeck;
+import static deck.DeckManager.decks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,8 +92,8 @@ public class Parser {
         case NEW_DECK -> new CommandCreateDeck(arguments);
         case SELECT_DECK -> new CommandSelectDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
-        case VIEW_DECKS -> new CommandViewDecks();
-        case REMOVE_DECK -> handleDeleteDeckConfirmation(arguments);
+        case VIEW_DECKS -> new CommandViewDecks(arguments);
+        case REMOVE_DECK -> validateDeckExistsForDelete(arguments);
 
         case QUIZ -> new CommandQuizFlashcards();
         case VIEW_RES -> new CommandViewQuizResult();
@@ -99,6 +103,29 @@ public class Parser {
         case USER_GUIDE -> new CommandUserGuide();
         default -> throw new FlashCLIArgumentException(POSSIBLE_COMMANDS);
         };
+    }
+
+    /**
+     * Validates that the deck to be deleted exists and is valid.
+     * Throws an exception if the deck list is empty, the name is empty, or the deck does not exist.
+     * If validation passes, proceeds to confirmation for deletion.
+     *
+     * @param arguments the raw user input representing the deck name.
+     * @return a {@code CommandDeleteDeck} if deletion is confirmed, or {@code null} if cancelled.
+     * @throws FlashCLIArgumentException if validation fails due to missing or invalid deck.
+     */
+    public static Command validateDeckExistsForDelete(String arguments) throws FlashCLIArgumentException {
+        int listIndex = checkAndGetListIndex(arguments);
+
+        if (decks.isEmpty()) {
+            throw new FlashCLIArgumentException(DELETE_EMPTY_DECK_ERROR);
+        }
+
+        if (listIndex < 0 || listIndex >= decks.size()) {
+            throw new FlashCLIArgumentException(DECK_INDEX_OUT_OF_BOUNDS);
+        }
+
+        return handleDeleteDeckConfirmation(arguments);
     }
 
     /**

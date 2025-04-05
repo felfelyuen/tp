@@ -1,31 +1,35 @@
 # FlashCLI Developer Guide
 
-## Table of Contents
-1. [Acknowledgements](#acknowledgements)
-2. [Implementation](#implementation)
-    - [Flashcard Features](#flashcard-features)
-        - [Create Flashcard](#create-a-flashcard)
-        - [Edit Flashcard](#edit-flashcard-question-and-answer-feature)
-        - [Delete Flashcard](#delete-flashcard-feature)
-        - [View Answer](#view-flashcard-answer-feature)
-        - [Insert Code Snippet](#insert-code-snippet)
-    - [Deck Features](#deck-features)
-        - [Create Deck](#creating-a-new-deck)
-        - [Rename Deck](#renaming-decks)
-        - [List Decks](#listing-all-decks)
-        - [Select Deck](#selecting-a-deck)
-        - [Delete Deck](#deleting-a-deck)
-    - [Search Feature](#search-feature)
-    - [Save/Load Functionality](#saveload-functionality)
-3. [Product Scope](#product-scope)
-    - [Target User Profile](#target-user-profile)
-    - [Value Proposition](#value-proposition)
-4. [User Stories](#user-stories)
-5. [Non-Functional Requirements](#non-functional-requirements)
-6. [Glossary](#glossary)
-7. [Testing Instructions](#instructions-for-manual-testing)
+---
 
-## Acknowledgements
+## Table of Contents
+1. [Acknowledgements](#1-acknowledgements)
+2. [Notes](#2-notes)
+3. [Implementation](#3-implementation)
+    - [3.1. Flashcard Features](#31-flashcard-features)
+        - [3.1.1. Create a flashcard](#311-create-a-flashcard)
+        - [3.1.2. Edit a flashcard](#312-edit-a-flashcard)
+        - [3.1.3. Delete a flashcard](#313-delete-a-flashcard)
+        - [3.1.4. View a flashcard answer](#314-view-a-flashcard-answer)
+        - [3.1.5. Insert code snippet in a flashcard](#315-insert-code-snippet-in-a-flashcard)
+    - [3.2. Deck Features](#32-deck-features)
+        - [3.2.1. Creating a new deck](#321-creating-a-new-deck)
+        - [3.2.2. Renaming decks](#322-renaming-decks)
+        - [3.2.3. Listing all decks](#323-listing-all-decks)
+        - [3.2.4. Selecting a deck](#324-selecting-a-deck)
+        - [3.2.5. Deleting a deck](#325-deleting-a-deck)
+        - [3.2.6. Searching](#326-searching)
+        - [3.2.7. Save/Load Functionality](#327-saveload-functionality)
+        - [3.2.8. Viewing quiz results ](#328-viewing-quiz-results)
+4. [Appendix A: Product Scope](#appendix-a-product-scope)
+5. [Appendix B: User Stories](#appendix-b-user-stories)
+6. [Appendix C: Non-Functional Requirements](#appendix-c-non-functional-requirements)
+7. [Appendix D: Glossary](#appendix-d-glossary)
+8. [Appendix E: Instructions for manual testing](#appendix-e-instructions-for-manual-testing)
+
+---
+
+## 1. Acknowledgements
 
 Third-party libraries used:
 - Java SE 17 - Core Java platform
@@ -34,43 +38,77 @@ Third-party libraries used:
 
 This project's structure was inspired by the SE-EDU AddressBook-Level3 project.
 
-## Notes
+---
+
+## 2. Notes
 
 This Developer Guide documents the core architecture and key components of FlashCLI, but does not exhaustively cover all implemented classes
 
-## Implementation
-This section describes some noteworthy details on how certain features are implemented. 
+---
 
-### Flashcard features
-### Create a flashcard
+## 3. Implementation
+This section describes some noteworthy details on how the features are implemented. 
 
-This command allows the user to create a new flashcard with compulsory `/q QUESTION` and `/a ANSWER` fields.
+### 3.1. Flashcard features
+### 3.1.1. Create a flashcard
+
+This command allows the user to create a new flashcard with compulsory `QUESTION` and `ANSWER` fields, denoted by `/q` and `/a` tags.
 
 The create flashcard mechanism is facilitated by `Deck` and `CommandCreateFlashcard`.
 
 The feature requires a deck to be selected before usage.
 
-**How the feature is implemented:**
+Duplicates of the same flashcard are allowed.
 
-Below is the sequence diagram describing the operations for creating the flashcard:
+#### **Before creating the flashcard, these conditions must be satisfied:**
 
-![](images/CreateFlashcardSequenceDiagram.png)
+* **Contains all arguments**: Arguments should have both tags `/q` and `/a`.
+* **Correct order**: The `/q` tag comes before the `/a` tag.
+* **No text before `/q` tag**: There must be no text before the `/q` tag, i.e. `hello/q QUESTION /a ANSWER` is not permitted.
+* **No empty fields**: Neither `QUESTION` nor `ANSWER` field can be empty. This includes having only whitespaces in the fields.
 
-1. The `CommandCreateFlashcard#executeCommand()` method is executed which calls `Deck#createFlashcard()`.
-2. A new `Flashcard` object is created when the user uses the command.
-3. When `Deck#createFlashcard()` is called by the `CommandCreateFlashcard#executeCommand()` method, it immediately checks if the input arguments (without the command) is valid. 
-4. This is achieved with the `Deck#checkQuestionAndAnswer` helper method.
-5. The `Deck#checkQuestionAndAnswer` helper method returns the valid strings of question and answer.
-6. A new flashcard is then created using the question and answer and added to the current selected deck.
+In addition, any text after the first `/q` or `/a` tag will be considered as `QUESTION` or `ANSWER` respectively.
 
-**Handling of edge cases:**
-* **Contains all arguments**: Arguments should have both question and answer fields
-* **Correct indices**: The index of the start of the question and answer is valid.
-* **Correct order**: The question comes before the answer.
+In particular, if there are multiple `/q` or `/a` tags, they will be considered part of the `QUESTION` or `ANSWER`.
+
+e.g. `/q What is the weather today? /q extra question /a Sunny /a extra answer`<br>
+**Question**: `What is the weather today? /q extra question`<br>
+**Answer**: `Sunny /a extra answer`
+
+Note that the question and answer fields will be trimmed.
 
 If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
 
-### Edit Flashcard Question and Answer Feature
+**Below is the sequence diagram describing the operations for creating the flashcard:**
+
+![](images/CreateFlashcardSequenceDiagram.png)
+
+1. When the command is executed using `CommandCreateFlashcard#executeCommand()`, the `Deck#createFlashcard()` method is called.
+2. Then, `Deck#checkQuestionAndAnswer()` checks if the arguments are valid, according to the previously mentioned [conditions](#before-creating-the-flashcard-these-conditions-must-be-satisfied).
+3. If it is valid, the question and answer strings will be passed to create a new `Flashcard` object.
+4. A success message will then be shown to the user.
+
+**Note**: The lifeline for `CommandCreateFlashcard` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+
+#### Why is it implemented this way?
+
+- The user has to select a deck before creating a flashcard, which prevents flashcards from being created and not being in any decks.
+- 
+- Each command eg `CommandCreateFlashcard` is a separate class, allowing the code to achieve the **Separation of Concerns** design principle.
+- The tags `/q` and `/a` are compulsory to prevent improper creation of Flashcard objects.
+- Any text after the first `/q` or `/a` tag will be considered as `QUESTION` or `ANSWER` respectively, to simplify the usage of the command and allow for a greater range of characters in the question.
+- Allowing duplicates gives users the flexibility to structure their decks according to their study preferences. For example, repeating a flashcard can help reinforce a key concept by increasing exposure during review.
+
+#### Alternatives Considered:
+
+- Using a regex expression
+  - Pros: More concise code, can handle a wider range of possible inputs with increased flexibility.
+  - Cons: Difficult to debug and understand, especially for Developers with little experience with regex.
+- Only allowing `/q` and `/a` tags i.e. should have no foreign tags allowed
+  - Pros: Ensures that user keys in only the inputs required.
+  - Cons: Difficult to define what is a "foreign" tag. Users might not be able to use `/` in their `QUESTION` or `ANSWER`. Also significantly increases complexity without achieving much functionality.
+
+### 3.1.2. Edit a flashcard
 
 #### Design
 
@@ -97,7 +135,7 @@ This feature enables the user to edit the question and answer to a specific flas
 - Invalid index format → `NumberFormatException`
 - Out-of-bounds index → `ArrayIndexOutOfBoundsException`
 
-### Delete Flashcard Feature
+### 3.1.3. Delete a flashcard
 
 #### Design
 
@@ -129,7 +167,7 @@ The delete flashcard feature allows users to remove a specific flashcard from th
 - Invalid input format (e.g., not an integer) → `NumberFormatException`
 - Index out of bounds → `ArrayIndexOutOfBoundsException`
 
-### View Flashcard Answer Feature
+### 3.1.4. View a flashcard answer
 
 #### Design
 
@@ -155,7 +193,7 @@ This feature enables the user to view the answer to a specific flashcard by supp
 - Validates that it's a valid number and within bounds
 - Retrieves and displays the answer
 
-### Insert Code Snippet
+### 3.1.5. Insert code snippet in a flashcard
 
 #### Design
 
@@ -182,10 +220,14 @@ This feature enables the user to insert a code snippet to a specific flashcard b
 - Invalid index format → `NumberFormatException`
 - Out-of-bounds index → `ArrayIndexOutOfBoundsException`
 
-### Deck features
-### Creating a New Deck
+### 3.2. Deck features
+### 3.2.1. Creating a New Deck
 
-The `new` command is implemented using the `Deck` class, which represents a collection of flashcards, and the `CommandCreateDeck` class, which processes user input to create a new deck. To ensure deck names are unique, a hashmap is used to track existing deck names.
+This feature allows the user to create a new deck with a deck name. 
+
+The create deck mechanism is facilitated by `DeckManager` and `CommandCreateDeck`.
+
+To ensure deck names are unique, a hashmap is used to track existing deck names.
 
 #### Implementation of `DeckManager.createDeck()`
 Below shows the sequence diagram of the operations of creating a deck:
@@ -203,7 +245,7 @@ Below shows the sequence diagram of the operations of creating a deck:
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
-### Renaming decks
+### 3.2.2. Renaming decks
 
 The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. Similar to creating decks, a hashmap is used to track existing deck names. A deck has to be selected before being able to use this command.
 
@@ -224,7 +266,7 @@ Below shows the sequence diagram for the operations of rename deck:
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
-### Listing all decks
+### 3.2.3. Listing all decks
 
 The `decks` command is implemented using the `Deck` class and the `CommandViewDecks` class. 
 
@@ -236,7 +278,7 @@ The `decks` command is implemented using the `Deck` class and the `CommandViewDe
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
-### Selecting a deck
+### 3.2.4. Selecting a deck
 
 The `select` command is implemented using the `Deck` class and the `CommandSelectDeck` class.
 
@@ -249,7 +291,7 @@ The `select` command is implemented using the `Deck` class and the `CommandSelec
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
-### Deleting a deck
+### 3.2.5. Deleting a deck
 
 The `remove` command is implemented using the `Deck` class and the `CommandDeleteDeck` class.
 
@@ -265,7 +307,7 @@ The `remove` command is implemented using the `Deck` class and the `CommandDelet
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
-### Search Feature
+### 3.2.6. Searching
 
 #### Design
 
@@ -335,7 +377,7 @@ This command bridges user input with search logic:
 - Could be extended to highlight matched terms or paginate long results
 - Error handling is gracefully propagated to the UI layer
 
-### Save/Load Functionality
+### 3.2.7. Save/Load Functionality
 
 #### Design
 
@@ -398,7 +440,7 @@ Saving.saveAllDecks(DeckManager.decks);
 - Current implementation assumes well-formed files
 - Future improvements: introduce backup/restore, encryption, or support for import/export formats like JSON/CSV
 
-### View Quiz Result Functionality
+### 3.2.8. Viewing quiz results
 
 #### Design
 
@@ -428,21 +470,23 @@ This design enables detailed post-quiz analysis while maintaining data consisten
 5. Correct/incorrect counts
 6. Calls showMistakes() for detailed review
 
-## Product scope
-### Target user profile
+---
 
-The user should:
-- be a CS2113 student
+## Appendix A: Product scope
+**Target user profile:**
+- CS2113 student
 - prefer desktop apps over other types
 - prefers typing to mouse interactions
 - is reasonably comfortable using CLI apps
 
-### Value proposition
+**Value proposition:**
 
 This app provides a no-frills solution to helping CS2113 students study and 
 practice using terminal commands while memorising key information required for the course.
 
-## User Stories
+---
+
+## Appendix B: User Stories
 
 | Version | As a ... | I want to ...                                                    | So that I can ...                                      |
 |---------|----------|------------------------------------------------------------------|--------------------------------------------------------|
@@ -466,14 +510,18 @@ practice using terminal commands while memorising key information required for t
 | v2.0    | student  | access my flashcards and decks across sessions                   | continue my revision without losing progress           |
 | v2.0    | student  | see a nice UI                                                    | have a comfortable viewing experience                  |
 
-## Non-Functional Requirements
+---
+
+## Appendix C: Non-Functional Requirements
 1. Should be compatible on any mainstream OS as long as it has Java 17 or above installed. 
 2. The system should respond to user input within 5 seconds for most commands under typical usage.
 3. Should be intuitive for most users familiar with a command line user interface .
 4. End-users should be able to set up and run the flashcard quizzes within 3 steps (create deck, add flashcard, quiz).
 5. The system has automated logging after the end of every session, and be able to store up to a casual amount of usage.
 
-## Glossary
+---
+
+## Appendix D: Glossary
 
 * *Mainstream OS* - Windows, Linux, Unix, macOS
 * *Flashcard* - An Object with parameters *index*, *question*, *answer*, *codeSnippet*, *isLearned*
@@ -485,7 +533,9 @@ practice using terminal commands while memorising key information required for t
 * *FlashCLIArgumentException* - thrown if an invalid input is inputted
 * *QuizCancelledException* - thrown if the quiz is cancelled halfway
 
-## Instructions for manual testing
+---
+
+## Appendix E: Instructions for manual testing
 
 ### Notes
 * *Testing Purpose* - These instructions are for basic testing only
@@ -680,8 +730,8 @@ practice using terminal commands while memorising key information required for t
   Answer: Object-Oriented Prog
 
 ### Command Prefix Key
-| Prefix | Purpose          | Example                  |
-|--------|------------------|--------------------------|
-| /q     | Question         | `/q What is OOP?`        |
-| /a     | Answer           | `/a Object-Oriented Prog`|
-| /c     | Code snippet     | `/c System.out.println()`|
+| Prefix | Purpose      | Example                   |
+|--------|--------------|---------------------------|
+| /q     | Question     | `/q What is OOP?`         |
+| /a     | Answer       | `/a Object-Oriented Prog` |
+| /c     | Code snippet | `/c System.out.println()` |
