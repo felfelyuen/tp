@@ -16,7 +16,10 @@ import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.SWITCH_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
+import static storage.Saving.deleteDeckFile;
+import static storage.Saving.saveDeck;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -73,6 +76,11 @@ public class DeckManager {
 
         decks.put(newDeckName, new Deck(newDeckName));
         logger.info("Deck created successfully: " + newDeckName);
+        try {
+            saveDeck(newDeckName, decks.get(newDeckName));
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
+        }
 
         assert decks.containsKey(newDeckName) : "Deck was not added successfully!";
 
@@ -215,6 +223,12 @@ public class DeckManager {
 
         if (deletedDeck == null) {
             throw new FlashCLIArgumentException(NO_SUCH_DECK);
+        }
+
+        try {
+            deleteDeckFile(deckName);
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
         }
 
         return String.format(DELETE_DECK_SUCCESS, deckName);
