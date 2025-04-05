@@ -14,13 +14,7 @@ import static constants.ErrorMessages.SEARCH_MISSING_FIELD;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
-import static constants.SuccessMessages.CHANGED_ISLEARNED_SUCCESS;
-import static constants.SuccessMessages.CREATE_SUCCESS;
-import static constants.SuccessMessages.EDIT_SUCCESS;
-import static constants.SuccessMessages.LIST_SUCCESS;
-import static constants.SuccessMessages.SEARCH_SUCCESS;
-import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
-import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
+import static constants.SuccessMessages.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -592,6 +586,43 @@ public class DeckTest {
             fail("Unexpected Exception was thrown: " + e.getMessage());
         } catch (FlashCLIArgumentException e) {
             assertEquals(EMPTY_LIST, e.getMessage());
+        }
+    }
+
+    @Test
+    void markIsLearned_alreadyUnlearned_illegalArgumentExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreateFlashcard(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+            assertEquals(2, deck.getFlashcards().size());
+
+            deck.changeIsLearned("2", false);
+            fail("Did not detect invalid input: Input out of bounds");
+        } catch (NumberFormatException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(String.format(CHANGED_ISLEARNED_NOCHANGENEEDED, "unlearned"), e.getMessage());
+        }
+    }
+
+    @Test
+    void markIsLearned_alreadyLearned_illegalArgumentExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreateFlashcard(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+            assertEquals(2, deck.getFlashcards().size());
+
+            deck.changeIsLearned("2", true);
+            deck.changeIsLearned("2", true);
+            fail("Did not detect invalid input: Input out of bounds");
+        } catch (NumberFormatException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(String.format(CHANGED_ISLEARNED_NOCHANGENEEDED, "learned"), e.getMessage());
         }
     }
 

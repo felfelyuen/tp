@@ -26,17 +26,7 @@ import static constants.QuizMessages.QUIZ_NO_ANSWER_DETECTED;
 import static constants.QuizMessages.QUIZ_NO_UNLEARNED;
 import static constants.QuizMessages.QUIZ_QUESTIONS_LEFT;
 import static constants.QuizMessages.QUIZ_START;
-import static constants.SuccessMessages.CHANGED_ISLEARNED_SUCCESS;
-import static constants.SuccessMessages.CREATE_SUCCESS;
-import static constants.SuccessMessages.DELETE_SUCCESS;
-import static constants.SuccessMessages.EDIT_SUCCESS;
-import static constants.SuccessMessages.INSERT_SUCCESS;
-import static constants.SuccessMessages.LIST_SUCCESS;
-import static constants.SuccessMessages.SEARCH_SUCCESS;
-import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
-import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
-import static constants.SuccessMessages.VIEW_QUIZRESULT_SUCCESS;
-import static constants.SuccessMessages.QUIZRESULT_FULL_MARKS;
+import static constants.SuccessMessages.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -573,12 +563,17 @@ public class Deck {
         }
 
         Flashcard indexCard = flashcards.get(index - 1);
+        String learnedString = isLearned ? "learned" : "unlearned";
+        if(indexCard.getIsLearned() == isLearned) {
+            throw new FlashCLIArgumentException(String.format(CHANGED_ISLEARNED_NOCHANGENEEDED, learnedString));
+        }
+
         indexCard.setIsLearned(isLearned);
         logger.info("indexCard " + index + "'s isLearned changed");
         if (isLearned) {
-            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, "learned"));
+            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, learnedString));
         } else {
-            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, "unlearned"));
+            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, learnedString));
         }
     }
 
