@@ -1,10 +1,17 @@
 package parser;
 
+import static constants.ErrorMessages.DELETE_EMPTY_DECK_ERROR;
+import static constants.ErrorMessages.EMPTY_DECK_NAME;
+import static constants.ErrorMessages.NO_SUCH_DECK;
+import static deck.DeckManager.decks;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static parser.Parser.validateDeckExistsForDelete;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import command.Command;
 import command.CommandCreateFlashcard;
@@ -16,9 +23,12 @@ public class ParserTest {
     private Deck deck;
 
     @BeforeEach
-    void setUp() throws FlashCLIArgumentException {
-        deck = new Deck("test1");
-        DeckManager.currentDeck = deck;
+    void setUp(TestInfo testInfo) {
+        decks.clear();
+        if (testInfo.getDisplayName().startsWith("parseInput")) {
+            deck = new Deck("test1");
+            DeckManager.currentDeck = deck;
+        }
     }
 
     @Test
@@ -49,4 +59,38 @@ public class ParserTest {
         }
     }
 
+    @Test
+    void validateDeckExistsForDelete_emptyDeckList_throwsException() {
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            validateDeckExistsForDelete("System Testing");
+        });
+        assertEquals(DELETE_EMPTY_DECK_ERROR, exception.getMessage());
+    }
+
+    @Test
+    void validateDeckExistsForDelete_nonExistentDeck_throwsException() {
+        decks.put("Unit Testing", new Deck("Unit Testing"));
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            validateDeckExistsForDelete("Test Case Design");
+        });
+        assertEquals(NO_SUCH_DECK, exception.getMessage());
+    }
+
+    @Test
+    void validateDeckExistsForDelete_emptyDeckName_throwsException() {
+        decks.put("System Testing", new Deck("System Testing"));
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            validateDeckExistsForDelete(" ");
+        });
+        assertEquals(EMPTY_DECK_NAME, exception.getMessage());
+    }
+
+    @Test
+    void validateDeckExistsForDelete_caseSensitiveDeletion_throwsException() {
+        decks.put("Partitioning", new Deck("Partitioning"));
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            validateDeckExistsForDelete("partitioning");
+        });
+        assertEquals(NO_SUCH_DECK, exception.getMessage());
+    }
 }

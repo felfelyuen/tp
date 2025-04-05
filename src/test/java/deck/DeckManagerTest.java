@@ -196,46 +196,11 @@ public class DeckManagerTest {
     }
 
     @Test
-    void deleteDeck_emptyDeckList_throwsException() {
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            deleteDeck("System Testing");
-        });
-        assertEquals(DELETE_EMPTY_DECK_ERROR, exception.getMessage());
-    }
-
-    @Test
-    void deleteDeck_nonExistentDeck_throwsException() {
-        decks.put("Unit Testing", new Deck("Unit Testing"));
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            deleteDeck("Test Case Design");
-        });
-        assertEquals(NO_SUCH_DECK, exception.getMessage());
-    }
-
-    @Test
-    void deleteDeck_emptyDeckName_throwsException() {
-        decks.put("System Testing", new Deck("System Testing"));
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            deleteDeck(" ");
-        });
-        assertEquals(EMPTY_DECK_NAME, exception.getMessage());
-    }
-
-    @Test
     void deleteDeck_trimsInputBeforeDeletion_successMessage() throws FlashCLIArgumentException {
         decks.put("Alpha/Beta Testing", new Deck("Alpha/Beta Testing"));
         String result = deleteDeck("  Alpha/Beta Testing  ");
         assertEquals(String.format(DELETE_DECK_SUCCESS, "Alpha/Beta Testing"), result);
         assertFalse(decks.containsKey("Alpha/Beta Testing"));
-    }
-
-    @Test
-    void deleteDeck_caseSensitiveDeletion_throwsException() {
-        decks.put("Partitioning", new Deck("Partitioning"));
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            deleteDeck("partitioning");
-        });
-        assertEquals(NO_SUCH_DECK, exception.getMessage());
     }
 
     @Test

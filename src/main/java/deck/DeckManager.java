@@ -238,13 +238,6 @@ public class DeckManager {
      */
     public static String deleteDeck(String arguments) throws FlashCLIArgumentException {
         String deckName = arguments.trim();
-        if (decks.isEmpty()) {
-            throw new FlashCLIArgumentException(DELETE_EMPTY_DECK_ERROR);
-        }
-        if (deckName.isEmpty()) {
-            throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
-        }
-
         // checks if selected deck is the one that will be deleted
         if (currentDeck == decks.get(deckName)) {
             currentDeck = null;
@@ -252,9 +245,7 @@ public class DeckManager {
 
         Deck deletedDeck = decks.remove(deckName);
 
-        if (deletedDeck == null) {
-            throw new FlashCLIArgumentException(NO_SUCH_DECK);
-        }
+        assert deletedDeck != null : "Unable to delete as deck does not exist";
 
         return String.format(DELETE_DECK_SUCCESS, deckName);
     }

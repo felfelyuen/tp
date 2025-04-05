@@ -220,7 +220,11 @@ This feature enables the user to insert a code snippet to a specific flashcard b
 ### 3.2. Deck features
 ### 3.2.1. Creating a New Deck
 
-The `new` command is implemented using the `Deck` class, which represents a collection of flashcards, and the `CommandCreateDeck` class, which processes user input to create a new deck. To ensure deck names are unique, a hashmap is used to track existing deck names.
+This feature allows the user to create a new deck with a deck name. 
+
+The create deck mechanism is facilitated by `DeckManager` and `CommandCreateDeck`.
+
+To ensure deck names are unique, a hashmap is used to track existing deck names.
 
 #### Implementation of `DeckManager.createDeck()`
 Below shows the sequence diagram of the operations of creating a deck:
