@@ -26,7 +26,18 @@ import static constants.QuizMessages.QUIZ_NO_ANSWER_DETECTED;
 import static constants.QuizMessages.QUIZ_NO_UNLEARNED;
 import static constants.QuizMessages.QUIZ_QUESTIONS_LEFT;
 import static constants.QuizMessages.QUIZ_START;
-import static constants.SuccessMessages.*;
+import static constants.SuccessMessages.CHANGED_ISLEARNED_NOCHANGENEEDED;
+import static constants.SuccessMessages.CHANGED_ISLEARNED_SUCCESS;
+import static constants.SuccessMessages.CREATE_SUCCESS;
+import static constants.SuccessMessages.DELETE_SUCCESS;
+import static constants.SuccessMessages.EDIT_SUCCESS;
+import static constants.SuccessMessages.INSERT_SUCCESS;
+import static constants.SuccessMessages.LIST_SUCCESS;
+import static constants.SuccessMessages.QUIZRESULT_FULL_MARKS;
+import static constants.SuccessMessages.SEARCH_SUCCESS;
+import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
+import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
+import static constants.SuccessMessages.VIEW_QUIZRESULT_SUCCESS;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -136,7 +147,7 @@ public class Deck {
         String question = result.question;
         String answer = result.answer;
 
-        int flashcardIndex = flashcards.size();
+        int flashcardIndex = flashcards.size() + 1;
         Flashcard newFlashcard = new Flashcard(flashcardIndex, question, answer);
         flashcards.add(newFlashcard);
 
@@ -311,6 +322,11 @@ public class Deck {
         Flashcard flashcardToDelete = flashcards.get(arrayIndex);
         assert flashcardToDelete != null : "flashcard object should not be null";
         flashcards.remove(arrayIndex);
+        //reset the indexes of the other flashcards
+        for (int i = arrayIndex; i < flashcards.size(); i++) {
+            Flashcard flashccard = flashcards.get(i);
+            flashccard.setIndex(i + 1);
+        }
         return String.format(DELETE_SUCCESS, index, flashcardToDelete.getQuestion(), flashcardToDelete.getAnswer());
     }
 

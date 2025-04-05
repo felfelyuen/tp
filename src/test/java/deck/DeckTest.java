@@ -344,6 +344,7 @@ public class DeckTest {
             String listAfterDeleteOutput = deck.listFlashcards();
             assertEquals(1, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS, "1. What is Java?"), listAfterDeleteOutput);
+            assertEquals(1, deck.getFlashcards().get(0).getIndex());
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
         }

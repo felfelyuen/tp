@@ -33,6 +33,15 @@ public class Flashcard {
     }
 
     /**
+     * Sets the index of the flashcard.
+     *
+     * @param index of the flashcard.
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    /**
      * Returns the question of the flashcard.
      *
      * @return The flashcard question.
