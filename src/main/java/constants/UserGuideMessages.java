@@ -5,6 +5,7 @@ import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.LIST_CARDS;
 import static constants.CommandConstants.REMOVE_DECK;
 import static constants.CommandConstants.SELECT_DECK;
+import static constants.CommandConstants.UNSELECT_DECK;
 import static constants.CommandConstants.VIEW_QN;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.DELETE_CARD;
@@ -45,6 +46,7 @@ public class UserGuideMessages {
                     "\"" + VIEW_DECKS + "\": shows list of decks\n" +
                     "\"" + SELECT_DECK + "\": selects deck of flashcards\n" +
                     "\"" + REMOVE_DECK + "\": deletes the deck\n" +
+                    "\"" + UNSELECT_DECK + "\": unselects the deck\n" +
                     "\"" + SEARCH_CARD + "\": searches within a deck or globally\n" +
                     "\"" + EXIT + "\": exits the program\n\n" +
                     "Go to the flashCli User Guide website for more details";

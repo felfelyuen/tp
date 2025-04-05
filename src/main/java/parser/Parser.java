@@ -12,6 +12,7 @@ import command.CommandListQuestion;
 import command.CommandQuizFlashcards;
 import command.CommandRenameDeck;
 import command.CommandSelectDeck;
+import command.CommandUnselectDeck;
 import command.CommandUserGuide;
 import command.CommandViewAnswer;
 import command.CommandViewDecks;
@@ -31,6 +32,7 @@ import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.QUIZ;
 import static constants.CommandConstants.RENAME_DECK;
 import static constants.CommandConstants.SELECT_DECK;
+import static constants.CommandConstants.UNSELECT_DECK;
 import static constants.CommandConstants.USER_GUIDE;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_DECKS;
@@ -96,6 +98,7 @@ public class Parser {
         case RENAME_DECK -> new CommandRenameDeck(arguments);
         case VIEW_DECKS -> new CommandViewDecks(arguments);
         case REMOVE_DECK -> validateDeckExistsForDelete(arguments);
+        case UNSELECT_DECK -> new CommandUnselectDeck(arguments);
 
         case QUIZ -> new CommandQuizFlashcards();
         case VIEW_RES -> new CommandViewQuizResult();

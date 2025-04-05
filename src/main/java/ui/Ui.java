@@ -19,7 +19,7 @@ public class Ui {
         if (in.hasNextLine()) {
             return in.nextLine();
         } else {
-            return EXIT; // Return a safe default to avoid exceptions
+            return EXIT;
         }
     }
 

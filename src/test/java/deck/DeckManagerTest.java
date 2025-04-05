@@ -231,17 +231,9 @@ public class DeckManagerTest {
     @Test
     void deleteDeck_hasDeck_successMessage() throws FlashCLIArgumentException {
         decks.put("System Testing", new Deck("System Testing"));
-        String result = deleteDeck("System Testing");
+        String result = deleteDeck(0);
         assertEquals(String.format(DELETE_DECK_SUCCESS, "System Testing"), result);
         assertFalse(decks.containsKey("System Testing"));
-    }
-
-    @Test
-    void deleteDeck_trimsInputBeforeDeletion_successMessage() throws FlashCLIArgumentException {
-        decks.put("Alpha/Beta Testing", new Deck("Alpha/Beta Testing"));
-        String result = deleteDeck("  Alpha/Beta Testing  ");
-        assertEquals(String.format(DELETE_DECK_SUCCESS, "Alpha/Beta Testing"), result);
-        assertFalse(decks.containsKey("Alpha/Beta Testing"));
     }
 
     @Test
@@ -250,7 +242,7 @@ public class DeckManagerTest {
         decks.put("Equivalence", deck);
         currentDeck = deck;
 
-        String result = deleteDeck("Equivalence");
+        String result = deleteDeck(0);
         assertEquals(String.format(DELETE_DECK_SUCCESS, "Equivalence"), result);
         assertNull(currentDeck, "Current deck should be set to null after deletion.");
     }

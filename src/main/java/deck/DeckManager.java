@@ -8,15 +8,18 @@ import static constants.ErrorMessages.EMPTY_DECK_NAME;
 import static constants.ErrorMessages.INVALID_INDEX_INPUT;
 import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
+import static constants.ErrorMessages.NO_DECK_TO_UNSELECT;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
+import static constants.ErrorMessages.UNSELECT_NO_ARGUMENTS_ALLOWED;
 import static constants.ErrorMessages.VIEW_DECKS_NO_ARGUMENTS_ALLOWED;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.DELETE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.SELECT_DECK_SUCCESS;
+import static constants.SuccessMessages.UNSELECT_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
 
 import java.util.ArrayList;
@@ -55,7 +58,7 @@ public class DeckManager {
 
     public static Deck getDeckByIndex(int index) {
         List<Map.Entry<String, Deck>> entryList = new ArrayList<>(decks.entrySet());
-        return entryList.get(index).getValue();  // Returns the Deck at the specified index
+        return entryList.get(index).getValue();
     }
 
     public static void removeDeckByIndex(int index) {
@@ -246,6 +249,13 @@ public class DeckManager {
         return String.format(SELECT_DECK_SUCCESS, currentDeck.getName());
     }
 
+    /**
+     * Validates and converts the input arguments to a valid deck index.
+     *
+     * @param arguments the string input representing the deck index.
+     * @return the zero-based index of the deck.
+     * @throws FlashCLIArgumentException if the input is empty, not a valid integer, or otherwise invalid.
+     */
     public static int checkAndGetListIndex(String arguments) throws FlashCLIArgumentException {
         String trimmedArguments = arguments.trim();
         if (trimmedArguments.isEmpty()) {
@@ -281,6 +291,20 @@ public class DeckManager {
         return String.format(DELETE_DECK_SUCCESS, deckToDelete.getName());
     }
 
+    public static String unselectDeck(String arguments) throws FlashCLIArgumentException {
+        if (currentDeck == null) {
+            throw new FlashCLIArgumentException(NO_DECK_TO_UNSELECT);
+        }
+
+        if (!arguments.trim().isEmpty()) {
+            logger.warning("Unexpected arguments provided to unselect decks: " + arguments);
+            throw new FlashCLIArgumentException(UNSELECT_NO_ARGUMENTS_ALLOWED);
+        }
+
+        String deckName = currentDeck.getName();
+        currentDeck = null;
+        return String.format(UNSELECT_DECK_SUCCESS, deckName);
+    }
     /**
      * Searches for flashcards across all decks based on the provided question and/or answer arguments.
      *
