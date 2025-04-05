@@ -54,21 +54,17 @@ public class DeckManager {
     }
 
     public static Deck getDeckByIndex(int index) {
-        // Convert the entry set to a list to enable index-based access
         List<Map.Entry<String, Deck>> entryList = new ArrayList<>(decks.entrySet());
         return entryList.get(index).getValue();  // Returns the Deck at the specified index
     }
 
     public static void removeDeckByIndex(int index) {
-        // Convert the entry set to a list to enable index-based access
         List<Map.Entry<String, Deck>> entryList = new ArrayList<>(decks.entrySet());
         Map.Entry<String, Deck> entryToRemove = entryList.get(index);
-
         decks.remove(entryToRemove.getKey());
     }
 
     public static void updateDeckByIndex(int index, String newKey, Deck newDeck) {
-        // Convert the entry set to a list to enable index-based access
         List<Map.Entry<String, Deck>> entryList = new ArrayList<>(decks.entrySet());
         Map.Entry<String, Deck> entry = entryList.get(index);
         decks.remove(entry.getKey());
@@ -269,23 +265,20 @@ public class DeckManager {
      * Deletes a deck by its name if the user has confirmed the deletion.
      * Ensures that the deck exists before removal and updates the current deck if necessary.
      *
-     * @param arguments the name of the deck to be deleted.
+     * @param listIndex the name of the deck to be deleted.
      * @return a success message indicating that the deck has been deleted.
      * @throws FlashCLIArgumentException if the deck list is empty, the deck name is missing,
      *                                   or the specified deck does not exist.
      */
-    public static String deleteDeck(String arguments) throws FlashCLIArgumentException {
-        String deckName = arguments.trim();
+    public static String deleteDeck(int listIndex) throws FlashCLIArgumentException {
         // checks if selected deck is the one that will be deleted
-        if (currentDeck == decks.get(deckName)) {
+        Deck deckToDelete = getDeckByIndex(listIndex);
+        if (currentDeck == deckToDelete) {
             currentDeck = null;
         }
 
-        Deck deletedDeck = decks.remove(deckName);
-
-        assert deletedDeck != null : "Unable to delete as deck does not exist";
-
-        return String.format(DELETE_DECK_SUCCESS, deckName);
+        removeDeckByIndex(listIndex);
+        return String.format(DELETE_DECK_SUCCESS, deckToDelete.getName());
     }
 
     /**
