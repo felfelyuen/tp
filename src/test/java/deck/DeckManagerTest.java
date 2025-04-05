@@ -9,6 +9,7 @@ import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.NO_SUCH_DECK;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
+import static constants.ErrorMessages.VIEW_DECKS_NO_ARGUMENTS_ALLOWED;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.DELETE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
@@ -122,18 +123,31 @@ public class DeckManagerTest {
         createDeck("Object Diagrams");
         createDeck("Sequence Diagrams");
         String expectedOutput = "1. Class Diagrams\n2. Object Diagrams\n3. Sequence Diagrams";
-        String result = viewDecks();
+        String arguments = "";
+        String result = viewDecks(arguments);
         assertEquals(String.format(VIEW_DECKS_SUCCESS, expectedOutput), result);
     }
 
     @Test
     void viewDecks_noDecks_throwsException() {
-        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, DeckManager::viewDecks);
+        String arguments = "";
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> DeckManager.viewDecks(arguments));
         assertEquals(NO_DECK_TO_VIEW, exception.getMessage());
     }
 
+    @Test
+    public void viewDecks_unexpectedArguments_throwsException() throws FlashCLIArgumentException {
+        createDeck("Class Diagrams");
+        String invalidArgs = "some extra text";
+        FlashCLIArgumentException exception = assertThrows(
+                FlashCLIArgumentException.class,
+                () -> viewDecks(invalidArgs)
+        );
+        assertEquals(VIEW_DECKS_NO_ARGUMENTS_ALLOWED, exception.getMessage());
+    }
+
     /*
-     * Tests for switch decks command ==============================================================================
+     * Tests for select decks command ==============================================================================
      */
 
     @Test

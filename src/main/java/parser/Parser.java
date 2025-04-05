@@ -88,7 +88,7 @@ public class Parser {
         case NEW_DECK -> new CommandCreateDeck(arguments);
         case SELECT_DECK -> new CommandSelectDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
-        case VIEW_DECKS -> new CommandViewDecks();
+        case VIEW_DECKS -> new CommandViewDecks(arguments);
         case REMOVE_DECK -> handleDeleteDeckConfirmation(arguments);
 
         case QUIZ -> new CommandQuizFlashcards();

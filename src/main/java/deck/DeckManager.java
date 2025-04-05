@@ -10,6 +10,7 @@ import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.NO_SUCH_DECK;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
+import static constants.ErrorMessages.VIEW_DECKS_NO_ARGUMENTS_ALLOWED;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.DELETE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
@@ -131,12 +132,17 @@ public class DeckManager {
      * @return a formatted string listing all available decks.
      * @throws FlashCLIArgumentException if there are no decks to view.
      */
-    public static String viewDecks() throws FlashCLIArgumentException {
+    public static String viewDecks(String arguments) throws FlashCLIArgumentException {
         logger.info("Entering viewDecks method");
 
         if (decks.isEmpty()) {
             logger.warning("Attempted to view decks, but no decks are available.");
             throw new FlashCLIArgumentException(NO_DECK_TO_VIEW);
+        }
+
+        if (!arguments.trim().isEmpty()) {
+            logger.warning("Unexpected arguments provided to viewDecks: " + arguments);
+            throw new FlashCLIArgumentException(VIEW_DECKS_NO_ARGUMENTS_ALLOWED);
         }
 
         StringBuilder deckList = new StringBuilder();
