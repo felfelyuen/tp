@@ -145,8 +145,22 @@ public class DeckManager {
             throw new FlashCLIArgumentException(VIEW_DECKS_NO_ARGUMENTS_ALLOWED);
         }
 
+        String deckListString = buildDeckList();
+
+        logger.info("Decks viewed successfully. Total decks: " + decks.size());
+        return String.format(VIEW_DECKS_SUCCESS, deckListString);
+    }
+
+    /**
+     * Builds a formatted string listing all deck names with their respective index.
+     * Decks are separated by newline characters, and an assertion ensures the deck count matches.
+     *
+     * @return A string of numbered deck names.
+     */
+    private static String buildDeckList() {
         StringBuilder deckList = new StringBuilder();
         int listIndex = 1;
+
         for (Map.Entry<String, Deck> deck : decks.entrySet()) {
             deckList.append(listIndex).append(". ").append(deck.getKey());
             if (listIndex != decks.size()) {
@@ -160,8 +174,7 @@ public class DeckManager {
         assert actualDeckCount == expectedDeckCount :
                 "Mismatch in deck count! Expected: " + expectedDeckCount + ", Found: " + actualDeckCount;
 
-        logger.info("Decks viewed successfully. Total decks: " + expectedDeckCount);
-        return String.format(VIEW_DECKS_SUCCESS, deckList);
+        return deckList.toString();
     }
 
     /**
