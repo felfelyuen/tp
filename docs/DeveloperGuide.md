@@ -47,7 +47,7 @@ This Developer Guide documents the core architecture and key components of Flash
 ---
 
 ## 3. Implementation
-This section describes some noteworthy details on how certain features are implemented. 
+This section describes some noteworthy details on how the features are implemented. 
 
 ### 3.1. Flashcard features
 ### 3.1.1. Create a flashcard
@@ -58,35 +58,52 @@ The create flashcard mechanism is facilitated by `Deck` and `CommandCreateFlashc
 
 The feature requires a deck to be selected before usage.
 
-**Before creating the flashcard, these conditions must be satisfied:**
+#### **Before creating the flashcard, these conditions must be satisfied:**
+
 * **Contains all arguments**: Arguments should have both tags `/q` and `/a`.
-* **Correct order**: The `/q` tag comes before the `a` tag.
+* **Correct order**: The `/q` tag comes before the `/a` tag.
 * **No text before `/q` tag**: There must be no text before the `/q` tag, i.e. `hello/q QUESTION /a ANSWER` is not permitted.
 * **No empty fields**: Neither `QUESTION` nor `ANSWER` field can be empty. This includes having only whitespaces in the fields.
 
-In addition, any text after the first `/q` tag will be considered as `QUESTION`, same for `/a` tags. 
+In addition, any text after the first `/q` or `/a` tag will be considered as `QUESTION` or `ANSWER` respectively.
 
-E.g. `/q What is the weather today? /q extra question /a Sunny /a extra answer` will create a flashcard with the following fields:
+In particular, if there are multiple `/q` or `/a` tags, they will be considered part of the `QUESTION` or `ANSWER`.
 
+e.g. `/q What is the weather today? /q extra question /a Sunny /a extra answer`<br>
 **Question**: `What is the weather today? /q extra question`<br>
 **Answer**: `Sunny /a extra answer`
 
-Note that the question and answer fields are trimmed.
+Note that the question and answer fields will be trimmed.
 
 If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
 
-**How the feature is implemented:**
-
-Below is the sequence diagram describing the operations for creating the flashcard:
+**Below is the sequence diagram describing the operations for creating the flashcard:**
 
 ![](images/CreateFlashcardSequenceDiagram.png)
 
-1. The `CommandCreateFlashcard#executeCommand()` method is executed which calls `Deck#createFlashcard()`.
-2. A new `Flashcard` object is created when the user uses the command.
-3. When `Deck#createFlashcard()` is called by the `CommandCreateFlashcard#executeCommand()` method, it immediately checks if the input arguments (without the command) is valid. 
-4. This is achieved with the `Deck#checkQuestionAndAnswer` helper method.
-5. The `Deck#checkQuestionAndAnswer` helper method returns the valid strings of question and answer.
-6. A new flashcard is then created using the question and answer and added to the current selected deck.
+1. When the command is executed using `CommandCreateFlashcard#executeCommand()`, the `Deck#createFlashcard()` method is called.
+2. Then, `Deck#checkQuestionAndAnswer()` checks if the arguments are valid, according to the previously mentioned [conditions](#before-creating-the-flashcard-these-conditions-must-be-satisfied).
+3. If it is valid, the question and answer strings will be passed to create a new `Flashcard` object.
+4. A success message will then be shown to the user.
+
+**Note**: The lifeline for `CommandCreateFlashcard` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+
+#### Why is it implemented this way?
+
+- The user has to select a deck before creating a flashcard, which prevents flashcards from being created and not being in any decks.
+- 
+- Each command eg `CommandCreateFlashcard` is a separate class, allowing the code to achieve the **Separation of Concerns** design principle.
+- The tags `/q` and `/a` are compulsory to prevent improper creation of Flashcard objects.
+- Any text after the first `/q` or `/a` tag will be considered as `QUESTION` or `ANSWER` respectively, to simplify the usage of the command and allow for a greater range of characters in the question.
+
+#### Alternatives Considered:
+
+- Using a regex expression
+  - Pros: More concise code, can handle a wider range of possible inputs with increased flexibility.
+  - Cons: Difficult to debug and understand, especially for Developers with little experience with regex.
+- Only allowing `/q` and `/a` tags i.e. should have no foreign tags allowed
+  - Pros: Ensures that user keys in only the inputs required.
+  - Cons: Difficult to define what is a "foreign" tag. Users might not be able to use `/` in their `QUESTION` or `ANSWER`. Also significantly increases complexity without achieving much functionality.
 
 ### 3.1.2. Edit a flashcard
 
