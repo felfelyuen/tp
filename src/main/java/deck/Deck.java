@@ -3,7 +3,7 @@ package deck;
 import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
-import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
+import static constants.ErrorMessages.MISSING_INPUT_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
@@ -188,14 +188,19 @@ public class Deck {
     /**
      * Views the flashcard question
      *
-     * @param index index of flashcard to view
+     * @param arguments index of flashcard to view
      * @return the question in the format of VIEW_QUESTION_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
     //@@author felfelyuen
-    public String viewFlashcardQuestion(int index) throws ArrayIndexOutOfBoundsException {
+    public String viewFlashcardQuestion(String arguments) throws FlashCLIArgumentException, NumberFormatException {
+        if (arguments.isEmpty()) {
+            throw new FlashCLIArgumentException(MISSING_INPUT_INDEX);
+        }
+
+        int index = Integer.parseInt(arguments);
         if (index <= 0 || index > flashcards.size()) {
-            throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
+            throw new FlashCLIArgumentException(INDEX_OUT_OF_BOUNDS);
         }
         int arrayIndex = index - 1;
         Flashcard flashcardToView = flashcards.get(arrayIndex);
@@ -552,7 +557,7 @@ public class Deck {
 
         if (arguments.isEmpty()) {
             logger.warning("No input detected.");
-            throw new FlashCLIArgumentException(CHANGE_IS_LEARNED_MISSING_INDEX);
+            throw new FlashCLIArgumentException(MISSING_INPUT_INDEX);
         }
 
         int index = Integer.parseInt(arguments.trim());
