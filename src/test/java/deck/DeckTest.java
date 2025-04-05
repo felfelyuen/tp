@@ -565,6 +565,37 @@ public class DeckTest {
     }
 
     @Test
+    void markIsLearned_zeroIndexInput_numberFormatExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreateFlashcard(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+            assertEquals(2, deck.getFlashcards().size());
+
+            deck.changeIsLearned("0", true);
+            fail("Did not detect invalid input: Input not a number");
+        } catch (NumberFormatException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
+        }
+    }
+
+    @Test
+    void markIsLearned_emptyList_flashCLIArgumentExceptionThrown() {
+        try {
+            assertEquals(0, deck.getFlashcards().size());
+            deck.changeIsLearned("1", true);
+            fail("Did not detect empty list");
+        } catch (NumberFormatException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(EMPTY_LIST, e.getMessage());
+        }
+    }
+
+    @Test
     void searchDeck_fullSearch_success() {
         String input = "/q What is Java? /a A programming language.";
         Command createTest = new CommandCreateFlashcard(input);

@@ -555,6 +555,11 @@ public class Deck {
     public String changeIsLearned (String arguments, boolean isLearned)
             throws NumberFormatException,
             FlashCLIArgumentException {
+        if (flashcards.isEmpty()) {
+            logger.warning("empty list, nothing to change");
+            throw new FlashCLIArgumentException(EMPTY_LIST);
+        }
+
         if (arguments.isEmpty()) {
             logger.warning("No input detected.");
             throw new FlashCLIArgumentException(CHANGE_IS_LEARNED_MISSING_INDEX);
@@ -562,7 +567,7 @@ public class Deck {
 
         int index = Integer.parseInt(arguments.trim());
         logger.info("index received:" + index);
-        if (index < 0 || index > flashcards.size()) {
+        if (index <= 0 || index > flashcards.size()) {
             logger.warning("Index out of bounds");
             throw new FlashCLIArgumentException(INDEX_OUT_OF_BOUNDS);
         }
