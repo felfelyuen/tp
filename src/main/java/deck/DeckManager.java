@@ -231,16 +231,12 @@ public class DeckManager {
     public static String selectDeck(String arguments) throws FlashCLIArgumentException {
         logger.info("Entering selectDeck method with arguments: " + arguments);
 
-        int listIndex = checkAndGetListIndex(arguments);
-
         if (decks.isEmpty()) {
             logger.warning("Attempted to switch decks, but no decks are available.");
             throw new FlashCLIArgumentException(NO_DECK_TO_SWITCH);
         }
 
-        if (listIndex < 0 || listIndex >= decks.size()) {
-            throw new FlashCLIArgumentException(DECK_INDEX_OUT_OF_BOUNDS);
-        }
+        int listIndex = checkAndGetListIndex(arguments);
 
         currentDeck = getDeckByIndex(listIndex);
         assert currentDeck != null : "Current deck should not be null after switching!";
@@ -267,6 +263,10 @@ public class DeckManager {
             listIndex = Integer.parseInt(trimmedArguments) - 1;
         } catch (NumberFormatException e) {
             throw new FlashCLIArgumentException(INVALID_INDEX_INPUT);
+        }
+
+        if (listIndex < 0 || listIndex >= decks.size()) {
+            throw new FlashCLIArgumentException(DECK_INDEX_OUT_OF_BOUNDS);
         }
         return listIndex;
     }

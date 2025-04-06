@@ -1,0 +1,33 @@
+@startuml
+
+hide footbox
+participant "<<class>>\n :FlashCLI" as FlashCLI
+participant "c:CommandSelectDeck" as CommandSelectDeck
+participant "<<class>>\n :DeckManager" as DeckManager
+participant ":Ui" as Ui
+
+FlashCLI -> CommandSelectDeck: executeCommand()
+activate CommandSelectDeck
+CommandSelectDeck -> DeckManager: selectDeck()
+activate DeckManager
+
+DeckManager -> DeckManager: checkAndGetListIndex()
+activate DeckManager
+DeckManager --> DeckManager: listIndex
+deactivate DeckManager
+
+DeckManager -> DeckManager: getDeckByIndex(listIndex)
+activate DeckManager
+DeckManager --> DeckManager:deck to select
+deactivate DeckManager
+
+DeckManager --> CommandSelectDeck: success message
+deactivate DeckManager
+CommandSelectDeck -> Ui: showToUser()
+activate Ui
+Ui --> CommandSelectDeck
+deactivate Ui
+CommandSelectDeck --> FlashCLI
+deactivate CommandSelectDeck
+destroy CommandSelectDeck
+@enduml

@@ -43,7 +43,6 @@ import static constants.CommandConstants.SEARCH_CARD;
 import static constants.ConfirmationMessages.CONFIRM_DELETE_DECK;
 import static constants.CommandConstants.VIEW_RES;
 import static constants.ConfirmationMessages.DECK_NOT_DELETED;
-import static constants.ErrorMessages.DECK_INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.DELETE_EMPTY_DECK_ERROR;
 import static constants.ErrorMessages.NO_DECK_ERROR;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
@@ -120,15 +119,11 @@ public class Parser {
      * @throws FlashCLIArgumentException if validation fails due to missing or invalid deck.
      */
     public static Command validateDeckExistsForDelete(String arguments) throws FlashCLIArgumentException {
-        int listIndex = checkAndGetListIndex(arguments);
 
         if (decks.isEmpty()) {
             throw new FlashCLIArgumentException(DELETE_EMPTY_DECK_ERROR);
         }
-
-        if (listIndex < 0 || listIndex >= decks.size()) {
-            throw new FlashCLIArgumentException(DECK_INDEX_OUT_OF_BOUNDS);
-        }
+        int listIndex = checkAndGetListIndex(arguments);
 
         return handleDeleteDeckConfirmation(listIndex);
     }

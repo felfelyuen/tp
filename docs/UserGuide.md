@@ -137,34 +137,6 @@ Question: What language is used in CS2113?
 Answer: Java
 ```
 
-### Edit flashcard: `edit`
-Edits an existing flashcard in the deck.
-
-Format: `edit INDEX q/QUESTION a/ANSWER`
-
-INDEX must be a positive integer, i.e: 1, 2, 3
-QUESTION and ANSWER are optional fields that the user can choose to fill to change. If no field is inputted, ie: edit INDEX or edit INDEX q/ there would be no edits.
-
-Examples:
-```
-[INPUT]:edit 2 q/What is substitutability?
-[OUTPUT]:Edited the question of flashcard 2
-
-[INPUT]:edit 3 q/What are some bad coding practices? a/Using a single letter to name variables. Eg n for number
-[OUTPUT]:Edited the question, answer of flashcard 3
-```
-
-### Insert code snippet: `insert_code`
-Inserts a code snippet to a question
-
-Format: `insert_code INDEX c/CODE_SNIPPET`
-
-Examples:
-```
-[INPUT]: insert_code 3 c/interface Interface{ void method(); }
-[OUTPUT]: code snippet added to flashcard question
-```
-
 ### Quiz mode with timer: `quiz`
 Enters quiz mode. The unlearned flashcards in the deck would be shuffled and the user would have to enter the correct answer for each flashcard. If the flashcard is answered correctly, it would be marked as learned, and the user would not see the flashcard again if they enter quiz mode afterwards. They can re-add the question by marking the flashcard as unlearned. After the quiz, they can type `view_results` to view their results and re-quiz the unlearned flashcards.
 
@@ -340,6 +312,7 @@ Unselects the specified deck. There must be a deck selected to use this command.
 | **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                        |
 | **View Decks**       | `decks`                                                                                         |
 | **Delete Deck**      | `remove DECKNAME` e.g. `remove testDeck`                                                        |
+| **Unselect Deck**    | `unselect`                                                                                      |
 | **Quiz Mode**        | `quiz`                                                                                          |
 | **View Results**     | `view_results` , `redo`                                                                         |
 | **Code Snippet**     | `insert_code INDEX c/CODE_SNIPPET` e.g. `insert_code 3 c/interface Interface{ void method(); }` |
