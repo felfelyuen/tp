@@ -472,18 +472,15 @@ public class Deck {
     /**
      * Handles showing result upon the completion of a quiz
      *
-     * @throws  FlashCLIArgumentException if the quiz is not completed or mismatched arrays
      */
     //@@author shunyang12
     public void showMistakes() throws ArrayIndexOutOfBoundsException {
         int wrongAnswerCount = 0;
         for (Integer indexIncorrect: incorrectIndexes) {
-            if(indexIncorrect < 0 | indexIncorrect >= flashcards.size() ) {
-                throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
-            }
+            assert (indexIncorrect >= 0 && indexIncorrect < flashcards.size()): "The index is out of bound";
 
-            Ui.showToUser("FlashCard " + indexIncorrect + " question: " + flashcards.get(indexIncorrect).getQuestion() +
-                    " correct answer: " + flashcards.get(indexIncorrect).getAnswer() + " Your answer: " +
+            Ui.showToUser("FlashCard " + indexIncorrect+1 + "—— Q: " + flashcards.get(indexIncorrect).getQuestion() +
+                    " Q: " + flashcards.get(indexIncorrect).getAnswer() + " Your Q: " +
                     incorrectAnswers.get(wrongAnswerCount));
             wrongAnswerCount++;
         }
