@@ -36,6 +36,8 @@ FlashCLI 2.0 is a command-line flashcard application designed specifically for C
 
 ## Features
 
+---
+### Flashcard Features
 ### Viewing user guide: `user_guide`
 Displays possible instructions that can be inputted.
 
@@ -55,15 +57,16 @@ List of commands:
 "delete": deletes the flashcard
 "edit": edits the flashcard question/answer
 "insert_code": inserts code snippet for a flashcard
+"quiz": quizzes the unlearned flashcards
 "mark_learned": marks flashcard as learned
 "mark_unlearned": marks flashcard as unlearned
-"quiz": quizzes the unlearned flashcards
 "view_results": views results from quiz after quiz is completed
 "new": creates a new deck of flashcards
 "rename": renames flashcard deck
 "decks": shows list of decks
-"select": selects deck of flashcards
+"select": selects a deck 
 "remove": deletes a deck
+"unselect": unselects a deck
 "search": searches within a deck or globally
 "exit": exits the program
 
@@ -79,45 +82,6 @@ Examples:
 * `add /q What language is used in CS2113? /a Java` → Adds a new flashcard with the question **What language is used in CS2113?** and answer **Java** to the current selected deck.
   
 If no deck is selected, this command cannot be used.
-
-### Create a new deck: `new`
-Creates a new deck with the given deck name. Deck name should not already be in use.
-
-**Format:** `new DECKNAME`<br>
-**Examples:**
-* `new testDeck` → Creates a new deck named **testDeck** (if the name is not already taken).
-
-### **Select a Deck: `select`**
-Selects the specified deck via the index. There must be an available deck to select to use this command. You can view decks to select using the `decks` command.
-
-**Format:** `select INDEX`
-
-**Examples:**
-* **`select 1`** → Selects the first deck.
-
-### **Rename a Deck: `rename`**
-Renames the currently selected deck to a new name. A deck must be selected before using this command.
-
-**Format:** `rename NEWNAME`
-
-**Examples:**
-* **`rename testDeck2`** → Renames the current deck to **testDeck2**.
-
-### **View All Decks: `decks`**
-Displays a list of all available decks.
-
-**Format:** `decks`
-
-**Examples:**
-* **`decks`** → Lists all existing decks.
-
-### **Delete a Deck: `remove`**
-Deletes the specified deck. This action is **permanent** and **cannot be undone**. You can view decks to delete using the `decks` command.
-
-**Format:** `remove INDEX`
-
-**Examples:**
-* **`remove 2`** → Deletes the second deck in the list. 
 
 ### Summary view of the flashcard deck: `list`
 Shows a list of all the flashcards in your deck, including information about the index and question of each flashcard. Limit to only 50 flashcards per page.
@@ -287,6 +251,24 @@ Examples:
 [OUTPUT]: Changed flashcard number 2 into unlearned
 ```
 
+### View test results: `view_results`
+Views the flashcards that were answered wrong after test mode.
+
+Format: `view_results`
+
+Examples:
+```
+[INPUT]: view_resultS
+[OUTPUT]: Your test for DECK_WEEK result is 9/10, correctness: 90%
+Your wrong answers are following:
+-Q1. What colour is an apple?  Your answer: Red
+Correct answer: Blue
+-Q5. What is the capital of the UK? Your answer: Washington DC     
+Correct answer: London
+
+    Type “redo” to restart the test.
+```
+
 ### Search Flashcards: `search`
 Searches for the specified flashcard. If no deck is selected, the search will be across all decks.
 However, if a deck is selected, then the search will only be specific to that deck.
@@ -313,6 +295,56 @@ Flashcards matched:
 Question: What language is used in CS2113?
 Answer: Java
 ```
+---
+### Deck Features
+### Create a new deck: `new`
+Creates a new deck with the given deck name. Deck name should not already be in use.
+
+**Format:** `new DECKNAME`<br>
+**Examples:**
+* `new testDeck` → Creates a new deck named **testDeck** (if the name is not already taken).
+
+### **Select a Deck: `select`**
+Selects the specified deck via the index. There must be an available deck to select to use this command. You can view decks to select using the `decks` command.
+
+**Format:** `select INDEX`
+
+**Examples:**
+* **`select 1`** → Selects the first deck.
+
+### **Rename a Deck: `rename`**
+Renames the currently selected deck to a new name. A deck must be selected before using this command.
+
+**Format:** `rename NEWNAME`
+
+**Examples:**
+* **`rename testDeck2`** → Renames the current deck to **testDeck2**.
+
+### **View All Decks: `decks`**
+Displays a list of all available decks.
+
+**Format:** `decks`
+
+**Examples:**
+* **`decks`** → Lists all existing decks.
+
+### **Delete a Deck: `remove`**
+Deletes the specified deck. There will be a confirmation before deletion to prevent accidental deletion. The user can also view decks to delete using the `decks` command.
+
+This action is **permanent** and **cannot be undone**.
+
+**Format:** `remove INDEX`
+
+**Examples:**
+* **`remove 2`** → Deletes the second deck in the list.
+
+### **Unselect a Deck: `unselect`**
+Unselects the specified deck. There must be a deck selected to use this command. This command does not take any arguments.
+
+**Format:** `unselect`
+
+**Examples:**
+* **`unselect`** → If deck "testDeck" is selected, this unselects "testDeck"
 
 --------------------------------------------------------------------------------------------------------------------
 ## FAQ
@@ -332,7 +364,6 @@ Answer: Java
 ---
 
 ## Command Summary
-
 | Action               | Format, Examples                                                                                  |
 |----------------------|---------------------------------------------------------------------------------------------------|
 | **View User Guide**  | `user_guide`                                                                                      |
@@ -342,7 +373,7 @@ Answer: Java
 | **View Answer**      | `ans INDEX` e.g. `ans 3`                                                                          |
 | **Delete Flashcard** | `delete INDEX` e.g. `delete 3`                                                                    |
 | **Edit Flashcard**   | `edit INDEX [/q QUESTION] [/a ANSWER]` e.g.  `edit 2 /q What is substitutability? /a A method`    |
-| **Search Flashcard** | `search /q QUESTION /a ANSWER` e.g. `search /q What language is used in CS2113? /a Java`          |       |
+| **Search Flashcard** | `search /q QUESTION /a ANSWER` e.g. `search /q What language is used in CS2113? /a Java`          |   
 | **New Deck**         | `new DECKNAME` e.g.  `new testDeck`                                                               |
 | **Select Deck**      | `select DECKNAME` e.g. `select testDeck`                                                          |
 | **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                          |
@@ -354,5 +385,5 @@ Answer: Java
 | **Mark Learned**     | `mark_learned INDEX` e.g. `mark_learned 2`                                                        |
 | **Mark Unlearned**   | `mark_unlearned INDEX` e.g. `mark_unlearned 2`                                                    |
 | **Exit**             | `exit`                                                                                            |
-|
+
 

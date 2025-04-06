@@ -7,15 +7,18 @@ import static constants.ErrorMessages.EMPTY_DECK_NAME;
 import static constants.ErrorMessages.INVALID_INDEX_INPUT;
 import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
+import static constants.ErrorMessages.NO_DECK_TO_UNSELECT;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
+import static constants.ErrorMessages.UNSELECT_NO_ARGUMENTS_ALLOWED;
 import static constants.ErrorMessages.VIEW_DECKS_NO_ARGUMENTS_ALLOWED;
 import static constants.SuccessMessages.CREATE_DECK_SUCCESS;
 import static constants.SuccessMessages.DELETE_DECK_SUCCESS;
 import static constants.SuccessMessages.RENAME_DECK_SUCCESS;
 import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.SELECT_DECK_SUCCESS;
+import static constants.SuccessMessages.UNSELECT_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
 import static deck.DeckManager.createDeck;
 import static deck.DeckManager.currentDeck;
@@ -25,6 +28,7 @@ import static deck.DeckManager.globalSearch;
 import static deck.DeckManager.renameDeck;
 
 import static deck.DeckManager.selectDeck;
+import static deck.DeckManager.unselectDeck;
 import static deck.DeckManager.viewDecks;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -231,17 +235,9 @@ public class DeckManagerTest {
     @Test
     void deleteDeck_hasDeck_successMessage() throws FlashCLIArgumentException {
         decks.put("System Testing", new Deck("System Testing"));
-        String result = deleteDeck("System Testing");
+        String result = deleteDeck(0);
         assertEquals(String.format(DELETE_DECK_SUCCESS, "System Testing"), result);
         assertFalse(decks.containsKey("System Testing"));
-    }
-
-    @Test
-    void deleteDeck_trimsInputBeforeDeletion_successMessage() throws FlashCLIArgumentException {
-        decks.put("Alpha/Beta Testing", new Deck("Alpha/Beta Testing"));
-        String result = deleteDeck("  Alpha/Beta Testing  ");
-        assertEquals(String.format(DELETE_DECK_SUCCESS, "Alpha/Beta Testing"), result);
-        assertFalse(decks.containsKey("Alpha/Beta Testing"));
     }
 
     @Test
@@ -250,9 +246,53 @@ public class DeckManagerTest {
         decks.put("Equivalence", deck);
         currentDeck = deck;
 
-        String result = deleteDeck("Equivalence");
+        String result = deleteDeck(0);
         assertEquals(String.format(DELETE_DECK_SUCCESS, "Equivalence"), result);
         assertNull(currentDeck, "Current deck should be set to null after deletion.");
+    }
+
+    /*
+     * Tests for unselect decks command ==============================================================================
+     */
+
+    @Test
+    void unselectDeck_validInput_successMessage() throws FlashCLIArgumentException {
+        currentDeck = new Deck("Integration Testing");
+
+        String result = unselectDeck("");
+        assertEquals(String.format(UNSELECT_DECK_SUCCESS, "Integration Testing"), result);
+        assertNull(currentDeck, "Current deck should be null after unselecting.");
+    }
+
+    @Test
+    void unselectDeck_whitespaceArguments_successMessage() throws FlashCLIArgumentException {
+        currentDeck = new Deck("Regression Testing");
+
+        String result = unselectDeck("    ");
+        assertEquals(String.format(UNSELECT_DECK_SUCCESS, "Regression Testing"), result);
+        assertNull(currentDeck, "Current deck should be null after unselecting.");
+    }
+
+    @Test
+    void unselectDeck_noCurrentDeck_throwsException() {
+        currentDeck = null;
+
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            unselectDeck("");
+        });
+
+        assertEquals(NO_DECK_TO_UNSELECT, exception.getMessage());
+    }
+
+    @Test
+    void unselectDeck_unexpectedArguments_throwsException() {
+        currentDeck = new Deck("Boundary Testing");
+
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            unselectDeck("unexpected text");
+        });
+
+        assertEquals(UNSELECT_NO_ARGUMENTS_ALLOWED, exception.getMessage());
     }
 
     //@@author ManZ9802

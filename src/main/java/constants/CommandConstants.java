@@ -27,6 +27,7 @@ public class CommandConstants {
     public static final String RENAME_DECK = "rename";
     public static final String VIEW_DECKS = "decks";
     public static final String REMOVE_DECK = "remove";
+    public static final String UNSELECT_DECK = "unselect";
 
     // system commands
     public static final String USER_GUIDE = "user_guide";
