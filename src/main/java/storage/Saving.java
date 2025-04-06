@@ -38,7 +38,7 @@ public class Saving {
 
         for (String deckName : decks.keySet()) {
             Deck deck = decks.get(deckName);
-            File file = new File(dir, deckName.toLowerCase() + ".txt");
+            File file = new File(dir, deckName + ".txt");
             FileWriter fw = new FileWriter(file);
 
             for (Flashcard flashcard : deck.getFlashcards()) {
@@ -57,7 +57,7 @@ public class Saving {
             dir.mkdirs();
         }
 
-        File file = new File(dir, deckName.toLowerCase() + ".txt");
+        File file = new File(dir, deckName + ".txt");
 
         try (FileWriter fw = new FileWriter(file)) {
             for (Flashcard flashcard : deck.getFlashcards()) {
@@ -71,7 +71,7 @@ public class Saving {
     }
 
     public static void deleteDeckFile(String deckName) throws IOException {
-        File file = new File("./data/decks/" + deckName.toLowerCase() + ".txt");
+        File file = new File("./data/decks/" + deckName + ".txt");
         if (file.exists()) {
             if (!file.delete()) {
                 System.out.println("Failed to delete deck file: " + deckName);
@@ -80,8 +80,8 @@ public class Saving {
     }
 
     public static void renameDeckFile(String oldName, String newName) throws IOException {
-        File oldFile = new File("./data/decks/" + oldName.toLowerCase() + ".txt");
-        File newFile = new File("./data/decks/" + newName.toLowerCase() + ".txt");
+        File oldFile = new File("./data/decks/" + oldName + ".txt");
+        File newFile = new File("./data/decks/" + newName + ".txt");
 
         if (oldFile.exists()) {
             boolean success = oldFile.renameTo(newFile);
