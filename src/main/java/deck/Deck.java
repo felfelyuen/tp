@@ -298,8 +298,11 @@ public class Deck {
         StringBuilder list = new StringBuilder();
         int i = 1;
         for (Flashcard question : flashcards) {
+            list.append(i).append(". ");
+            String isLearned = question.getIsLearnedAsString();
+            list.append(isLearned).append(" ");
             String currentQuestion = question.getQuestion();
-            list.append(i).append(". ").append(currentQuestion);
+            list.append(currentQuestion);
             if (i != flashcards.size()) {
                 list.append("\n");
             }
@@ -498,12 +501,11 @@ public class Deck {
     public void showMistakes() throws ArrayIndexOutOfBoundsException {
         int wrongAnswerCount = 0;
         for (Integer indexIncorrect: incorrectIndexes) {
-            if(indexIncorrect < 0 | indexIncorrect >= flashcards.size() ) {
+            if(indexIncorrect < 0 | indexIncorrect > flashcards.size() ) {
                 throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
             }
-
-            Ui.showToUser("FlashCard " + indexIncorrect + " question: " + flashcards.get(indexIncorrect).getQuestion() +
-                    " correct answer: " + flashcards.get(indexIncorrect).getAnswer() + " Your answer: " +
+            Ui.showToUser("FlashCard " + indexIncorrect + " question: " + flashcards.get(indexIncorrect - 1).getQuestion() +
+                    " correct answer: " + flashcards.get(indexIncorrect - 1).getAnswer() + " Your answer: " +
                     incorrectAnswers.get(wrongAnswerCount));
             wrongAnswerCount++;
         }

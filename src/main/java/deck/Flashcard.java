@@ -102,5 +102,17 @@ public class Flashcard {
     public void setIsLearned(boolean change) {
         this.isLearned = change;
     }
+
+    /**
+     * Returns String representation of whether flashcard is learned
+     * @return string representation of flashcard's isLearned value
+     */
+    public String getIsLearnedAsString() {
+        if (isLearned) {
+            return "[X]";
+        } else {
+            return "[ ]";
+        }
+    }
 }
 
