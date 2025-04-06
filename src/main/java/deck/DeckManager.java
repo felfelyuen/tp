@@ -291,6 +291,13 @@ public class DeckManager {
         return String.format(DELETE_DECK_SUCCESS, deckToDelete.getName());
     }
 
+    /**
+     * Unselects the currently selected deck if one is active.
+     *
+     * @param arguments should be an empty string; no arguments are expected.
+     * @return a success message indicating the deck has been unselected.
+     * @throws FlashCLIArgumentException if no deck is currently selected or if unexpected arguments are provided.
+     */
     public static String unselectDeck(String arguments) throws FlashCLIArgumentException {
         if (currentDeck == null) {
             throw new FlashCLIArgumentException(NO_DECK_TO_UNSELECT);
