@@ -3,7 +3,7 @@ package deck;
 import exceptions.EmptyListException;
 import exceptions.FlashCLIArgumentException;
 
-import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
+import static constants.ErrorMessages.MISSING_INPUT_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_INPUT_ERROR;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
@@ -27,24 +27,31 @@ import static constants.QuizMessages.QUIZ_NO_ANSWER_DETECTED;
 import static constants.QuizMessages.QUIZ_NO_UNLEARNED;
 import static constants.QuizMessages.QUIZ_QUESTIONS_LEFT;
 import static constants.QuizMessages.QUIZ_START;
+import static constants.QuizMessages.RESULT_HEADER;
+import static constants.QuizMessages.RESULT_FORMAT;
+import static constants.QuizMessages.MISTAKES_HEADER;
+import static constants.QuizMessages.FLASHCARD_FORMAT;
+import static constants.SuccessMessages.CHANGED_ISLEARNED_NOCHANGENEEDED;
 import static constants.SuccessMessages.CHANGED_ISLEARNED_SUCCESS;
 import static constants.SuccessMessages.CREATE_SUCCESS;
 import static constants.SuccessMessages.DELETE_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
 import static constants.SuccessMessages.INSERT_SUCCESS;
 import static constants.SuccessMessages.LIST_SUCCESS;
+import static constants.SuccessMessages.QUIZRESULT_FULL_MARKS;
 import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUIZRESULT_SUCCESS;
-import static constants.SuccessMessages.QUIZRESULT_FULL_MARKS;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Logger;
 
 import exceptions.QuizCancelledException;
 import parser.Parser;
+import storage.Saving;
 import ui.Ui;
 import timer.Timer;
 /**
@@ -67,9 +74,10 @@ public class Deck {
     private static final Logger logger = Logger.getLogger(Deck.class.getName());
     private String name;
     private ArrayList<Flashcard> flashcards = new ArrayList<>();
-    private final ArrayList<Flashcard> incorrectFlashcards = new ArrayList<>();
-    private final ArrayList<Integer> incorrectIndexes = new ArrayList<>();
-    private final ArrayList<String> incorrectAnswers = new ArrayList<>();
+    private ArrayList<Flashcard> incorrectFlashcards = new ArrayList<>();
+    private ArrayList<Integer> incorrectIndexes = new ArrayList<>();
+    private ArrayList<String> incorrectAnswers = new ArrayList<>();
+    private int quizAmtAnswered;
     private Timer timer;
 
     private record Result(String question, String answer) { }
@@ -147,10 +155,14 @@ public class Deck {
         String question = result.question;
         String answer = result.answer;
 
-        int flashcardIndex = flashcards.size();
+        int flashcardIndex = flashcards.size() + 1;
         Flashcard newFlashcard = new Flashcard(flashcardIndex, question, answer);
         flashcards.add(newFlashcard);
-
+        try {
+            Saving.saveDeck(name, this);
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
+        }
         logger.info("Successfully created a flashcard: Question: " + question + ", Answer: " + answer);
         return String.format(CREATE_SUCCESS,
                 newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size());
@@ -198,22 +210,28 @@ public class Deck {
     /**
      * Views the flashcard question
      *
-     * @param index index of flashcard to view
+     * @param arguments index of flashcard to view
      * @return the question in the format of VIEW_QUESTION_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
      */
     //@@author felfelyuen
-    public String viewFlashcardQuestion(int index) throws ArrayIndexOutOfBoundsException {
+    public String viewFlashcardQuestion(String arguments) throws FlashCLIArgumentException, NumberFormatException {
+        if (arguments.isEmpty()) {
+            throw new FlashCLIArgumentException(MISSING_INPUT_INDEX);
+        }
+
+        int index = Integer.parseInt(arguments);
         if (index <= 0 || index > flashcards.size()) {
-            throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
+            throw new FlashCLIArgumentException(INDEX_OUT_OF_BOUNDS);
         }
         int arrayIndex = index - 1;
         Flashcard flashcardToView = flashcards.get(arrayIndex);
         assert flashcardToView != null : "flashcard object should not be null";
+        String isLearned =  flashcardToView.getIsLearnedAsString();
         String question = flashcardToView.getQuestion();
         assert !question.isEmpty() : "Question should not be empty when viewing flashcards";
         String codeSnippet = flashcardToView.getCodeSnippet();
-        return String.format(VIEW_QUESTION_SUCCESS, index, question, codeSnippet);
+        return String.format(VIEW_QUESTION_SUCCESS, index, isLearned, question, codeSnippet);
     }
 
     /**
@@ -280,6 +298,11 @@ public class Deck {
         String oldQuestion = oldFlashcard.getQuestion();
         String oldAnswer = oldFlashcard.getAnswer();
         flashcards.set(arrayIndex, updatedFlashcard);
+        try {
+            Saving.saveDeck(name, this);
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
+        }
         return String.format(EDIT_SUCCESS,
                 oldQuestion, updatedQuestion, oldAnswer, updatedAnswer);
     }
@@ -298,8 +321,11 @@ public class Deck {
         StringBuilder list = new StringBuilder();
         int i = 1;
         for (Flashcard question : flashcards) {
+            list.append(i).append(". ");
+            String isLearned = question.getIsLearnedAsString();
+            list.append(isLearned).append(" ");
             String currentQuestion = question.getQuestion();
-            list.append(i).append(". ").append(currentQuestion);
+            list.append(currentQuestion);
             if (i != flashcards.size()) {
                 list.append("\n");
             }
@@ -323,6 +349,16 @@ public class Deck {
         Flashcard flashcardToDelete = flashcards.get(arrayIndex);
         assert flashcardToDelete != null : "flashcard object should not be null";
         flashcards.remove(arrayIndex);
+        //reset the indexes of the other flashcards
+        for (int i = arrayIndex; i < flashcards.size(); i++) {
+            Flashcard flashccard = flashcards.get(i);
+            flashccard.setIndex(i + 1);
+        }
+        try {
+            Saving.saveDeck(name, this);
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
+        }
         return String.format(DELETE_SUCCESS, index, flashcardToDelete.getQuestion(), flashcardToDelete.getAnswer());
     }
 
@@ -333,15 +369,16 @@ public class Deck {
      * @throws EmptyListException if there are no flashcards in the deck
      */
     //@@author felfelyuen
-    public boolean quizFlashcards() throws EmptyListException, QuizCancelledException {
+    public void quizFlashcards() throws EmptyListException, QuizCancelledException {
         logger.info("starting to enter quiz mode:");
         if (flashcards.isEmpty()) {
             throw new EmptyListException(EMPTY_LIST);
         }
 
-        incorrectIndexes.clear();
-        incorrectFlashcards.clear();
-        incorrectAnswers.clear();
+        ArrayList<Flashcard> tempIncorrectFlashcards = new ArrayList<>();
+        ArrayList<Integer> tempIncorrectIndexes = new ArrayList<>();
+        ArrayList<String> tempIncorrectAnswers = new ArrayList<>();
+        quizAmtAnswered = 0;
 
         logger.info("Found " + flashcards.size() + " flashcards in the deck");
         logger.info("starting sorting and shuffling:");
@@ -358,11 +395,17 @@ public class Deck {
         for (int i = 0; i < lastIndex; i++) {
             int questionsLeft = queue.size() - i;
             Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questionsLeft));
-            handleQuestionForQuiz(queue.get(i));
+            handleQuestionForQuiz(queue.get(i),
+                    tempIncorrectFlashcards,
+                    tempIncorrectIndexes,
+                    tempIncorrectAnswers);
         }
         logger.info("Last question:");
         Ui.showToUser(QUIZ_LAST_QUESTION);
-        handleQuestionForQuiz(queue.get(lastIndex));
+        handleQuestionForQuiz(queue.get(lastIndex),
+                tempIncorrectFlashcards,
+                tempIncorrectIndexes,
+                tempIncorrectAnswers);
 
         logger.info("Finished asking questions, tabulating timer amount:");
         long timeTaken = timer.getDuration();
@@ -371,7 +414,10 @@ public class Deck {
         logger.info("Exiting quiz mode:");
         Ui.showToUser(String.format(QUIZ_END, timeTaken));
         isQuizCompleted = true;
-        return true;
+        quizAmtAnswered = queue.size();
+        incorrectFlashcards = tempIncorrectFlashcards;
+        incorrectIndexes = tempIncorrectIndexes;
+        incorrectAnswers = tempIncorrectAnswers;
     }
 
     /**
@@ -381,9 +427,15 @@ public class Deck {
      * @throws QuizCancelledException if user wants to cancel halfway through the quiz
      */
     //@@author felfelyuen
-    public void handleQuestionForQuiz(Flashcard indexCard) throws QuizCancelledException {
+    public void handleQuestionForQuiz(
+            Flashcard indexCard,
+            ArrayList<Flashcard> tempIncorrectFlashcards,
+            ArrayList<Integer> tempIncorrectIndexes,
+            ArrayList<String> tempIncorrectAnswers)
+            throws QuizCancelledException {
+        //show question
         Ui.showToUser(indexCard.getQuestion());
-
+        //get answer
         String userAnswer = Ui.getUserCommand().trim();
         while (userAnswer.isEmpty()) {
             logger.info("no answer detected");
@@ -395,9 +447,9 @@ public class Deck {
         if (!answerCorrect) {
             logger.info("Adding into incorrect answer arrays:");
             int incorrectIndex = indexCard.getIndex();
-            incorrectIndexes.add(incorrectIndex);
-            incorrectFlashcards.add(indexCard);
-            incorrectAnswers.add(userAnswer);
+            tempIncorrectIndexes.add(incorrectIndex);
+            tempIncorrectFlashcards.add(indexCard);
+            tempIncorrectAnswers.add(userAnswer);
         }
         indexCard.setIsLearned(answerCorrect);
     }
@@ -415,9 +467,7 @@ public class Deck {
         assert (!userAnswer.isEmpty()) : "userAnswer should not be empty";
         if(userAnswer.equals(QUIZ_CANCEL)) {
             logger.info("Quiz cancelled by user. Exiting quiz:");
-            incorrectIndexes.clear();
-            incorrectFlashcards.clear();
-            incorrectAnswers.clear();
+            isQuizCompleted = false;
             throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
         }
 
@@ -435,63 +485,235 @@ public class Deck {
     }
 
 
+
     /**
-     * Handles showing result upon the completion of a quiz
+     * Displays the quiz results including statistics and accuracy.
      *
-     * @return a success message indicating the result has been shown.
-     * @throws  FlashCLIArgumentException if the quiz is not completed or mismatched arrays
+     * @return A success message indicating the result has been shown
+     * @throws FlashCLIArgumentException If the quiz is not completed or arrays are mismatched
      */
     //@@author shunyang12
     public String showQuizResult() throws FlashCLIArgumentException {
-        logger.info("Trying to generate your quiz result...");
+        logger.info("Generating quiz results...");
+        validateQuizCompletion();
 
-        if (isQuizCompleted == false) {
-            throw new FlashCLIArgumentException(INCOMPLETED_QUIZ);
-        }
+        int incorrectCount = incorrectAnswers.size();
+        validateArrayConsistency(incorrectCount);
 
-        int incorrectAnswersSize = incorrectAnswers.size();
-        int incorrectIndexesSize = incorrectIndexes.size();
-        int incorrectFlashcardsSize = incorrectFlashcards.size();
-        int totalQuestionsSize = flashcards.size();
+        displayQuizStatistics(incorrectCount);
+        displayMistakesIfAny(incorrectCount);
 
-        if (incorrectAnswersSize != incorrectIndexesSize 
-            | incorrectAnswersSize != incorrectFlashcardsSize 
-            | incorrectIndexesSize != incorrectFlashcardsSize) {
-            throw new FlashCLIArgumentException(MISMATCHED_ARRAYS);
-        }
-
-        Ui.showToUser("You have answered " + totalQuestionsSize + " questions in the quiz.");
-
-        if (incorrectAnswersSize == 0) {
-            return QUIZRESULT_FULL_MARKS;
-        }
-
-        Ui.showToUser("You got " + (totalQuestionsSize-incorrectAnswersSize) + " questions correctly.");
-        Ui.showToUser("You got " + incorrectAnswersSize + " questions incorrectly.");
-
-        Ui.showToUser("Review your mistakes: ");
-
-        showMistakes();
-
+        resetQuizState();
         return VIEW_QUIZRESULT_SUCCESS;
     }
 
     /**
-     * Handles showing result upon the completion of a quiz
+     * Validates that the quiz was properly completed before showing results.
      *
+     * @throws FlashCLIArgumentException If the quiz was not completed
+     */
+    private void validateQuizCompletion() throws FlashCLIArgumentException {
+        if (!isQuizCompleted) {
+            throw new FlashCLIArgumentException(INCOMPLETED_QUIZ);
+        }
+    }
+
+    /**
+     * Ensures all mistake-tracking arrays have consistent sizes.
+     *
+     * @param expectedSize The expected size for all mistake-tracking arrays
+     * @throws FlashCLIArgumentException If array sizes don't match
+     */
+    private void validateArrayConsistency(int expectedSize) throws FlashCLIArgumentException {
+        if (expectedSize != incorrectIndexes.size() ||
+                expectedSize != incorrectFlashcards.size()) {
+            throw new FlashCLIArgumentException(MISMATCHED_ARRAYS);
+        }
+    }
+
+    /**
+     * Builds and displays the quiz statistics message.
+     *
+     * @param incorrectCount Number of incorrect answers
+     */
+    private void displayQuizStatistics(int incorrectCount) {
+        int totalQuestions = quizAmtAnswered;
+        assert totalQuestions > 0 : "totalQuestions should not be zero";
+        double accuracy = calculateAccuracyPercentage(totalQuestions, incorrectCount);
+
+        String resultMessage = buildStatisticsMessage(totalQuestions, incorrectCount, accuracy);
+        Ui.showToUser(resultMessage);
+    }
+
+    /**
+     * Builds a formatted statistics message containing quiz results including:
+     * - Total questions count
+     * - Correct and incorrect answer counts
+     * - Accuracy percentage
+     * - Letter grade
+     * - Performance comment
+     * - Achievement art (if applicable)
+     * - Full marks message or mistakes header
+     *
+     * @param totalQuestions The total number of questions in the quiz
+     * @param incorrectCount The number of incorrectly answered questions
+     * @param accuracy The calculated accuracy percentage (0-100)
+     * @return A formatted string containing all quiz statistics and results,
+     *         ready for display. The string includes:
+     *         - Header section with basic statistics
+     *         - Accuracy and grade information
+     *         - Motivational performance comment
+     *         - Achievement medal art for high scores (90%+)
+     *         - Either full marks congratulation or mistakes review header
+     */
+    private String buildStatisticsMessage(int totalQuestions, int incorrectCount, double accuracy) {
+        String accuracyGrade = calculateAccuracyGrade(accuracy);
+
+        StringBuilder sb = new StringBuilder(RESULT_HEADER)
+                .append(String.format(RESULT_FORMAT, "Total Question(s)", totalQuestions))
+                .append(String.format(RESULT_FORMAT, "Correct Answer(s)", totalQuestions - incorrectCount))
+                .append(String.format(RESULT_FORMAT, "Incorrect Answer(s)", incorrectCount))
+                .append(String.format(RESULT_FORMAT, "Accuracy", formatPercentage(accuracy)))
+                .append(String.format(RESULT_FORMAT, "Grade", accuracyGrade))
+                .append("\n").append(getPerformanceComment(accuracy)).append("\n");
+
+        if (accuracy >= 90) {
+            sb.append("\n").append(getAchievementArt(accuracy));
+        }
+
+        if (incorrectCount == 0) {
+            sb.append("\n").append("\n" + QUIZRESULT_FULL_MARKS + "\n");
+        } else {
+            sb.append(MISTAKES_HEADER);
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Generates ASCII art achievement medals based on quiz accuracy.
+     * Medals are awarded for exceptional performance:
+     * - Gold medal for perfect score (100% accuracy)
+     * - Silver medal for near-perfect score (95-99% accuracy)
+     * - No medal for scores below 95%
+     *
+     * @param accuracy The quiz accuracy percentage (0-100)
+     * @return String containing ASCII art medal representation:
+     *         - Gold medal art for 100% accuracy
+     *         - Silver medal art for 95-99% accuracy
+     *         - Empty string for accuracy below 95%
+     *         Each medal consists of 6 lines forming the medal shape
+     *         with appropriate label underneath
+     */
+    private String getAchievementArt(double accuracy) {
+        if (accuracy == 100) {
+            return "   ,d88b.d88b,\n" +
+                    "   88888888888\n" +
+                    "   `Y8888888Y'\n" +
+                    "     `Y888Y'\n" +
+                    "       `Y'\n" +
+                    "   GOLD MEDAL";
+        }
+        if (accuracy >= 70) {
+            return "   ,d88b.d88b,\n" +
+                    "   88888888888\n" +
+                    "    `Y88888Y'\n" +
+                    "      `Y88Y'\n" +
+                    "        `Y'\n" +
+                    "  SILVER MEDAL";
+        }
+        return "";
+    }
+
+    /**
+     * Calculates a letter grade based on accuracy percentage
+     * @param accuracy The accuracy percentage (0-100)
+     * @return Letter grade with emoji
+     */
+    private String calculateAccuracyGrade(double accuracy) {
+        if (accuracy >= 90) return "A+ :)";
+        if (accuracy >= 85) return "A :>";
+        if (accuracy >= 80) return "A-";
+        if (accuracy >= 75) return "B+";
+        if (accuracy >= 70) return "B";
+        if (accuracy >= 65) return "B-";
+        if (accuracy >= 60) return "C+";
+        if (accuracy >= 55) return "C";
+        if (accuracy >= 50) return "C-";
+        if (accuracy >= 40) return "D";
+        return "F ;(";
+    }
+
+    private String getPerformanceComment(double accuracy) {
+        if (accuracy == 100) return "PERFECT SCORE! FLAWLESS PERFORMANCE!";
+        if (accuracy >= 95) return "Outstanding! You've mastered this material!";
+        if (accuracy >= 85) return "Excellent work! You're doing great!";
+        if (accuracy >= 75) return "Good job! You're making solid progress.";
+        if (accuracy >= 65) return "Not bad! Review your mistakes to improve.";
+        if (accuracy >= 50) return "You passed, but more practice would help.";
+        return "Keep practicing! Review the material and try again.";
+    }
+
+    /**
+     * Calculates the accuracy percentage.
+     *
+     * @param total Total questions answered
+     * @param incorrect Number of incorrect answers
+     * @return Accuracy percentage (0-100)
+     */
+    private double calculateAccuracyPercentage(int total, int incorrect) {
+        return total == 0 ? 0 : ((double)(total - incorrect) / total) * 100;
+    }
+
+    /**
+     * Formats a percentage value to 2 decimal places.
+     *
+     * @param value Percentage value to format
+     * @return Formatted percentage string (e.g., "85.71%")
+     */
+    private String formatPercentage(double value) {
+        return String.format("%.2f%%", value);
+    }
+
+    /**
+     * Displays mistakes if there were any incorrect answers.
+     *
+     * @param incorrectCount Number of incorrect answers
+     */
+    private void displayMistakesIfAny(int incorrectCount) {
+        if (incorrectCount > 0) {
+            showMistakes();
+        }
+    }
+
+    /**
+     * Resets the quiz completion state after showing results.
+     */
+    private void resetQuizState() {
+        isQuizCompleted = false;
+    }
+
+    /**
+     * Displays each mistake with the original question, correct answer, and user's answer.
+     *
+     * @throws ArrayIndexOutOfBoundsException If any index in incorrectIndexes is invalid
      */
     //@@author shunyang12
     public void showMistakes() throws ArrayIndexOutOfBoundsException {
-        int wrongAnswerCount = 0;
-        for (Integer indexIncorrect: incorrectIndexes) {
-            assert (indexIncorrect >= 0 && indexIncorrect < flashcards.size()): "The index is out of bound";
+        for (int i = 0; i < incorrectIndexes.size(); i++) {
+            int index = incorrectIndexes.get(i);
 
-            Ui.showToUser("FlashCard " + indexIncorrect+1 + "—— Q: " + flashcards.get(indexIncorrect).getQuestion() +
-                    " Q: " + flashcards.get(indexIncorrect).getAnswer() + " Your Q: " +
-                    incorrectAnswers.get(wrongAnswerCount));
-            wrongAnswerCount++;
+            Flashcard card = flashcards.get(index);
+            String userAnswer = incorrectAnswers.get(i);
+
+            Ui.showToUser(String.format(FLASHCARD_FORMAT,
+                    index + 1,
+                    card.getQuestion(),
+                    card.getAnswer(),
+                    userAnswer));
         }
     }
+
 
     /**
      * Inserts code snippets to the flashcard
@@ -559,25 +781,35 @@ public class Deck {
     public String changeIsLearned (String arguments, boolean isLearned)
             throws NumberFormatException,
             FlashCLIArgumentException {
+        if (flashcards.isEmpty()) {
+            logger.warning("empty list, nothing to change");
+            throw new FlashCLIArgumentException(EMPTY_LIST);
+        }
+
         if (arguments.isEmpty()) {
             logger.warning("No input detected.");
-            throw new FlashCLIArgumentException(CHANGE_IS_LEARNED_MISSING_INDEX);
+            throw new FlashCLIArgumentException(MISSING_INPUT_INDEX);
         }
 
         int index = Integer.parseInt(arguments.trim());
         logger.info("index received:" + index);
-        if (index < 0 || index > flashcards.size()) {
+        if (index <= 0 || index > flashcards.size()) {
             logger.warning("Index out of bounds");
             throw new FlashCLIArgumentException(INDEX_OUT_OF_BOUNDS);
         }
 
         Flashcard indexCard = flashcards.get(index - 1);
+        String learnedString = isLearned ? "learned" : "unlearned";
+        if(indexCard.getIsLearned() == isLearned) {
+            throw new FlashCLIArgumentException(String.format(CHANGED_ISLEARNED_NOCHANGENEEDED, learnedString));
+        }
+
         indexCard.setIsLearned(isLearned);
         logger.info("indexCard " + index + "'s isLearned changed");
         if (isLearned) {
-            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, "learned"));
+            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, learnedString));
         } else {
-            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, "unlearned"));
+            return (String.format(CHANGED_ISLEARNED_SUCCESS, index, learnedString));
         }
     }
 

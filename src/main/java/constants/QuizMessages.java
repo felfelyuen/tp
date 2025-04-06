@@ -22,5 +22,9 @@ public class QuizMessages {
     public static final String QUIZ_LAST_QUESTION = "You have 1 question left:";
     public static final String QUIZ_NO_UNLEARNED = "You have no unlearned questions.\n" +
             "Unmark some questions with mark_unlearned before continuing";
+    public static final String RESULT_HEADER = "=== Quiz Results ===\n";
+    public static final String RESULT_FORMAT = "- %s: %s\n";
+    public static final String MISTAKES_HEADER = "\n=== Mistakes Review ===";
+    public static final String FLASHCARD_FORMAT = "FLASHCARD%d\n Q: %s\n A: %s\n Your A: %s\n";
 
 }

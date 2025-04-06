@@ -21,7 +21,11 @@ import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.SELECT_DECK_SUCCESS;
 import static constants.SuccessMessages.UNSELECT_DECK_SUCCESS;
 import static constants.SuccessMessages.VIEW_DECKS_SUCCESS;
+import static storage.Saving.deleteDeckFile;
+import static storage.Saving.renameDeckFile;
+import static storage.Saving.saveDeck;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -98,6 +102,11 @@ public class DeckManager {
 
         decks.put(newDeckName, new Deck(newDeckName));
         logger.info("Deck created successfully: " + newDeckName);
+        try {
+            saveDeck(newDeckName, decks.get(newDeckName));
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
+        }
 
         assert decks.containsKey(newDeckName) : "Deck was not added successfully!";
 
@@ -175,6 +184,11 @@ public class DeckManager {
             }
         }
         decks = newMap;
+        try {
+            renameDeckFile(oldDeckName, newDeckName);
+        } catch (IOException e) {
+            System.out.println("Error renaming deck file: " + e.getMessage());
+        }
 
         assert !decks.containsKey(oldDeckName) : "Old deck name still exists after renaming!";
         assert decks.containsKey(newDeckName) : "New deck name was not successfully added!";
@@ -297,7 +311,11 @@ public class DeckManager {
         if (currentDeck == deckToDelete) {
             currentDeck = null;
         }
-
+        try {
+            deleteDeckFile(deckToDelete.getName());
+        } catch (IOException e) {
+            System.out.println("Error deleting deck: " + e.getMessage());
+        }
         removeDeckByIndex(listIndex);
         return String.format(DELETE_DECK_SUCCESS, deckToDelete.getName());
     }

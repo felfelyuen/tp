@@ -59,7 +59,7 @@ public class ErrorMessages {
     public static final String INSERT_USAGE = "Usage: " + INSERT_CODE + " {INDEX} /c {CODE_SNIPPET}";
 
     // Quiz error messages
-    public static final String CHANGE_IS_LEARNED_MISSING_INDEX = "No input index detected.";
+    public static final String MISSING_INPUT_INDEX = "No input index detected.";
     public static final String INCOMPLETED_QUIZ = "Complete a quiz first";
     public static final String MISMATCHED_ARRAYS = "Attempted to view Quiz results, but arrays are mismatched.";
 
