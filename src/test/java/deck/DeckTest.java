@@ -184,7 +184,7 @@ public class DeckTest {
             createTest.executeCommand();
             String viewOutput = deck.viewFlashcardQuestion("1");
             assertEquals(1, deck.getFlashcards().size());
-            assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?", ""), viewOutput);
+            assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "[ ]", "What is Java?", ""), viewOutput);
         } catch (FlashCLIArgumentException | NumberFormatException e) {
             fail("Unexpected ArrayIndexOutOfBoundsException was thrown: " + e.getMessage());
         }
@@ -331,7 +331,9 @@ public class DeckTest {
             String listOutput = deck.listFlashcards();
             assertEquals(3, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS,
-                    "1. What is Java?\n2. What is Java?\n3. What is Java?"),
+                    "1. [ ] What is Java?\n" +
+                            "2. [ ] What is Java?\n" +
+                            "3. [ ] What is Java?"),
                     listOutput);
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
@@ -359,12 +361,12 @@ public class DeckTest {
             createTest.executeCommand();
             String listOutput = deck.listFlashcards();
             assertEquals(2, deck.getFlashcards().size());
-            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
+            assertEquals(String.format(LIST_SUCCESS, "1. [ ] What is Java?\n2. [ ] What is Java?"), listOutput);
             Command deleteTest = new CommandDeleteFlashcard("1");
             deleteTest.executeCommand();
             String listAfterDeleteOutput = deck.listFlashcards();
             assertEquals(1, deck.getFlashcards().size());
-            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?"), listAfterDeleteOutput);
+            assertEquals(String.format(LIST_SUCCESS, "1. [ ] What is Java?"), listAfterDeleteOutput);
             assertEquals(1, deck.getFlashcards().get(0).getIndex());
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
@@ -380,7 +382,7 @@ public class DeckTest {
             createTest.executeCommand();
             String listOutput = deck.listFlashcards();
             assertEquals(2, deck.getFlashcards().size());
-            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
+            assertEquals(String.format(LIST_SUCCESS, "1. [ ] What is Java?\n2. [ ] What is Java?"), listOutput);
             Command deleteTest = new CommandDeleteFlashcard("sdsd");
             deleteTest.executeCommand();
         } catch (EmptyListException e) {
@@ -399,7 +401,7 @@ public class DeckTest {
             createTest.executeCommand();
             String listOutput = deck.listFlashcards();
             assertEquals(2, deck.getFlashcards().size());
-            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
+            assertEquals(String.format(LIST_SUCCESS, "1. [ ] What is Java?\n2. [ ] What is Java?"), listOutput);
             Command deleteTest = new CommandDeleteFlashcard("72");
             deleteTest.executeCommand();
         } catch (EmptyListException e) {
@@ -483,7 +485,7 @@ public class DeckTest {
             insertTest.executeCommand();
             String viewOutput = deck.viewFlashcardQuestion("1");
             assertEquals(1, deck.getFlashcards().size());
-            assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?",
+            assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1,"[ ]", "What is Java?",
                     "Class Java { void method() {...} }"), viewOutput);
         } catch (FlashCLIArgumentException | NumberFormatException e) {
             fail("Unexpected Exception was thrown: " + e.getMessage());

@@ -217,10 +217,11 @@ public class Deck {
         int arrayIndex = index - 1;
         Flashcard flashcardToView = flashcards.get(arrayIndex);
         assert flashcardToView != null : "flashcard object should not be null";
+        String isLearned =  flashcardToView.getIsLearnedAsString();
         String question = flashcardToView.getQuestion();
         assert !question.isEmpty() : "Question should not be empty when viewing flashcards";
         String codeSnippet = flashcardToView.getCodeSnippet();
-        return String.format(VIEW_QUESTION_SUCCESS, index, question, codeSnippet);
+        return String.format(VIEW_QUESTION_SUCCESS, index, isLearned, question, codeSnippet);
     }
 
     /**
