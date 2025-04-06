@@ -8,7 +8,7 @@ public class SuccessMessages {
             "Answer: %s\n" +
             "You have %d flashcard(s) in your deck.";
 
-    public static final String VIEW_QUESTION_SUCCESS = "Question of flashcard: %s\n" +
+    public static final String VIEW_QUESTION_SUCCESS = "Question of flashcard %s\n" +
             "Question: %s\n" +
             "%s";
 
@@ -17,9 +17,9 @@ public class SuccessMessages {
 
     public static final String EDIT_SUCCESS = "Updated flashcard.\n" +
             "Edit Question: %s\n" +
-            "Updated: %s\n" +
+            "   Updated Question: %s\n" +
             "Edit Answer: %s\n" +
-            "Updated: %s\n";
+            "   Updated Answer: %s\n";
 
     public static final String LIST_SUCCESS = "List of flashcards:\n%s";
 
