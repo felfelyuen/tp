@@ -162,8 +162,19 @@ public class DeckManager {
         assert currentDeck != null : "A deck must be selected before renaming!";
 
         currentDeck.setName(newDeckName);
-        decks.put(newDeckName, currentDeck);
-        decks.remove(oldDeckName);
+
+        LinkedHashMap<String, Deck> newMap = new LinkedHashMap<>();
+        for (Map.Entry<String, Deck> entry : decks.entrySet()) {
+            String key = entry.getKey();
+            Deck value = entry.getValue();
+
+            if (key.equals(oldDeckName)) {
+                newMap.put(newDeckName, value);
+            } else {
+                newMap.put(key, value);
+            }
+        }
+        decks = newMap;
 
         assert !decks.containsKey(oldDeckName) : "Old deck name still exists after renaming!";
         assert decks.containsKey(newDeckName) : "New deck name was not successfully added!";
