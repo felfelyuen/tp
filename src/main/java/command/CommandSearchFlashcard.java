@@ -21,6 +21,7 @@ public class CommandSearchFlashcard extends Command {
     @Override
     public void executeCommand() {
         try {
+            Ui.loadingeffect();
             String list;
             if (currentDeck == null) {
                 list = globalSearch(arguments);
