@@ -39,12 +39,14 @@ import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUIZRESULT_SUCCESS;
 import static constants.SuccessMessages.QUIZRESULT_FULL_MARKS;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Logger;
 
 import exceptions.QuizCancelledException;
 import parser.Parser;
+import storage.Saving;
 import ui.Ui;
 import timer.Timer;
 /**
@@ -150,7 +152,11 @@ public class Deck {
         int flashcardIndex = flashcards.size();
         Flashcard newFlashcard = new Flashcard(flashcardIndex, question, answer);
         flashcards.add(newFlashcard);
-
+        try {
+            Saving.saveDeck(name, this);
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
+        }
         logger.info("Successfully created a flashcard: Question: " + question + ", Answer: " + answer);
         return String.format(CREATE_SUCCESS,
                 newFlashcard.getQuestion(), newFlashcard.getAnswer(), flashcards.size());
@@ -280,6 +286,11 @@ public class Deck {
         String oldQuestion = oldFlashcard.getQuestion();
         String oldAnswer = oldFlashcard.getAnswer();
         flashcards.set(arrayIndex, updatedFlashcard);
+        try {
+            Saving.saveDeck(name, this);
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
+        }
         return String.format(EDIT_SUCCESS,
                 oldQuestion, updatedQuestion, oldAnswer, updatedAnswer);
     }
@@ -323,6 +334,11 @@ public class Deck {
         Flashcard flashcardToDelete = flashcards.get(arrayIndex);
         assert flashcardToDelete != null : "flashcard object should not be null";
         flashcards.remove(arrayIndex);
+        try {
+            Saving.saveDeck(name, this);
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
+        }
         return String.format(DELETE_SUCCESS, index, flashcardToDelete.getQuestion(), flashcardToDelete.getAnswer());
     }
 

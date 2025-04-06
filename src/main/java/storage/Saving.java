@@ -1,4 +1,3 @@
-//@@author ManZ9802
 package storage;
 
 import java.io.File;
@@ -39,7 +38,7 @@ public class Saving {
 
         for (String deckName : decks.keySet()) {
             Deck deck = decks.get(deckName);
-            File file = new File(dir, deckName.toLowerCase() + ".txt");
+            File file = new File(dir, deckName + ".txt");
             FileWriter fw = new FileWriter(file);
 
             for (Flashcard flashcard : deck.getFlashcards()) {
@@ -49,6 +48,48 @@ public class Saving {
             }
 
             fw.close();
+        }
+    }
+
+    public static void saveDeck(String deckName, Deck deck) throws IOException {
+        File dir = new File("./data/decks");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        File file = new File(dir, deckName + ".txt");
+
+        try (FileWriter fw = new FileWriter(file)) {
+            for (Flashcard flashcard : deck.getFlashcards()) {
+                fw.write("Q: " + flashcard.getQuestion() + "\n");
+                fw.write("A: " + flashcard.getAnswer() + "\n");
+                fw.write("\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + deckName);
+        }
+    }
+
+    public static void deleteDeckFile(String deckName) throws IOException {
+        File file = new File("./data/decks/" + deckName + ".txt");
+        if (file.exists()) {
+            if (!file.delete()) {
+                System.out.println("Failed to delete deck file: " + deckName);
+            }
+        }
+    }
+
+    public static void renameDeckFile(String oldName, String newName) throws IOException {
+        File oldFile = new File("./data/decks/" + oldName + ".txt");
+        File newFile = new File("./data/decks/" + newName + ".txt");
+
+        if (oldFile.exists()) {
+            boolean success = oldFile.renameTo(newFile);
+            if (!success) {
+                System.out.println("Failed to rename deck file from " + oldName + " to " + newName);
+            }
+        } else {
+            System.out.println("Deck file to rename not found: " + oldName);
         }
     }
 }
