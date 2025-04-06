@@ -1,6 +1,6 @@
 package command;
 
-import static constants.ErrorMessages.*;
+import static constants.ErrorMessages.INVALID_INDEX_INPUT;
 import static deck.DeckManager.currentDeck;
 
 import exceptions.FlashCLIArgumentException;

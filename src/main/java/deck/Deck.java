@@ -391,11 +391,17 @@ public class Deck {
         for (int i = 0; i < lastIndex; i++) {
             int questionsLeft = queue.size() - i;
             Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questionsLeft));
-            handleQuestionForQuiz(queue.get(i), tempIncorrectFlashcards, tempIncorrectIndexes, tempIncorrectAnswers);
+            handleQuestionForQuiz(queue.get(i),
+                    tempIncorrectFlashcards,
+                    tempIncorrectIndexes,
+                    tempIncorrectAnswers);
         }
         logger.info("Last question:");
         Ui.showToUser(QUIZ_LAST_QUESTION);
-        handleQuestionForQuiz(queue.get(lastIndex), tempIncorrectFlashcards, tempIncorrectIndexes, tempIncorrectAnswers);
+        handleQuestionForQuiz(queue.get(lastIndex),
+                tempIncorrectFlashcards,
+                tempIncorrectIndexes,
+                tempIncorrectAnswers);
 
         logger.info("Finished asking questions, tabulating timer amount:");
         long timeTaken = timer.getDuration();
@@ -528,9 +534,10 @@ public class Deck {
             if(indexIncorrect < 0 | indexIncorrect > flashcards.size() ) {
                 throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
             }
-            Ui.showToUser("FlashCard " + indexIncorrect + " question: " + flashcards.get(indexIncorrect - 1).getQuestion() +
-                    " correct answer: " + flashcards.get(indexIncorrect - 1).getAnswer() + " Your answer: " +
-                    incorrectAnswers.get(wrongAnswerCount));
+            Ui.showToUser("FlashCard " + indexIncorrect +
+                    " question: " + flashcards.get(indexIncorrect - 1).getQuestion() +
+                    " correct answer: " + flashcards.get(indexIncorrect - 1).getAnswer() +
+                    " Your answer: " + incorrectAnswers.get(wrongAnswerCount));
             wrongAnswerCount++;
         }
     }
