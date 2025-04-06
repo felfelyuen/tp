@@ -170,9 +170,41 @@ Examples:
 [OUTPUT]: 
 Updated flashcard
 Edit Question: Old placeholder question here
-Updated: What is a java interface?
+   Updated Question: What is a java interface?
 Edit Answer: Old placeholder answer here
-Updated: a special class
+   Updated Answer: a special class
+
+```
+### Edit question only: `edit`
+Show the question of a flashcard via its index.
+
+Format: `edit INDEX /q QUESTION`
+INDEX must be a positive integer, ie: 1, 2, 3
+Examples:
+```
+[INPUT]: edit 3 /q What is a java interface?
+[OUTPUT]: 
+Updated flashcard
+Edit Question: Old placeholder question here
+   Updated Question: What is a java interface?
+Edit Answer: Old placeholder answer here
+   Updated Answer: Old placeholder answer here
+
+```
+### Edit answer only: `edit`
+Show the question of a flashcard via its index.
+
+Format: `edit INDEX /a ANSWER`
+INDEX must be a positive integer, ie: 1, 2, 3
+Examples:
+```
+[INPUT]: edit 3 /a a special class
+[OUTPUT]: 
+Updated flashcard
+Edit Question: Old placeholder question here
+   Updated Question: Old placeholder question here
+Edit Answer: Old placeholder answer here
+   Updated Answer: a special class
 
 ```
 
@@ -309,7 +341,7 @@ Answer: Java
 | **View Question**    | `qn INDEX` e.g. `qn 3`                                                                            |
 | **View Answer**      | `ans INDEX` e.g. `ans 3`                                                                          |
 | **Delete Flashcard** | `delete INDEX` e.g. `delete 3`                                                                    |
-| **Edit Flashcard**   | `edit INDEX /q QUESTION /a ANSWER` e.g.  `edit 2 /q What is substitutability? /a A method`        |
+| **Edit Flashcard**   | `edit INDEX [/q QUESTION] [/a ANSWER]` e.g.  `edit 2 /q What is substitutability? /a A method`    |
 | **Search Flashcard** | `search /q QUESTION /a ANSWER` e.g. `search /q What language is used in CS2113? /a Java`          |       |
 | **New Deck**         | `new DECKNAME` e.g.  `new testDeck`                                                               |
 | **Select Deck**      | `select DECKNAME` e.g. `select testDeck`                                                          |
