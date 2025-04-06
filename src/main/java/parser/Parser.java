@@ -161,6 +161,44 @@ public class Parser {
      * @throws FlashCLIArgumentException if the input is invalid or required arguments are missing.
      */
     public static String parseCodeSnippet(String codeSnippet) {
-        return codeSnippet;
+        int numIndents = 0;
+        int braceStartIndex = codeSnippet.indexOf("{");
+        int braceEndIndex = codeSnippet.indexOf("}");
+        String output = "";
+        while (braceStartIndex > 0 || braceEndIndex > 0) {
+            boolean addCloseBrace = false;
+            String frontCode;
+            String backCode;
+            if (braceStartIndex > 0) {
+                frontCode = codeSnippet.substring(0, braceStartIndex + "{".length());
+                backCode = codeSnippet.substring(braceStartIndex + "{".length());
+                numIndents += 1;
+            } else if (braceEndIndex > 0) {
+                frontCode = codeSnippet.substring(0, braceEndIndex);
+                backCode = codeSnippet.substring(braceEndIndex + "}".length());
+                numIndents -= 1;
+                addCloseBrace = true;
+            } else {
+                frontCode = "";
+                backCode = "";
+            }
+
+            output += frontCode + "\n";
+            if (numIndents > 0) {
+                for (int i = 0; i < numIndents; i++) {
+                    output += ("   ");
+                }
+            }
+            codeSnippet = backCode;
+            braceStartIndex = codeSnippet.indexOf("{");
+            braceEndIndex = codeSnippet.indexOf("}");
+            if (addCloseBrace) {
+                output += "}";
+            }
+            if (braceEndIndex < 0 && braceStartIndex < 0) {
+                output += backCode;
+            }
+        }
+        return output;
     }
 }

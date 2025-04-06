@@ -469,7 +469,7 @@ public class DeckTest {
         String viewOutput = deck.viewFlashcardQuestion(1);
         assertEquals(1, deck.getFlashcards().size());
         assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?",
-                "Class Java { void method() {...} }"), viewOutput);
+                "Class Java {\n    void method() {\n      ...\n   } \n}"), viewOutput);
     }
 
     @Test
