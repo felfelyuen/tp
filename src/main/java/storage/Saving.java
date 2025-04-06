@@ -43,6 +43,7 @@ public class Saving {
             FileWriter fw = new FileWriter(file);
 
             for (Flashcard flashcard : deck.getFlashcards()) {
+                fw.write(flashcard.getIsLearnedAsString() + "\n");
                 fw.write("Q: " + flashcard.getQuestion() + "\n");
                 fw.write("A: " + flashcard.getAnswer() + "\n");
                 fw.write("\n"); // Separate flashcards with a blank line

@@ -13,6 +13,7 @@ public class Flashcard {
     /**
      * Constructs a Flashcard with the specified question and answer.
      *
+     * @param index The index of the flashcard within the deck.
      * @param question The question for the flashcard.
      * @param answer The answer to the flashcard question.
      */
@@ -21,6 +22,21 @@ public class Flashcard {
         this.question = question;
         this.answer = answer;
         this.isLearned = false;
+    }
+
+    /**
+     * Alternative constructor that specifies the question, answer, and the isLearned value.
+     *
+     * @param index The index of the flashcard within the deck.
+     * @param question The question for the flashcard.
+     * @param answer The answer to the flashcard question.
+     * @param isLearned The isLearned value of the flashcard.
+     */
+    public Flashcard (int index, String question, String answer, boolean isLearned) {
+        this.index = index;
+        this.question = question;
+        this.answer = answer;
+        this.isLearned = isLearned;
     }
 
     /**
