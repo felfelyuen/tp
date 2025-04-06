@@ -159,6 +159,42 @@ Answer of flashcard 3
 Answer: Java
 ```
 
+### Edit question and answer: `edit`
+Show the question of a flashcard via its index.
+
+Format: `edit INDEX /q QUESTION /a ANSWER`
+INDEX must be a positive integer, ie: 1, 2, 3
+Examples:
+```
+[INPUT]: edit 3 /q What is a java interface? /a a special class
+[OUTPUT]: 
+Updated flashcard
+Edit Question: Old placeholder question here
+Updated: What is a java interface?
+Edit Answer: Old placeholder answer here
+Updated: a special class
+
+```
+
+### Insert code snippet: `Insert_code`
+Show the question of a flashcard via its index.
+
+Format: `insert_code INDEX /c CODE_SNIPPET`
+INDEX must be a positive integer, ie: 1, 2, 3
+Examples:
+```
+[INPUT]: insert_code 3 /c interface Interface{ void method(); }
+[OUTPUT]: 
+Inserted code snippet to flashcard.
+Question: What is a java interface?
+Answer: a special class
+Code Snippet: 
+interface Interface{ 
+   void method(); 
+}
+
+```
+
 ### Delete flashcard: `delete`
 Delete the flashcard in the deck via its index
 
@@ -265,26 +301,26 @@ Answer: Java
 
 ## Command Summary
 
-| Action               | Format, Examples                                                                                |
-|----------------------|-------------------------------------------------------------------------------------------------|
-| **View User Guide**  | `user_guide`                                                                                    |
-| **Create Flashcard** | `add /q QUESTION /a ANSWER` e.g. `add /q What language is used in CS2113? /a Java`              |
-| **List Flashcards**  | `list`                                                                                          |
-| **View Question**    | `qn INDEX` e.g. `qn 3`                                                                          |
-| **View Answer**      | `ans INDEX` e.g. `ans 3`                                                                        |
-| **Delete Flashcard** | `delete INDEX` e.g. `delete 3`                                                                  |
-| **Edit Flashcard**   | `edit INDEX [/q QUESTION] [/a ANSWER]` e.g.  `edit 2 /q What is substitutability? /a A method`  |
-| **Search Flashcard** | `search /q QUESTION /a ANSWER` e.g. `search /q What language is used in CS2113? /a Java`        |       |
-| **New Deck**         | `new DECKNAME` e.g.  `new testDeck`                                                             |
-| **Select Deck**      | `select DECKNAME` e.g. `select testDeck`                                                        |
-| **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                        |
-| **View Decks**       | `decks`                                                                                         |
-| **Delete Deck**      | `remove DECKNAME` e.g. `remove testDeck`                                                        |
-| **Quiz Mode**        | `quiz`                                                                                          |
-| **View Results**     | `view_results` , `redo`                                                                         |
-| **Code Snippet**     | `insert_code INDEX c/CODE_SNIPPET` e.g. `insert_code 3 c/interface Interface{ void method(); }` |
-| **Mark Learned**     | `mark_learned INDEX` e.g. `mark_learned 2`                                                      |
-| **Mark Unlearned**   | `mark_unlearned INDEX` e.g. `mark_unlearned 2`                                                  |
-| **Exit**             | `exit`                                                                                          |
+| Action               | Format, Examples                                                                                  |
+|----------------------|---------------------------------------------------------------------------------------------------|
+| **View User Guide**  | `user_guide`                                                                                      |
+| **Create Flashcard** | `add /q QUESTION /a ANSWER` e.g. `add /q What language is used in CS2113? /a Java`                |
+| **List Flashcards**  | `list`                                                                                            |
+| **View Question**    | `qn INDEX` e.g. `qn 3`                                                                            |
+| **View Answer**      | `ans INDEX` e.g. `ans 3`                                                                          |
+| **Delete Flashcard** | `delete INDEX` e.g. `delete 3`                                                                    |
+| **Edit Flashcard**   | `edit INDEX /q QUESTION /a ANSWER` e.g.  `edit 2 /q What is substitutability? /a A method`        |
+| **Search Flashcard** | `search /q QUESTION /a ANSWER` e.g. `search /q What language is used in CS2113? /a Java`          |       |
+| **New Deck**         | `new DECKNAME` e.g.  `new testDeck`                                                               |
+| **Select Deck**      | `select DECKNAME` e.g. `select testDeck`                                                          |
+| **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                          |
+| **View Decks**       | `decks`                                                                                           |
+| **Delete Deck**      | `remove DECKNAME` e.g. `remove testDeck`                                                          |
+| **Quiz Mode**        | `quiz`                                                                                            |
+| **View Results**     | `view_results` , `redo`                                                                           |
+| **Code Snippet**     | `insert_code INDEX /c CODE_SNIPPET` e.g. `insert_code 3 /c interface Interface{ void method(); }` |
+| **Mark Learned**     | `mark_learned INDEX` e.g. `mark_learned 2`                                                        |
+| **Mark Unlearned**   | `mark_unlearned INDEX` e.g. `mark_unlearned 2`                                                    |
+| **Exit**             | `exit`                                                                                            |
 |
 
