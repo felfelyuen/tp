@@ -68,9 +68,10 @@ public class Deck {
     private static final Logger logger = Logger.getLogger(Deck.class.getName());
     private String name;
     private ArrayList<Flashcard> flashcards = new ArrayList<>();
-    private final ArrayList<Flashcard> incorrectFlashcards = new ArrayList<>();
-    private final ArrayList<Integer> incorrectIndexes = new ArrayList<>();
-    private final ArrayList<String> incorrectAnswers = new ArrayList<>();
+    private ArrayList<Flashcard> incorrectFlashcards = new ArrayList<>();
+    private ArrayList<Integer> incorrectIndexes = new ArrayList<>();
+    private ArrayList<String> incorrectAnswers = new ArrayList<>();
+    private int quizAmtAnswered;
     private Timer timer;
 
     private record Result(String question, String answer) { }
@@ -337,15 +338,16 @@ public class Deck {
      * @throws EmptyListException if there are no flashcards in the deck
      */
     //@@author felfelyuen
-    public boolean quizFlashcards() throws EmptyListException, QuizCancelledException {
+    public void quizFlashcards() throws EmptyListException, QuizCancelledException {
         logger.info("starting to enter quiz mode:");
         if (flashcards.isEmpty()) {
             throw new EmptyListException(EMPTY_LIST);
         }
 
-        incorrectIndexes.clear();
-        incorrectFlashcards.clear();
-        incorrectAnswers.clear();
+        ArrayList<Flashcard> tempIncorrectFlashcards = new ArrayList<>();
+        ArrayList<Integer> tempIncorrectIndexes = new ArrayList<>();
+        ArrayList<String> tempIncorrectAnswers = new ArrayList<>();
+        quizAmtAnswered = 0;
 
         logger.info("Found " + flashcards.size() + " flashcards in the deck");
         logger.info("starting sorting and shuffling:");
@@ -362,11 +364,11 @@ public class Deck {
         for (int i = 0; i < lastIndex; i++) {
             int questionsLeft = queue.size() - i;
             Ui.showToUser(String.format(QUIZ_QUESTIONS_LEFT, questionsLeft));
-            handleQuestionForQuiz(queue.get(i));
+            handleQuestionForQuiz(queue.get(i), tempIncorrectFlashcards, tempIncorrectIndexes, tempIncorrectAnswers);
         }
         logger.info("Last question:");
         Ui.showToUser(QUIZ_LAST_QUESTION);
-        handleQuestionForQuiz(queue.get(lastIndex));
+        handleQuestionForQuiz(queue.get(lastIndex), tempIncorrectFlashcards, tempIncorrectIndexes, tempIncorrectAnswers);
 
         logger.info("Finished asking questions, tabulating timer amount:");
         long timeTaken = timer.getDuration();
@@ -375,7 +377,10 @@ public class Deck {
         logger.info("Exiting quiz mode:");
         Ui.showToUser(String.format(QUIZ_END, timeTaken));
         isQuizCompleted = true;
-        return true;
+        quizAmtAnswered = queue.size();
+        incorrectFlashcards = tempIncorrectFlashcards;
+        incorrectIndexes = tempIncorrectIndexes;
+        incorrectAnswers = tempIncorrectAnswers;
     }
 
     /**
@@ -385,9 +390,15 @@ public class Deck {
      * @throws QuizCancelledException if user wants to cancel halfway through the quiz
      */
     //@@author felfelyuen
-    public void handleQuestionForQuiz(Flashcard indexCard) throws QuizCancelledException {
+    public void handleQuestionForQuiz(
+            Flashcard indexCard,
+            ArrayList<Flashcard> tempIncorrectFlashcards,
+            ArrayList<Integer> tempIncorrectIndexes,
+            ArrayList<String> tempIncorrectAnswers)
+            throws QuizCancelledException {
+        //show question
         Ui.showToUser(indexCard.getQuestion());
-
+        //get answer
         String userAnswer = Ui.getUserCommand().trim();
         while (userAnswer.isEmpty()) {
             logger.info("no answer detected");
@@ -399,9 +410,9 @@ public class Deck {
         if (!answerCorrect) {
             logger.info("Adding into incorrect answer arrays:");
             int incorrectIndex = indexCard.getIndex();
-            incorrectIndexes.add(incorrectIndex);
-            incorrectFlashcards.add(indexCard);
-            incorrectAnswers.add(userAnswer);
+            tempIncorrectIndexes.add(incorrectIndex);
+            tempIncorrectFlashcards.add(indexCard);
+            tempIncorrectAnswers.add(userAnswer);
         }
         indexCard.setIsLearned(answerCorrect);
     }
@@ -419,9 +430,6 @@ public class Deck {
         assert (!userAnswer.isEmpty()) : "userAnswer should not be empty";
         if(userAnswer.equals(QUIZ_CANCEL)) {
             logger.info("Quiz cancelled by user. Exiting quiz:");
-            incorrectIndexes.clear();
-            incorrectFlashcards.clear();
-            incorrectAnswers.clear();
             isQuizCompleted = false;
             throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
         }
@@ -457,7 +465,7 @@ public class Deck {
         int incorrectAnswersSize = incorrectAnswers.size();
         int incorrectIndexesSize = incorrectIndexes.size();
         int incorrectFlashcardsSize = incorrectFlashcards.size();
-        int totalQuestionsSize = flashcards.size();
+        int totalQuestionsSize = quizAmtAnswered;
 
         if (incorrectAnswersSize != incorrectIndexesSize 
             | incorrectAnswersSize != incorrectFlashcardsSize 

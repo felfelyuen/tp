@@ -444,8 +444,8 @@ public class DeckTest {
     @Test
     void quizFlashcards_emptyList_emptyListExceptionThrown() {
         try {
-            boolean quizSuccess = deck.quizFlashcards();
-            assertTrue(quizSuccess);
+            deck.quizFlashcards();
+            fail("No exception was thrown");
         } catch (EmptyListException e) {
             assertEquals(EMPTY_LIST,e.getMessage());
         } catch (QuizCancelledException e) {
@@ -466,7 +466,7 @@ public class DeckTest {
             boolean testSuccess = deck.handleAnswerForFlashcard(flashcards.get(0), userAnswer);
             assertFalse(testSuccess);
             boolean exitQuizSuccess = deck.handleAnswerForFlashcard(flashcards.get(1), QUIZ_CANCEL);
-            assertFalse(exitQuizSuccess);
+            fail("No exception was thrown");
         } catch (QuizCancelledException e) {
             assertEquals(QUIZ_CANCEL_MESSAGE,e.getMessage());
         }
@@ -550,14 +550,14 @@ public class DeckTest {
     }
 
     @Test
-    void markIsLearned_invalidIndex_numberFormatExceptionThrown() {
-        try {
-            String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreateFlashcard(createInput);
-            createTest.executeCommand();
-            createTest.executeCommand();
-            assertEquals(2, deck.getFlashcards().size());
+    void markIsLearned_invalidInputs_exceptionThrown(){
+        String createInput = "/q What is Java? /a A programming language.";
+        Command createTest = new CommandCreateFlashcard(createInput);
+        createTest.executeCommand();
+        createTest.executeCommand();
+        assertEquals(2, deck.getFlashcards().size());
 
+        try { //invalid index
             deck.changeIsLearned("a", true);
             fail("Did not detect invalid input: Input not a number");
         } catch (NumberFormatException e) {
@@ -565,17 +565,8 @@ public class DeckTest {
         } catch (FlashCLIArgumentException e) {
             fail("Unexpected Exception was thrown: " + e.getMessage());
         }
-    }
 
-    @Test
-    void markIsLearned_emptyInputs_illegalArgumentExceptionThrown() {
-        try {
-            String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreateFlashcard(createInput);
-            createTest.executeCommand();
-            createTest.executeCommand();
-            assertEquals(2, deck.getFlashcards().size());
-
+        try { //empty inputs
             deck.changeIsLearned("", true);
             fail("Did not detect invalid input: Input empty");
         } catch (NumberFormatException e) {
@@ -583,17 +574,8 @@ public class DeckTest {
         } catch (FlashCLIArgumentException e) {
             assertEquals(MISSING_INPUT_INDEX, e.getMessage());
         }
-    }
 
-    @Test
-    void markIsLearned_inputOutOfBounds_illegalArgumentExceptionThrown() {
-        try {
-            String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreateFlashcard(createInput);
-            createTest.executeCommand();
-            createTest.executeCommand();
-            assertEquals(2, deck.getFlashcards().size());
-
+        try { //out of bounds index
             deck.changeIsLearned("5", true);
             fail("Did not detect invalid input: Input out of bounds");
         } catch (NumberFormatException e) {
@@ -601,17 +583,8 @@ public class DeckTest {
         } catch (FlashCLIArgumentException e) {
             assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
         }
-    }
 
-    @Test
-    void markIsLearned_zeroIndexInput_numberFormatExceptionThrown() {
-        try {
-            String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreateFlashcard(createInput);
-            createTest.executeCommand();
-            createTest.executeCommand();
-            assertEquals(2, deck.getFlashcards().size());
-
+        try { //zero inputted
             deck.changeIsLearned("0", true);
             fail("Did not detect invalid input: Input not a number");
         } catch (NumberFormatException e) {
