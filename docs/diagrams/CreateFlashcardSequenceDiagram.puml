@@ -1,21 +1,13 @@
 @startuml
 
-actor User
-participant CommandCreateFlashcard
-participant Deck
-participant Flashcard
-participant Ui
+hide footbox
+participant "<<class>>\n :FlashCLI" as FlashCLI
+participant "c:CommandCreateFlashcard" as CommandCreateFlashcard
+participant ":Deck" as Deck
+participant ":Flashcard" as Flashcard
+participant ":Ui" as Ui
 
-activate User
-create CommandCreateFlashcard
-User -> CommandCreateFlashcard
-activate CommandCreateFlashcard
-
-CommandCreateFlashcard --> User
-deactivate CommandCreateFlashcard
-
-
-User -> CommandCreateFlashcard: executeCommand()
+FlashCLI -> CommandCreateFlashcard: executeCommand()
 activate CommandCreateFlashcard
 CommandCreateFlashcard -> Deck: createFlashcard()
 
@@ -38,7 +30,8 @@ CommandCreateFlashcard -> Ui: showToUser()
 activate Ui
 Ui --> CommandCreateFlashcard
 deactivate Ui
-CommandCreateFlashcard --> User
+CommandCreateFlashcard --> FlashCLI
 deactivate CommandCreateFlashcard
+destroy CommandCreateFlashcard
 
 @enduml

@@ -12,6 +12,7 @@ import command.CommandListQuestion;
 import command.CommandQuizFlashcards;
 import command.CommandRenameDeck;
 import command.CommandSelectDeck;
+import command.CommandUnselectDeck;
 import command.CommandUserGuide;
 import command.CommandViewAnswer;
 import command.CommandViewDecks;
@@ -31,6 +32,7 @@ import static constants.CommandConstants.NEW_DECK;
 import static constants.CommandConstants.QUIZ;
 import static constants.CommandConstants.RENAME_DECK;
 import static constants.CommandConstants.SELECT_DECK;
+import static constants.CommandConstants.UNSELECT_DECK;
 import static constants.CommandConstants.USER_GUIDE;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.VIEW_DECKS;
@@ -40,9 +42,14 @@ import static constants.CommandConstants.LIST_CARDS;
 import static constants.CommandConstants.SEARCH_CARD;
 import static constants.ConfirmationMessages.CONFIRM_DELETE_DECK;
 import static constants.CommandConstants.VIEW_RES;
+import static constants.ConfirmationMessages.DECK_NOT_DELETED;
+import static constants.ErrorMessages.DELETE_EMPTY_DECK_ERROR;
 import static constants.ErrorMessages.NO_DECK_ERROR;
 import static constants.ErrorMessages.POSSIBLE_COMMANDS;
+import static deck.DeckManager.checkAndGetListIndex;
 import static deck.DeckManager.currentDeck;
+import static deck.DeckManager.decks;
+import static deck.DeckManager.getDeckByIndex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,8 +95,9 @@ public class Parser {
         case NEW_DECK -> new CommandCreateDeck(arguments);
         case SELECT_DECK -> new CommandSelectDeck(arguments);
         case RENAME_DECK -> new CommandRenameDeck(arguments);
-        case VIEW_DECKS -> new CommandViewDecks();
-        case REMOVE_DECK -> handleDeleteDeckConfirmation(arguments);
+        case VIEW_DECKS -> new CommandViewDecks(arguments);
+        case REMOVE_DECK -> validateDeckExistsForDelete(arguments);
+        case UNSELECT_DECK -> new CommandUnselectDeck(arguments);
 
         case QUIZ -> new CommandQuizFlashcards();
         case VIEW_RES -> new CommandViewQuizResult();
@@ -102,26 +110,47 @@ public class Parser {
     }
 
     /**
+     * Validates that the deck to be deleted exists and is valid.
+     * Throws an exception if the deck list is empty, the name is empty, or the deck does not exist.
+     * If validation passes, proceeds to confirmation for deletion.
+     *
+     * @param arguments the raw user input representing the deck name.
+     * @return a {@code CommandDeleteDeck} if deletion is confirmed, or {@code null} if cancelled.
+     * @throws FlashCLIArgumentException if validation fails due to missing or invalid deck.
+     */
+    public static Command validateDeckExistsForDelete(String arguments) throws FlashCLIArgumentException {
+
+        if (decks.isEmpty()) {
+            throw new FlashCLIArgumentException(DELETE_EMPTY_DECK_ERROR);
+        }
+        int listIndex = checkAndGetListIndex(arguments);
+
+        return handleDeleteDeckConfirmation(listIndex);
+    }
+
+    /**
      * Handles the confirmation process when a user attempts to delete a deck.
      * Prompts the user for confirmation and ensures valid input ("y" or "n").
      * If the user confirms ("y"), a {@code CommandDeleteDeck} is returned.
      * If the user cancels ("n"), {@code null} is returned.
      *
-     * @param arguments the name or identifier of the deck to be deleted.
+     * @param listIndex the name or identifier of the deck to be deleted.
      * @return a {@code CommandDeleteDeck} if confirmed, or {@code null} if canceled.
      */
-    private static Command handleDeleteDeckConfirmation(String arguments) {
+    private static Command handleDeleteDeckConfirmation(int listIndex) {
         boolean isValidConfirmation;
+        String deckName = getDeckByIndex(listIndex).getName();
         String userInput;
         do {
-            Ui.showToUser(String.format(CONFIRM_DELETE_DECK, arguments));
+            Ui.showToUser(String.format(CONFIRM_DELETE_DECK, deckName));
             userInput = Ui.getUserCommand().toLowerCase();
-            isValidConfirmation = userInput.equals("y") || userInput.equals("n");
+            isValidConfirmation = userInput.equals("yes") || userInput.equals("no");
         } while (!isValidConfirmation);
-        if (userInput.equals("n")) {
+        if (userInput.equals("no")) {
+            Ui.showToUser(String.format(DECK_NOT_DELETED, deckName));
             return null;
         }
-        return new CommandDeleteDeck(arguments);
+        return new CommandDeleteDeck(listIndex);
     }
 
     /**

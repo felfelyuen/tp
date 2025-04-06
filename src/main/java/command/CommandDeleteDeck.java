@@ -7,15 +7,15 @@ import ui.Ui;
 
 public class CommandDeleteDeck extends Command {
 
-    private final String arguments;
+    private final int listIndex;
 
-    public CommandDeleteDeck(String arguments) {
-        this.arguments = arguments;
+    public CommandDeleteDeck(int listIndex) {
+        this.listIndex = listIndex;
     }
 
     public void executeCommand() {
         try {
-            Ui.showToUser(deleteDeck(this.arguments));
+            Ui.showToUser(deleteDeck(this.listIndex));
         } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
         }

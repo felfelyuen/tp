@@ -36,7 +36,7 @@ Third-party libraries used:
 - JUnit 5 - Unit testing framework
 - PlantUML - For generating UML diagrams
 
-This project's structure was inspired by the SE-EDU AddressBook-Level3 project.
+This project's structure was inspired by the SE-EDU AddressBook-Level3 and AddressBook-Level4 project.
 
 ---
 
@@ -47,36 +47,65 @@ This Developer Guide documents the core architecture and key components of Flash
 ---
 
 ## 3. Implementation
-This section describes some noteworthy details on how certain features are implemented. 
+This section describes some noteworthy details on how the features are implemented. 
 
 ### 3.1. Flashcard features
 ### 3.1.1. Create a flashcard
 
-This command allows the user to create a new flashcard with compulsory `/q QUESTION` and `/a ANSWER` fields.
+This command allows the user to create a new flashcard with compulsory `QUESTION` and `ANSWER` fields, denoted by `/q` and `/a` tags.
 
 The create flashcard mechanism is facilitated by `Deck` and `CommandCreateFlashcard`.
 
 The feature requires a deck to be selected before usage.
 
-**How the feature is implemented:**
+Duplicates of the same flashcard are allowed.
 
-Below is the sequence diagram describing the operations for creating the flashcard:
+#### **Before creating the flashcard, these conditions must be satisfied:**
+
+* **Contains all arguments**: Arguments should have both tags `/q` and `/a`.
+* **Correct order**: The `/q` tag comes before the `/a` tag.
+* **No text before `/q` tag**: There must be no text before the `/q` tag, i.e. `hello/q QUESTION /a ANSWER` is not permitted.
+* **No empty fields**: Neither `QUESTION` nor `ANSWER` field can be empty. This includes having only whitespaces in the fields.
+
+In addition, any text after the first `/q` or `/a` tag will be considered as `QUESTION` or `ANSWER` respectively.
+
+In particular, if there are multiple `/q` or `/a` tags, they will be considered part of the `QUESTION` or `ANSWER`.
+
+e.g. `/q What is the weather today? /q extra question /a Sunny /a extra answer`<br>
+**Question**: `What is the weather today? /q extra question`<br>
+**Answer**: `Sunny /a extra answer`
+
+Note that the question and answer fields will be trimmed.
+
+If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
+
+**Below is the sequence diagram describing the operations for creating the flashcard:**
 
 ![](images/CreateFlashcardSequenceDiagram.png)
 
-1. The `CommandCreateFlashcard#executeCommand()` method is executed which calls `Deck#createFlashcard()`.
-2. A new `Flashcard` object is created when the user uses the command.
-3. When `Deck#createFlashcard()` is called by the `CommandCreateFlashcard#executeCommand()` method, it immediately checks if the input arguments (without the command) is valid. 
-4. This is achieved with the `Deck#checkQuestionAndAnswer` helper method.
-5. The `Deck#checkQuestionAndAnswer` helper method returns the valid strings of question and answer.
-6. A new flashcard is then created using the question and answer and added to the current selected deck.
+1. When the command is executed using `CommandCreateFlashcard#executeCommand()`, the `Deck#createFlashcard()` method is called.
+2. Then, `Deck#checkQuestionAndAnswer()` checks if the arguments are valid, according to the previously mentioned [conditions](#before-creating-the-flashcard-these-conditions-must-be-satisfied).
+3. If it is valid, the question and answer strings will be passed to create a new `Flashcard` object.
+4. A success message will then be shown to the user upon completion.
 
-**Handling of edge cases:**
-* **Contains all arguments**: Arguments should have both question and answer fields
-* **Correct indices**: The index of the start of the question and answer is valid.
-* **Correct order**: The question comes before the answer.
+**Note**: The lifeline for `CommandCreateFlashcard` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
 
-If the arguments are invalid, the exception `FlashCLIArgumentException` will be thrown with a custom message which is shown to the user.
+#### Why is it implemented this way?
+
+- The user has to select a deck before creating a flashcard, which prevents flashcards from being created and not being in any decks.
+- Each command eg `CommandCreateFlashcard` is a separate class, allowing the code to achieve the **Separation of Concerns** design principle.
+- The tags `/q` and `/a` are compulsory to prevent improper creation of Flashcard objects.
+- Any text after the first `/q` or `/a` tag will be considered as `QUESTION` or `ANSWER` respectively, to simplify the usage of the command and allow for a greater range of characters in the question.
+- Allowing duplicates gives users the flexibility to structure their decks according to their study preferences. For example, repeating a flashcard can help reinforce a key concept by increasing exposure during review.
+
+#### Alternatives Considered:
+
+- Using a regex expression
+  - Pros: More concise code, can handle a wider range of possible inputs with increased flexibility.
+  - Cons: Difficult to debug and understand, especially for Developers with little experience with regex.
+- Only allowing `/q` and `/a` tags i.e. should have no foreign tags allowed
+  - Pros: Ensures that user keys in only the inputs required.
+  - Cons: Difficult to define what is a "foreign" tag. Users might not be able to use `/` in their `QUESTION` or `ANSWER`. Also significantly increases complexity without achieving much functionality.
 
 ### 3.1.2. Edit a flashcard
 
@@ -193,28 +222,53 @@ This feature enables the user to insert a code snippet to a specific flashcard b
 ### 3.2. Deck features
 ### 3.2.1. Creating a New Deck
 
-The `new` command is implemented using the `Deck` class, which represents a collection of flashcards, and the `CommandCreateDeck` class, which processes user input to create a new deck. To ensure deck names are unique, a hashmap is used to track existing deck names.
+This feature allows the user to create a new deck with a deck name. 
+
+The create deck mechanism is facilitated by `DeckManager` and `CommandCreateDeck`.
+
+To ensure deck names are unique, a LinkedHashMap is used to track existing deck names.
+
+#### **Before creating the deck, these conditions must be satisfied:**
+* **Duplicate Deck Name**: If the user attempts to create a deck with a name that already exists, an error message is displayed, and the command is not executed.
+* **Empty Deck Name**: if the new deck name is empty or consists only of whitespaces, it is considered invalid.
+
+Note that the provided deck name will be trimmed.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
 #### Implementation of `DeckManager.createDeck()`
 Below shows the sequence diagram of the operations of creating a deck:
 ![](images/CreateDeckSequenceDiagram.png)
 
-1. The user issues the command to create a new deck.
-2. The `DeckManager.createDeck()` method checks whether the deck name already exists in the hashmap.
-3. If the name is unique, a new `Deck` object is created and stored in the hashmap, with the name as the key and the `Deck` object as the value.
-4. If the name already exists, an error message is shown to the user.
+1. When the command is executed using `CommandCreateDeck#executeCommand()`, the `DeckManager.createDeck()` method is called.
+2. The `DeckManager.createDeck()` method checks for the conditions listed above.
+3. Then, a new `Deck` object is created and stored in the LinkHashMap, with the name as the key and the `Deck` object as the value.
+4. A success message will then be shown to the user upon completion.
 
-#### Handling Edge Cases
-* **Duplicate Deck Name**: If the user attempts to create a deck with a name that already exists, an error message is displayed, and the command is not executed.
-* **Empty Deck Name**: Empty deck names are considered invalid.
-* **Whitespace-Only Names**: Deck names consisting solely of spaces are considered invalid.
+The diagram purposely omits interactions with `Ui` as it would unnecessarily complicate the diagram. Hence, to clarify, the error and success messages will be shown to the user for each condition. 
 
-A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+**Note**: The lifeline for `CommandCreateDeck` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+
+#### Why is it implemented this way?
+
+- Decks are not allowed to have duplicates as it would decrease usability of the application
+- As such, a type of HashMaps has to be used. LinkedHashMaps are chosen due to the small time complexity to find decks, and also for their ability to handle duplicates efficiently. The reason for LinkedHashMaps over regular HashMaps is explained in the [select decks feature](#).
+- The features for Decks are also in a separate class `DeckManger` to align with the Single Responsibility Principle
+
+#### Why is it implemented this way?
+
+- **Deck name uniqueness** is enforced to prevent user confusion and improve usability, ensuring each deck can be clearly identified.
+
+- A **`LinkedHashMap`** is used over `HashMap` for efficient `O(1)` lookups and to preserve the insertion order of decks, which supports predictable and user-friendly display — a consideration also relevant in the [select decks feature](#).
+
+- **`DeckManager` handles all deck-related logic** to follow the **Single Responsibility Principle**, improving code maintainability and separation of concerns.
+
+#### Alternatives Considered:
+- See [Select Decks](#)
 
 ### 3.2.2. Renaming decks
 
 The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. Similar to creating decks, a hashmap is used to track existing deck names. A deck has to be selected before being able to use this command.
-
 
 #### Implementation of `DeckManager.renameDeck()`
 Below shows the sequence diagram for the operations of rename deck:
@@ -246,16 +300,25 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 
 ### 3.2.4. Selecting a deck
 
+This command allows the user to select a deck via its `INDEX`, which can be viewed using the `decks` command.
+
 The `select` command is implemented using the `Deck` class and the `CommandSelectDeck` class.
 
-#### Implementation of `DeckManager.selectDeck()`
-* Updates `currentDeck` to the selected `Deck` object if deck exists.
-
-#### Handling Edge Cases
+#### **Before selecting a deck, these conditions must be satisfied:**
 * **No Decks**: If there are no decks available, the user will not be able to select any decks.
-* * **Deck not found**: If the deck name is not found in the keys of the hashmap, the user will not be able to select the deck.
+* **Invalid index**: 
+  * Checks the following conditions:
+    * Empty or whitespace input provided
+    * Not a number
+    * Index out of bounds
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+#### Implementation of `DeckManager.selectDeck()`
+![](images/SelectDeckSequenceDiagram.png)
+* Checks for the [conditions](#before-selecting-a-deck-these-conditions-must-be-satisfied) listed above
+* `DeckManager.checkAndGetListIndex()` checks if the index is valid and returns listIndex.
+* Then, we get the deck corresponding to that index. The `LinkedHashMap` has to be converted into a `Set` via the `entrySet()` method.
 
 ### 3.2.5. Deleting a deck
 

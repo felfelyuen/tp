@@ -12,7 +12,10 @@ import ui.Ui;
  * Displays either the success message or an error message based on the result.</p>
  */
 public class CommandViewDecks extends Command {
-
+    private final String arguments;
+    public CommandViewDecks(String arguments) {
+        this.arguments = arguments;
+    }
     /**
      * Executes the command to list decks and shows the result to the user.
      *
@@ -20,7 +23,7 @@ public class CommandViewDecks extends Command {
      */
     public void executeCommand() {
         try {
-            Ui.showToUser(viewDecks());
+            Ui.showToUser(viewDecks(this.arguments));
         } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
         }
