@@ -40,16 +40,20 @@ public class Loading {
                 String line;
                 String question = null;
                 String answer = null;
+                boolean isLearned = false;
 
                 while ((line = br.readLine()) != null) {
-                    if (line.startsWith("Q: ")) {
+                    if (line.equals("[X]")) {
+                        isLearned = true;
+                    } else if (line.startsWith("Q: ")) {
                         question = line.substring(3).trim();
                     } else if (line.startsWith("A: ")) {
                         answer = line.substring(3).trim();
                         if (question != null && !question.isEmpty()) {
-                            deck.insertFlashcard(new Flashcard(deck.getDeckSize(), question, answer));
+                            deck.insertFlashcard(new Flashcard(deck.getDeckSize(), question, answer, isLearned));
                             question = null;
                             answer = null;
+
                         }
                     }
                 }

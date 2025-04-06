@@ -1,7 +1,7 @@
 package deck;
 
-import static constants.ErrorMessages.CHANGE_IS_LEARNED_MISSING_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_INPUT_ERROR;
+import static constants.ErrorMessages.MISSING_INPUT_INDEX;
 import static constants.ErrorMessages.CREATE_INVALID_ORDER;
 import static constants.ErrorMessages.CREATE_MISSING_DESCRIPTION;
 import static constants.ErrorMessages.CREATE_MISSING_FIELD;
@@ -15,6 +15,7 @@ import static constants.ErrorMessages.SEARCH_MISSING_FIELD;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.QuizMessages.QUIZ_CANCEL;
 import static constants.QuizMessages.QUIZ_CANCEL_MESSAGE;
+import static constants.SuccessMessages.CHANGED_ISLEARNED_NOCHANGENEEDED;
 import static constants.SuccessMessages.CHANGED_ISLEARNED_SUCCESS;
 import static constants.SuccessMessages.CREATE_SUCCESS;
 import static constants.SuccessMessages.EDIT_SUCCESS;
@@ -188,10 +189,10 @@ public class DeckTest {
             String createInput = "/q What is Java? /a A programming language.";
             Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
-            String viewOutput = deck.viewFlashcardQuestion(1);
+            String viewOutput = deck.viewFlashcardQuestion("1");
             assertEquals(1, deck.getFlashcards().size());
-            assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?", ""), viewOutput);
-        } catch (ArrayIndexOutOfBoundsException e) {
+            assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "[ ]", "What is Java?", ""), viewOutput);
+        } catch (FlashCLIArgumentException | NumberFormatException e) {
             fail("Unexpected ArrayIndexOutOfBoundsException was thrown: " + e.getMessage());
         }
     }
@@ -203,10 +204,12 @@ public class DeckTest {
             Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             assertEquals(1, deck.getFlashcards().size());
-            deck.viewFlashcardQuestion(3);
+            deck.viewFlashcardQuestion("3");
             fail("no exception was thrown");
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (FlashCLIArgumentException e) {
             assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
+        } catch (NumberFormatException e) {
+            fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
@@ -217,11 +220,28 @@ public class DeckTest {
             Command createTest = new CommandCreateFlashcard(createInput);
             createTest.executeCommand();
             assertEquals(1, deck.getFlashcards().size());
-            int index = Integer.parseInt("sjd");
-            deck.viewFlashcardQuestion(index);
+            deck.viewFlashcardQuestion("sjd");
             fail("no exception was thrown");
         } catch (NumberFormatException e) {
             assertEquals("For input string: \"sjd\"", e.getMessage());
+        } catch (FlashCLIArgumentException e) {
+            fail("Unexpected FlashCLIArgumentException was thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void viewFlashcardQuestion_noInputs_arrayIndexOutOfBoundsExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreateFlashcard(createInput);
+            createTest.executeCommand();
+            assertEquals(1, deck.getFlashcards().size());
+            deck.viewFlashcardQuestion("");
+            fail("no exception was thrown");
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(MISSING_INPUT_INDEX, e.getMessage());
+        } catch (NumberFormatException e) {
+            fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
@@ -318,7 +338,9 @@ public class DeckTest {
             String listOutput = deck.listFlashcards();
             assertEquals(3, deck.getFlashcards().size());
             assertEquals(String.format(LIST_SUCCESS,
-                    "1. What is Java?\n2. What is Java?\n3. What is Java?"),
+                    "1. [ ] What is Java?\n" +
+                            "2. [ ] What is Java?\n" +
+                            "3. [ ] What is Java?"),
                     listOutput);
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
@@ -346,12 +368,13 @@ public class DeckTest {
             createTest.executeCommand();
             String listOutput = deck.listFlashcards();
             assertEquals(2, deck.getFlashcards().size());
-            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
+            assertEquals(String.format(LIST_SUCCESS, "1. [ ] What is Java?\n2. [ ] What is Java?"), listOutput);
             Command deleteTest = new CommandDeleteFlashcard("1");
             deleteTest.executeCommand();
             String listAfterDeleteOutput = deck.listFlashcards();
             assertEquals(1, deck.getFlashcards().size());
-            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?"), listAfterDeleteOutput);
+            assertEquals(String.format(LIST_SUCCESS, "1. [ ] What is Java?"), listAfterDeleteOutput);
+            assertEquals(1, deck.getFlashcards().get(0).getIndex());
         } catch (EmptyListException e) {
             fail("Unexpected EmptyListException was thrown: " + e.getMessage());
         }
@@ -366,7 +389,7 @@ public class DeckTest {
             createTest.executeCommand();
             String listOutput = deck.listFlashcards();
             assertEquals(2, deck.getFlashcards().size());
-            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
+            assertEquals(String.format(LIST_SUCCESS, "1. [ ] What is Java?\n2. [ ] What is Java?"), listOutput);
             Command deleteTest = new CommandDeleteFlashcard("sdsd");
             deleteTest.executeCommand();
         } catch (EmptyListException e) {
@@ -385,7 +408,7 @@ public class DeckTest {
             createTest.executeCommand();
             String listOutput = deck.listFlashcards();
             assertEquals(2, deck.getFlashcards().size());
-            assertEquals(String.format(LIST_SUCCESS, "1. What is Java?\n2. What is Java?"), listOutput);
+            assertEquals(String.format(LIST_SUCCESS, "1. [ ] What is Java?\n2. [ ] What is Java?"), listOutput);
             Command deleteTest = new CommandDeleteFlashcard("72");
             deleteTest.executeCommand();
         } catch (EmptyListException e) {
@@ -430,8 +453,8 @@ public class DeckTest {
     @Test
     void quizFlashcards_emptyList_emptyListExceptionThrown() {
         try {
-            boolean quizSuccess = deck.quizFlashcards();
-            assertTrue(quizSuccess);
+            deck.quizFlashcards();
+            fail("No exception was thrown");
         } catch (EmptyListException e) {
             assertEquals(EMPTY_LIST,e.getMessage());
         } catch (QuizCancelledException e) {
@@ -452,7 +475,7 @@ public class DeckTest {
             boolean testSuccess = deck.handleAnswerForFlashcard(flashcards.get(0), userAnswer);
             assertFalse(testSuccess);
             boolean exitQuizSuccess = deck.handleAnswerForFlashcard(flashcards.get(1), QUIZ_CANCEL);
-            assertFalse(exitQuizSuccess);
+            fail("No exception was thrown");
         } catch (QuizCancelledException e) {
             assertEquals(QUIZ_CANCEL_MESSAGE,e.getMessage());
         }
@@ -460,16 +483,20 @@ public class DeckTest {
 
     @Test
     void insertCodeSnippet_validInputs_success() {
-        String createInput = "/q What is Java? /a A programming language.";
-        Command createTest = new CommandCreateFlashcard(createInput);
-        createTest.executeCommand();
-        String insertCodeSnippet = "1 /c Class Java { void method() {...} }";
-        Command insertTest = new CommandInsertCode(insertCodeSnippet);
-        insertTest.executeCommand();
-        String viewOutput = deck.viewFlashcardQuestion(1);
-        assertEquals(1, deck.getFlashcards().size());
-        assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "What is Java?",
-                "Class Java {\n    void method() {\n      ...\n   } \n}"), viewOutput);
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreateFlashcard(createInput);
+            createTest.executeCommand();
+            String insertCodeSnippet = "1 /c Class Java { void method() {...} }";
+            Command insertTest = new CommandInsertCode(insertCodeSnippet);
+            insertTest.executeCommand();
+            String viewOutput = deck.viewFlashcardQuestion("1");
+            assertEquals(1, deck.getFlashcards().size());
+            assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "[ ]", "What is Java?",
+                    "Class Java {\n    void method() {\n      ...\n   } \n}"), viewOutput);
+        } catch (FlashCLIArgumentException | NumberFormatException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        }
     }
 
     @Test
@@ -532,14 +559,14 @@ public class DeckTest {
     }
 
     @Test
-    void markIsLearned_invalidIndex_numberFormatExceptionThrown() {
-        try {
-            String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreateFlashcard(createInput);
-            createTest.executeCommand();
-            createTest.executeCommand();
-            assertEquals(2, deck.getFlashcards().size());
+    void markIsLearned_invalidInputs_exceptionThrown(){
+        String createInput = "/q What is Java? /a A programming language.";
+        Command createTest = new CommandCreateFlashcard(createInput);
+        createTest.executeCommand();
+        createTest.executeCommand();
+        assertEquals(2, deck.getFlashcards().size());
 
+        try { //invalid index
             deck.changeIsLearned("a", true);
             fail("Did not detect invalid input: Input not a number");
         } catch (NumberFormatException e) {
@@ -547,41 +574,82 @@ public class DeckTest {
         } catch (FlashCLIArgumentException e) {
             fail("Unexpected Exception was thrown: " + e.getMessage());
         }
-    }
 
-    @Test
-    void markIsLearned_emptyInputs_illegalArgumentExceptionThrown() {
-        try {
-            String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreateFlashcard(createInput);
-            createTest.executeCommand();
-            createTest.executeCommand();
-            assertEquals(2, deck.getFlashcards().size());
-
+        try { //empty inputs
             deck.changeIsLearned("", true);
             fail("Did not detect invalid input: Input empty");
         } catch (NumberFormatException e) {
             fail("Unexpected Exception was thrown: " + e.getMessage());
         } catch (FlashCLIArgumentException e) {
-            assertEquals(CHANGE_IS_LEARNED_MISSING_INDEX, e.getMessage());
+            assertEquals(MISSING_INPUT_INDEX, e.getMessage());
         }
-    }
 
-    @Test
-    void markIsLearned_inputOutOfBounds_illegalArgumentExceptionThrown() {
-        try {
-            String createInput = "/q What is Java? /a A programming language.";
-            Command createTest = new CommandCreateFlashcard(createInput);
-            createTest.executeCommand();
-            createTest.executeCommand();
-            assertEquals(2, deck.getFlashcards().size());
-
+        try { //out of bounds index
             deck.changeIsLearned("5", true);
             fail("Did not detect invalid input: Input out of bounds");
         } catch (NumberFormatException e) {
             fail("Unexpected Exception was thrown: " + e.getMessage());
         } catch (FlashCLIArgumentException e) {
             assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
+        }
+
+        try { //zero inputted
+            deck.changeIsLearned("0", true);
+            fail("Did not detect invalid input: Input not a number");
+        } catch (NumberFormatException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(INDEX_OUT_OF_BOUNDS, e.getMessage());
+        }
+    }
+
+    @Test
+    void markIsLearned_emptyList_flashCLIArgumentExceptionThrown() {
+        try {
+            assertEquals(0, deck.getFlashcards().size());
+            deck.changeIsLearned("1", true);
+            fail("Did not detect empty list");
+        } catch (NumberFormatException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(EMPTY_LIST, e.getMessage());
+        }
+    }
+
+    @Test
+    void markIsLearned_alreadyUnlearned_illegalArgumentExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreateFlashcard(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+            assertEquals(2, deck.getFlashcards().size());
+
+            deck.changeIsLearned("2", false);
+            fail("Did not detect invalid input: Input out of bounds");
+        } catch (NumberFormatException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(String.format(CHANGED_ISLEARNED_NOCHANGENEEDED, "unlearned"), e.getMessage());
+        }
+    }
+
+    @Test
+    void markIsLearned_alreadyLearned_illegalArgumentExceptionThrown() {
+        try {
+            String createInput = "/q What is Java? /a A programming language.";
+            Command createTest = new CommandCreateFlashcard(createInput);
+            createTest.executeCommand();
+            createTest.executeCommand();
+            assertEquals(2, deck.getFlashcards().size());
+
+            deck.changeIsLearned("2", true);
+            deck.changeIsLearned("2", true);
+            fail("Did not detect invalid input: Input out of bounds");
+        } catch (NumberFormatException e) {
+            fail("Unexpected Exception was thrown: " + e.getMessage());
+        } catch (FlashCLIArgumentException e) {
+            assertEquals(String.format(CHANGED_ISLEARNED_NOCHANGENEEDED, "learned"), e.getMessage());
         }
     }
 
