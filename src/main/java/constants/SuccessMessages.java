@@ -35,7 +35,7 @@ public class SuccessMessages {
     public static final String INSERT_SUCCESS = "Inserted code snippet to flashcard.\n" +
             "Question: %s\n" +
             "Answer: %s\n" +
-            "Code Snippet: %s\n";
+            "Code Snippet: \n%s\n";
 
     public static final String CHANGED_ISLEARNED_SUCCESS = "Changed flashcard number %s into %s";
     public static final String SEARCH_SUCCESS = "Flashcards matched: \n%s";

@@ -171,8 +171,19 @@ public class DeckManager {
         assert currentDeck != null : "A deck must be selected before renaming!";
 
         currentDeck.setName(newDeckName);
-        decks.put(newDeckName, currentDeck);
-        decks.remove(oldDeckName);
+
+        LinkedHashMap<String, Deck> newMap = new LinkedHashMap<>();
+        for (Map.Entry<String, Deck> entry : decks.entrySet()) {
+            String key = entry.getKey();
+            Deck value = entry.getValue();
+
+            if (key.equals(oldDeckName)) {
+                newMap.put(newDeckName, value);
+            } else {
+                newMap.put(key, value);
+            }
+        }
+        decks = newMap;
         try {
             renameDeckFile(oldDeckName, newDeckName);
         } catch (IOException e) {

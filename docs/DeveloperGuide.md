@@ -138,7 +138,7 @@ This feature enables the user to edit the question and answer to a specific flas
 
 #### Design
 
-The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on a 0-based index. The system validates the index and ensures it’s within bounds.
+The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on index. The system validates the index and ensures it’s within bounds.
 
 #### Class Diagram
 
@@ -251,50 +251,57 @@ The diagram purposely omits interactions with `Ui` as it would unnecessarily com
 
 #### Why is it implemented this way?
 
-- Decks are not allowed to have duplicates as it would decrease usability of the application
-- As such, a type of HashMaps has to be used. LinkedHashMaps are chosen due to the small time complexity to find decks, and also for their ability to handle duplicates efficiently. The reason for LinkedHashMaps over regular HashMaps is explained in the [select decks feature](#).
-- The features for Decks are also in a separate class `DeckManger` to align with the Single Responsibility Principle
-
-#### Why is it implemented this way?
-
 - **Deck name uniqueness** is enforced to prevent user confusion and improve usability, ensuring each deck can be clearly identified.
 
-- A **`LinkedHashMap`** is used over `HashMap` for efficient `O(1)` lookups and to preserve the insertion order of decks, which supports predictable and user-friendly display — a consideration also relevant in the [select decks feature](#).
+- A **`LinkedHashMap`** is used over `HashMap` for efficient `O(1)` lookups and to preserve the insertion order of decks, which supports predictable and user-friendly display — a consideration also relevant in the [select decks feature](#324-selecting-a-deck).
 
 - **`DeckManager` handles all deck-related logic** to follow the **Single Responsibility Principle**, improving code maintainability and separation of concerns.
 
-#### Alternatives Considered:
-- See [Select Decks](#)
-
 ### 3.2.2. Renaming decks
 
-The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. Similar to creating decks, a hashmap is used to track existing deck names. A deck has to be selected before being able to use this command.
+This feature allows users to rename selected decks.
 
-#### Implementation of `DeckManager.renameDeck()`
-Below shows the sequence diagram for the operations of rename deck:
-![](images/RenameDeckSequenceDiagram.png)
+The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. A `LinkedHashMap` is used to track existing deck names. A deck has to be selected before being able to use this command.
 
-1. The user issues the command to rename an existing deck.
-2. The `DeckManager.renameDeck()` method checks whether the deck name already exists in the hashmap.
-3. If the new name is unique, the `name` attribute of `Deck` object will be updated to the new name. Then, the new name with the renamed `Deck` object will be added to the hashmap as a new entry. 
-4. The old entry will then be removed from the hashmap.
+The ordering of the decks is preserved.
 
-#### Handling Edge Cases
+#### **Before renaming a deck, these conditions must be satisfied:**
 * **Unchanged Name**: If the user renames back to the same name as previous, it will not be allowed.
 * **Duplicate Deck Name**: The user will not be able to rename the selected deck to deck names that are already created.
 * **Empty Deck Name / Whitespace-Only Names**: Empty deck names or names consisting solely of spaces are considered invalid.
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
+#### Implementation of `DeckManager.renameDeck()`
+![](images/RenameDeckSequenceDiagram.png)
+
+1. The `DeckManger.validateNewDeckName()` method checks the new deck name according to the [conditions](#before-renaming-a-deck-these-conditions-must-be-satisfied).
+2. The `Deck` object must be preserved, as it contains all the flashcards created. Hence, we rename the `Deck` using `Deck#setname()`.
+3. However, as the keys of the `LinkedHashMap` are immutable, we cannot update it directly.
+4. Thus, we create a new `LinkedHashMap` and copy over all previous entries while updating the new deck name.
+5. This ensures that relative order is preserved during the rename process.
+
+#### Why is it implemented this way?
+
+- **Deck order is preserved** to maintain a consistent and intuitive user experience — renaming a deck should not change its position in the list.
+- Since **`LinkedHashMap` does not support key updates directly**, we reconstruct the map when renaming a deck. This allows the renamed deck to stay in the same position.
+- While this introduces a time complexity of **`O(n)`**, the tradeoff is justified by the importance of preserving deck order.
+- The actual `Deck` object is preserved to retain all associated flashcards — only the name (key) is updated.
+
 ### 3.2.3. Listing all decks
 
+This feature allows users to view all decks along with their corresponding indices. It does not allow any arguments, although whitespace is allowed.
+
 The `decks` command is implemented using the `Deck` class and the `CommandViewDecks` class. 
+
+The ordering of the decks is preserved.
 
 #### Implementation of `DeckManager.viewDecks()`
 * Using the `StringBuilder` class from `java.lang`, the method prints the name of each deck in the hashmap, along with a counter index that goes from 1 to n.
 
 #### Handling Edge Cases
 * **No Decks**: If there are no decks available, the user will not be able to list them.
+* **No extra arguments**: There must be no input after the command. e.g. `decks abc` is not allowed. However, whitespace is allowed.
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
@@ -318,21 +325,32 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 ![](images/SelectDeckSequenceDiagram.png)
 * Checks for the [conditions](#before-selecting-a-deck-these-conditions-must-be-satisfied) listed above
 * `DeckManager.checkAndGetListIndex()` checks if the index is valid and returns listIndex.
-* Then, we get the deck corresponding to that index. The `LinkedHashMap` has to be converted into a `Set` via the `entrySet()` method.
+* Then, we get the deck corresponding to that index. The `LinkedHashMap` has to be converted into a `Set` via the `entrySet()` method and then to a `List`. This is to facilitate the accessing of decks via index.
+* After getting the deck, we select it by assigning it to `currentDeck`, which indicates the deck selected.
+
+**Note**: The lifeline for `CommandSelectDeck` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+
+#### Why is it implemented this way?
+
+- `LinkedHashMap` was chosen over `LinkedHashSet`, `HashMap`, `Set` etc. due to its ability to maintain insertion order and allow index access without having to maintain multiple lists. 
+- We chose to convert the `LinkedHashMap` to a `List` everytime we require index access, instead of setting the `List` as an attribute. This is because the list is a shallow copy of the `LinkedHashMap` and will not be updated when the hashmap changes. To prevent adding further complexity to the code and having to maintain another list, we chose to sacrifice some speed in exchange for user convenience.
 
 ### 3.2.5. Deleting a deck
+
+This feature allows users to remove a deck via its index. The deck need not be selected.
 
 The `remove` command is implemented using the `Deck` class and the `CommandDeleteDeck` class.
 
 #### Implementation of `DeckManager.deleteDeck()`
-* Removes the selected deck from the hashmap via its key if the deck exists.
-* Also deselects the deck if the currentDeck is the deck being deleted. 
-* A confirmation message is raised to the user before deletion. This can be found in `Parser`.
+![](images/DeleteDeckSequenceDiagram.png)
+* When the command is sent, we first validate if the deck exists using `Parser.validateDeckExistsForDelete()`.
+* This is done through `DeckManager.checkAndGetListIndex()`, which checks that the input is a valid index and converts it from String to Integer.
+* Then, we confirm if the user indeed wants to delete the deck. This is done by continuously looping until the user enters "yes" or "no". The input is not case-sensitive. 
+* After which, a new `CommandDeleteDeck` object is created if the user confirms deletion or a message is shown to the user if "no" is entered.
 
 #### Handling Edge Cases
+* **Invalid input**: The input is empty or consists of only whitespace, or is out of bounds of the deck list.
 * **No Decks**: There are no decks to delete.
-* **Deck not found**: The deck does not exists as it is not in the hashmap. 
-* **Empty Deck Name / Whitespace-Only Names**: The deck name is empty or consists of only whitespace, which is not a valid deck name.
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
