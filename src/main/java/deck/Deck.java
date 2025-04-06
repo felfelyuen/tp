@@ -38,7 +38,6 @@ import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUIZRESULT_SUCCESS;
 import static constants.SuccessMessages.QUIZRESULT_FULL_MARKS;
-import static storage.Saving.saveDeck;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -154,7 +153,7 @@ public class Deck {
         Flashcard newFlashcard = new Flashcard(flashcardIndex, question, answer);
         flashcards.add(newFlashcard);
         try {
-            saveDeck(name, this);
+            Saving.saveDeck(name, this);
         } catch (IOException e) {
             System.out.println("Error saving deck: " + e.getMessage());
         }
@@ -281,7 +280,7 @@ public class Deck {
         String oldAnswer = oldFlashcard.getAnswer();
         flashcards.set(arrayIndex, updatedFlashcard);
         try {
-            saveDeck(name, this);
+            Saving.saveDeck(name, this);
         } catch (IOException e) {
             System.out.println("Error saving deck: " + e.getMessage());
         }
@@ -329,7 +328,7 @@ public class Deck {
         assert flashcardToDelete != null : "flashcard object should not be null";
         flashcards.remove(arrayIndex);
         try {
-            saveDeck(name, this);
+            Saving.saveDeck(name, this);
         } catch (IOException e) {
             System.out.println("Error saving deck: " + e.getMessage());
         }
