@@ -1,7 +1,6 @@
 package command;
 
 import static deck.DeckManager.unselectDeck;
-import static deck.DeckManager.viewDecks;
 
 import exceptions.FlashCLIArgumentException;
 import ui.Ui;
