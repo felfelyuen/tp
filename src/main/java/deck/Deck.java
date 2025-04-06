@@ -665,12 +665,24 @@ public class Deck {
     }
 
     private String getPerformanceComment(double accuracy) {
-        if (accuracy == 100) return "PERFECT SCORE! FLAWLESS PERFORMANCE!";
-        if (accuracy >= 95) return "Outstanding! You've mastered this material!";
-        if (accuracy >= 85) return "Excellent work! You're doing great!";
-        if (accuracy >= 75) return "Good job! You're making solid progress.";
-        if (accuracy >= 65) return "Not bad! Review your mistakes to improve.";
-        if (accuracy >= 50) return "You passed, but more practice would help.";
+        if (accuracy == 100) {
+            return "PERFECT SCORE! FLAWLESS PERFORMANCE!";
+        }
+        if (accuracy >= 95) {
+            return "Outstanding! You've mastered this material!";
+        }
+        if (accuracy >= 85) {
+            return "Excellent work! You're doing great!";
+        }
+        if (accuracy >= 75) {
+            return "Good job! You're making solid progress.";
+        }
+        if (accuracy >= 65) {
+            return "Not bad! Review your mistakes to improve.";
+        }
+        if (accuracy >= 50) {
+            return "You passed, but more practice would help.";
+        }
         return "Keep practicing! Review the material and try again.";
     }
 
