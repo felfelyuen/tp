@@ -245,29 +245,36 @@ public class Deck {
     public String editFlashcard(int index, String arguments)
             throws ArrayIndexOutOfBoundsException,
             FlashCLIArgumentException {
-        boolean containsAllArguments = arguments.contains("/q") && arguments.contains("/a");
+        boolean containsAllArguments = arguments.contains("/q") || arguments.contains("/a");
         if (!containsAllArguments) {
             throw new FlashCLIArgumentException(CREATE_MISSING_FIELD);
         }
-        int questionStart = arguments.indexOf("/q");
-        int answerStart = arguments.indexOf("/a");
-
-        if (questionStart > answerStart) {
-            throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
+        if (index <= 0 || index > flashcards.size()) {
+            throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
+        }
+        int questionStart = 0;
+        int answerStart = arguments.length();
+        int arrayIndex = index - 1;
+        Flashcard updatedFlashcard = flashcards.get(arrayIndex);
+        String updatedQuestion = updatedFlashcard.getQuestion();
+        String updatedAnswer = updatedFlashcard.getAnswer();
+        if (arguments.contains("/a")) {
+            answerStart = arguments.indexOf("/a");
+            updatedAnswer = arguments.substring(answerStart + "/a".length()).trim();
+        }
+        if (arguments.contains("/q")) {
+            questionStart = arguments.indexOf("/q");
+            if (questionStart > answerStart) {
+                throw new FlashCLIArgumentException(CREATE_INVALID_ORDER);
+            }
+            updatedQuestion = arguments.substring(questionStart + "/q".length(), answerStart).trim();
         }
 
-        String updatedQuestion = arguments.substring(questionStart + "/q".length(), answerStart).trim();
-        String updatedAnswer = arguments.substring(answerStart + "/a".length()).trim();
         if (updatedQuestion.isEmpty() || updatedAnswer.isEmpty()) {
             throw new FlashCLIArgumentException(CREATE_MISSING_DESCRIPTION);
         }
 
-        Flashcard updatedFlashcard = new Flashcard(index, updatedQuestion, updatedAnswer);
-
-        if (index <= 0 || index > flashcards.size()) {
-            throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
-        }
-        int arrayIndex = index - 1;
+        updatedFlashcard = new Flashcard(index, updatedQuestion, updatedAnswer);
 
         Flashcard oldFlashcard = flashcards.get(arrayIndex);
         String oldQuestion = oldFlashcard.getQuestion();

@@ -1,45 +1,35 @@
 @startuml
 
-actor User
-participant CommandRenameDeck
-participant DeckManager
-participant FlashCLIArgumentException
+hide footbox
+participant "<<class>>\n :FlashCLI" as FlashCLI
+participant ":CommandRenameDeck" as CommandRenameDeck
+participant "<<class>>\n :DeckManager" as DeckManager
 participant Deck
 
-activate User
-create CommandRenameDeck
-User -> CommandRenameDeck
-activate CommandRenameDeck
-
-CommandRenameDeck --> User
-deactivate CommandRenameDeck
-
-
-User -> CommandRenameDeck: executeCommand()
+FlashCLI -> CommandRenameDeck: executeCommand()
 activate CommandRenameDeck
 CommandRenameDeck -> DeckManager: renameDeck()
 activate DeckManager
 
-alt invalid deck name
-    DeckManager -> FlashCLIArgumentException
-    activate FlashCLIArgumentException
-    FlashCLIArgumentException --> User
-    deactivate FlashCLIArgumentException
+DeckManager -> DeckManager:validateNewDeckName()
+activate DeckManager
+DeckManager --> DeckManager
+deactivate DeckManager
 
-else else
-    DeckManager -> DeckManager:getName()
-    activate DeckManager
-    DeckManager --> DeckManager: current deck name
-    deactivate DeckManager
+DeckManager -> DeckManager:renameDeckInCollection()
+activate DeckManager
 
-    DeckManager -> Deck:setName()
-    activate Deck
-    Deck --> DeckManager
-    deactivate Deck
-    DeckManager --> CommandRenameDeck: success message
-    deactivate DeckManager
-    CommandRenameDeck --> User
-    deactivate CommandRenameDeck
-end alt
+DeckManager -> Deck: setName()
+activate Deck
+Deck --> DeckManager
+deactivate Deck
+DeckManager --> DeckManager
+deactivate DeckManager
+
+DeckManager --> CommandRenameDeck: success message
+deactivate DeckManager
+CommandRenameDeck --> FlashCLI
+deactivate CommandRenameDeck
+destroy CommandRenameDeck
 
 @enduml

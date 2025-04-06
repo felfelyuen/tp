@@ -1,0 +1,68 @@
+@startuml
+
+hide footbox
+participant ":FlashCLI" as FlashCLI
+participant "<<class>>\n :Parser" as Parser
+participant "<<class>>\n :DeckManager" as DeckManager
+participant ":Deck" as Deck
+participant ":Ui" as Ui
+participant ":CommandDeleteDeck" as CommandDeleteDeck
+
+FlashCLI -> Parser:parseInput(...)
+activate Parser
+Parser -> Parser: validateDeckExistsForDelete(arguments)
+activate Parser
+
+Parser -> DeckManager:checkAndGetListIndex(arguments)
+activate DeckManager
+DeckManager --> Parser: listIndex
+deactivate DeckManager
+
+Parser -> Parser:handleDeleteDeckConfirmation(listIndex)
+activate Parser
+
+Parser -> DeckManager:getDeckByIndex(listIndex)
+activate DeckManager
+DeckManager --> Parser
+deactivate DeckManager
+
+Parser -> Deck:getName()
+activate Deck
+Deck --> Parser
+deactivate Deck
+
+loop until "yes" or "no"
+Parser -> Ui:showToUser(...)
+activate Ui
+Ui --> Parser
+deactivate Ui
+
+Parser -> Ui:getUserCommand(...)
+activate Ui
+Ui --> Parser
+deactivate Ui
+
+end
+
+alt "yes"
+create CommandDeleteDeck
+Parser -> CommandDeleteDeck
+activate CommandDeleteDeck
+CommandDeleteDeck --> Parser
+deactivate CommandDeleteDeck
+
+else "no"
+Parser -> Ui:showToUser(...)
+activate Ui
+Ui --> Parser
+deactivate Ui
+end alt
+
+Parser --> Parser
+deactivate Parser
+Parser --> Parser
+deactivate Parser
+Parser --> FlashCLI
+deactivate Parser
+
+@enduml
