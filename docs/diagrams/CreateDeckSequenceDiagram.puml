@@ -2,20 +2,19 @@
 
 hide footbox
 participant "<<class>> \n:FlashCLI" as FlashCLI
-participant ":CommandCreateDeck" as CommandCreateDeck
+participant "c:CommandCreateDeck" as CommandCreateDeck
 participant "<<class>> \n :DeckManager" as DeckManager
 participant ":FlashCLIArgumentException" as FlashCLIArgumentException
 participant ":Deck" as Deck
 
 FlashCLI -> CommandCreateDeck: executeCommand()
 activate CommandCreateDeck
-CommandCreateDeck -> DeckManager: createDeck()
+CommandCreateDeck -> DeckManager: createDeck(...)
 activate DeckManager
 
-alt invalid deck name
+alt invalid or duplicate deck name
     DeckManager -> FlashCLIArgumentException
     activate FlashCLIArgumentException
-    FlashCLIArgumentException --> FlashCLI: error message
     deactivate FlashCLIArgumentException
 
 else else
@@ -28,6 +27,7 @@ else else
     deactivate DeckManager
     CommandCreateDeck --> FlashCLI
     deactivate CommandCreateDeck
+    destroy CommandCreateDeck
 end alt
 
 @enduml
