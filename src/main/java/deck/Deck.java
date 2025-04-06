@@ -631,16 +631,36 @@ public class Deck {
      * @return Letter grade with emoji
      */
     private String calculateAccuracyGrade(double accuracy) {
-        if (accuracy >= 90) return "A+ :)";
-        if (accuracy >= 85) return "A :>";
-        if (accuracy >= 80) return "A-";
-        if (accuracy >= 75) return "B+";
-        if (accuracy >= 70) return "B";
-        if (accuracy >= 65) return "B-";
-        if (accuracy >= 60) return "C+";
-        if (accuracy >= 55) return "C";
-        if (accuracy >= 50) return "C-";
-        if (accuracy >= 40) return "D";
+        if (accuracy >= 90) {
+            return "A+ :)";
+        }
+        if (accuracy >= 85) {
+            return "A :>";
+        }
+        if (accuracy >= 80) {
+            return "A-";
+        }
+        if (accuracy >= 75) {
+            return "B+";
+        }
+        if (accuracy >= 70) {
+            return "B";
+        }
+        if (accuracy >= 65) {
+            return "B-";
+        }
+        if (accuracy >= 60) {
+            return "C+";
+        }
+        if (accuracy >= 55) {
+            return "C";
+        }
+        if (accuracy >= 50) {
+            return "C-";
+        }
+        if (accuracy >= 40) {
+            return "D";
+        }
         return "F ;(";
     }
 
