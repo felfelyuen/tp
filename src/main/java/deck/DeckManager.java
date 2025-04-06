@@ -300,7 +300,11 @@ public class DeckManager {
         if (currentDeck == deckToDelete) {
             currentDeck = null;
         }
-
+        try {
+            deleteDeckFile(deckToDelete.getName());
+        } catch (IOException e) {
+            System.out.println("Error deleting deck: " + e.getMessage());
+        }
         removeDeckByIndex(listIndex);
         return String.format(DELETE_DECK_SUCCESS, deckToDelete.getName());
     }
