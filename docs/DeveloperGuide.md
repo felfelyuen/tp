@@ -577,190 +577,335 @@ practice using terminal commands while memorising key information required for t
 
 ---
 
+## Appendix E: Instructions for manual testing
+
+### Notes
+* *Testing Purpose* - These instructions are for basic testing only
+* *Expected Output* - Describes system behavior, not exact console output
+
+### Setup
+* *Java Requirement* - Ensure Java 17+ is installed
+* *Download* - Get latest FlashCLI.jar
+* *Run Command* - Execute `java -jar FlashCLI_2.0.jar`
+
+---
+
 ### Test Cases
 
 #### 1. Userguide Command
+* *Test Case*
+* *Prerequisites*: you do not select any deck
+    * *Input*:
+      ```
+      user_guide
+      ```
+    * *Expected*:
+      ```
+      Quick Start:
+      Create a deck of flashcards with "new", select it with "select", and begin 
+      adding flashcards with "add"!
+      List of commands......
+      ```
+#### 2. Create deck Command
 * *Test Case 1 - Valid Input*
-* *Prerequisites*: the user is under a deck named "computer science"
-* *Input*:
-  ```
-  user_guide:
-  ```
-* *Expected*:
-  Quick Start:
-  Create a deck of flashcards with "new", select it with "select", and begin adding flashcards with "add"!
+* *Prerequisites*: declare a different new deck
+    * *Input*:
+      ```
+      new computer science
+      ```
+    * *Expected*:
+      ```
+      Deck "computer science" created, number of decks: 1
+      ```
 
-    List of commands
+* *Test Case 2 - repetitive naming*
+* *Prerequisites*: declare a deck with a same name as an existing deck
+    * *Input*:
+      ```
+      new computer science
+      ```
+    * *Expected*:
+      ```
+      Deck name already exists!
+      ```
 
-#### 2. Add Flashcard Command
-* *Test Case 1 - Valid Input*
-* *Prerequisites*: the user is under a deck named "computer science"
-* *Input*:
-  ```
-  add /q What is binary number 1101's decimal Equivalent? /a 13
-  ```
-* *Expected*:
-  Added a new flashcard.
-  Question: What is binary number 1101's decimal Equivalent?
-  Answer: 13
-  You have 1 flashcard(s) in your deck.
+#### 3. Show Decks Command
+* *Test Case 1* valid input
+* *Prerequisites*: there is at least one deck
+    * *Input*:
+      ```
+      decks
+      ```
+    * *Expected*:
+      ```
+      List of decks:
+      1. computer science
+      ```
+* *Test Case 2 - no deck available*
+* *Prerequisites*: there is no deck
+    * *Input*:
+      ```
+      decks
+      ```
+    * *Expected*:
+      ```
+      No decks available. Create a deck to start.
+      ```
 
-* *Test Case 2 - Missing deck*
-* *Prerequisites*: None
-* *Input*:
-  ```
-  add /q What is binary number 1101's decimal Equivalent? /a 13
-  ```
-* *Expected*: Prompts for category input
-  Select a deck first!
+#### 4. Select and unselect a deck Command
+* *Test Case 1*  select 
+* *Prerequisites*: 
+    * *Input*:
+      ```
+      select 1
+      ```
+    * *Expected*:
+      ```
+      Switched to deck "computer science"
+      ```
+* *Test Case 2 - unselect*
+* *Prerequisites*: you already selected a deck
+    * *Input*:
+      ```
+      unselect
+      ```
+    * *Expected*:
+      ```
+      Deck "computer science" unselected
+      ```
+      
 
-* *Test Case 3 - Reversed order*
-* *Prerequisites*: the user is under a deck named "computer science"
-* *Input*:
-  ```
-  add /a What is binary number 1101's decimal Equivalent? /q 13
-  ```
-* *Expected*:
-  /a Answer first /q Question later
-  Usage: add /q {QUESTION} /a {ANSWER}
+#### 5. Add Flashcard Command
+* *Test Case 1 - Missing deck*
+* *Prerequisites*: you do not select any deck
+    * *Input*:
+      ```
+      add /q What is binary number 1101's decimal Equivalent? /a 13
+      ```
+    * *Expected*:
+      ```
+      Select a deck first!
+      ```
 
-#### 3. Create deck Command
-* *Test Case 1 - Valid Input*
-* *Prerequisites*: None
-* *Input*:
-  ```
-  new computer science
-  ```
-* *Expected*: Deck "computer science" created, number of decks: 1
 
-#### 4. Show Decks Command
-* *Test Case 1 - Valid Input*
-* *Prerequisites*: At least 1 deck exists
-* *Input*:
-  ```
-  decks
-  ```
-* *Expected*: List of decks:
-1. computer science
+* *Test Case 2 - Reversed order*
+* *Prerequisites*: the user has at least a deck and select it
+    * *Input*:
+      ```
+      add /a What is binary number 1101's decimal Equivalent? /q 13
+      ```
+    * *Expected*:
+      ```
+      /a Answer first /q Question later
+      Usage: add /q {QUESTION} /a {ANSWER}
+      ```
+
+
+* *Test Case 3 - Valid condition*
+* *Prerequisites*: the user has at least a deck and select it
+    * *Input*:
+      ```
+      add /q What is binary number 1101's decimal Equivalent? /a 13
+      ```
+    * *Expected*:
+        ```
+        Added a new flashcard.
+        Question: What is binary number 1101's decimal Equivalent?
+        Answer: 13
+        You have 1 flashcard(s) in your deck.
+        ```
+
+
 
 #### 5. Show Flashcards Command
+* *Test Case - Valid Input*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+    * *Input*:
+      ```
+      list
+      ```
+    * *Expected*:
+      ```
+      List of flashcards:
+      1. What is binary number 1101's decimal Equivalent?
+      ```
+
+#### 6. Learn and unlearn Command
 * *Test Case 1 - Valid Input*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  list
-  ```
-* *Expected*: List of flashcards:
-1. Is ant a type of insect?
+    * *Input*:
+      ```
+      mark_learned 1
+      ```
+    * *Expected*:
+      ```
+      Changed flashcard number 1 into learned
 
-#### 6. View Category Command
-* *Test Case*
+* *Test Case 2 - Valid Input*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  view-category
-  ```
-* *Expected*: Displays all categories
+    * *Input*:
+      ```
+      mark_unlearned 1
+      ```
+    * *Expected*:
+      ```
+      Changed flashcard number 1 into unlearned
+      ```
 
-#### 7. Learn and unlearn Command
-* *Test Case
+#### 7. Insert code snippet Command
+* *Test Case - Valid Input*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input1*:
-  ```
-  mark_learned 1
-  ```
-* *Expected1*: Changed flashcard number 1 into learned
-* 
-* *Input2*:
-  ```
-  mark_unlearned 1
-  ```
-* *Expected1*: Changed flashcard number 1 into unlearned
+    * *Input*:
+      ```
+      insert_code 1 /c printf(hello world)
+      ```
+    * *Expected*:
+      ```
+      Inserted code snippet to flashcard.
+      Question: hello
+      Answer: world
+      Code Snippet: printf(hello world)
 
-#### 8. Insert code snippet
-* *Test Case*
+* *Test Case - Invalid*
+* *Prerequisites*: not under a deck
+    * *Input*:
+      ```
+      insert_code 1 /c printf(hello world)
+      ```
+    * *Expected*:
+      ```
+      Select a deck first!
+      ```
+
+#### 8. rename Command
+* *Test Case 1 - Valid Input*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  insert_code 1 /c printf(hello world)
-  ```
-* *Expected*: Inserted code snippet to flashcard.
-  Question: hello
-  Answer: world
-  Code Snippet: printf(hello world)
+    * *Input*:
+      ```
+      computer graphics
+      ```
+    * *Expected*:
+      ```
+      Renamed deck "computer science" to "computer graphics"
 
-#### 8. Quiz mode
-* *Test Case*
+* *Test Case 2 - repetitive name*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  quiz
-  ```
-* *Expected*: Entering quiz mode... get ready!
-  Type 'exit_quiz' to cancel the quiz and leave at anytime
-  Cancelling the quiz would not save your results
-  You have 1 question left:
-  What is binary number 1101's decimal Equivalent? 
-* 
-* *Input*:
-  ```
-    13
-  ```
-* *Expected*:
-  Correct!
-  You finished the test! You took: 15 seconds!
-  Type view_res to check your test result
-* *Input*:
-  ```
-    view_res
-  ```
-* *Expected*:
-  Correct!
-  You have answered 1 questions in the quiz.
-  Great job! You have answered all of questions correctly.
+    * *Input*:
+      ```
+      computer graphics
+      ```
+    * *Expected*:
+      ```
+      Deck name is unchanged!
 
+* *Test Case 3 - Invalid*
+* *Prerequisites*: not under a deck
+    * *Input*:
+      ```
+      insert_code 1 /c printf(hello world)
+      ```
+    * *Expected*:
+      ```
+      Select a deck first!
+      ```
+      
 #### 9. Edit flashcard command
+* *Test Case 3 - Invalid*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+    * *Input*:
+      ```
+      edit 1 /q what is binary number 1001's decimal Equivalent? /a 9
+      ```
+    * *Expected*:
+      ```
+      Updated flashcard.
+      Edit Question: what is binary number 1001's decimal Equivalent?3
+      Updated: what is binary number 1101's decimal Equaivalent?
+      Edit Answer: 9
+      Updated: 13
+
+#### 10. Edit flashcard command
+* *Test Case 1 - search by keyword(question)*
+* *Prerequisites*:
+    * *Input*:
+      ```
+      search /q What
+      ```
+    * *Expected*:
+      ```
+      Flashcards matched:
+      Question: what is binary number 1001's decimal Equivalent? 3
+      Update: 13
+
+* *Test Case 2 - search by keyword(answer)*
+* *Prerequisites*:
+    * *Input*:
+      ```
+      search /a 1
+      ```
+    * *Expected*:
+      ```
+      Flashcards matched:
+      Question: what is binary number 1001's decimal Equivalent? 3
+      Update: 13
+
+#### 11. Quiz mode
+* *Test Case - total pipeline*
+* *Prerequisites*:
+    * *Input 1*:
+      ```
+      quiz
+      ```
+    * *Expected 1*:
+      ```
+      Entering quiz mode... get ready!
+      Type 'exit_quiz' to cancel the quiz and leave at anytime
+      Cancelling the quiz would not save your results
+      You have 2 questions left:
+
+      q1?
+    * *Input 2*:
+      ```
+      a1
+      ```
+    * *Expected 2*:
+      ```
+      Correct!
+      You have 1 question left:
+      q2?
+      ```
+    * *Input 3*:
+      ```
+      a1
+      ```
+    * *Expected 3*:
+      ```
+      Incorrect.
+      You finished the test! You took: 16 seconds!
+      Type view_res to check your test result
+      ```
+    * *Input 4*:
+      ```
+      view_res
+      ```     
+  * *Expected 3*:
+      ```
+      You have answered 2 questions in the quiz.
+      You got 1 questions correctly.
+      You got 2 questions incorrectly.
+      Review your mistakes:
+      FlashCard 2 question: q2 correct answer: a2 Your answer: a1
+      This is the end of the test report.
+      ```
+#### 12. Exit
 * *Test Case*
-* *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  edit 1 /q what is binary number 1001's decimal Equivalent? /a 9
-  ```
-* *Expected*: Inserted code snippet to flashcard.
-  Question: hello
-  Answer: world
-  Code Snippet: Updated flashcard.
-  Edit Question: hello
-  Updated: what is binary number 1001's decimal Equivalent?
-  Edit Answer: world
-  Updated: 9
+* *Prerequisites*:
+    * *Input*:
+      ```
+      exit
+      ```
+    * *Expected*:
+      ```
+      Thank you for using FlashCLI!
 
-#### 10. search flashcard
-* *Test Case1 - search by question*
-* *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  search /q What is OOP?
-  ```
 
-* *Expected*: Flashcards matched:
-  Question: What is OOP?
-  Answer: Object-Oriented Prog
-
-* *Test Case2 - search by answer*
-* *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  search /a Object-Oriented Prog
-  ```
-
-* *Expected*: Flashcards matched:
-  Question: What is OOP?
-  Answer: Object-Oriented Prog
-
-### Command Prefix Key
-| Prefix | Purpose      | Example                   |
-|--------|--------------|---------------------------|
-| /q     | Question     | `/q What is OOP?`         |
-| /a     | Answer       | `/a Object-Oriented Prog` |
-| /c     | Code snippet | `/c System.out.println()` |
