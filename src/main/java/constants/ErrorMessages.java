@@ -3,6 +3,7 @@ package constants;
 import static constants.CommandConstants.ADD_CARD;
 import static constants.CommandConstants.REMOVE_DECK;
 import static constants.CommandConstants.SELECT_DECK;
+import static constants.CommandConstants.UNSELECT_DECK;
 import static constants.CommandConstants.VIEW_QN;
 import static constants.CommandConstants.VIEW_ANS;
 import static constants.CommandConstants.EDIT_CARD;
@@ -29,8 +30,6 @@ public class ErrorMessages {
     public static final String CREATE_MISSING_FIELD = "Missing /q or /a in input.";
     public static final String CREATE_MISSING_DESCRIPTION = "Question or Answer cannot be empty.";
     public static final String CREATE_INVALID_ORDER = "/a Answer first /q Question later";
-    public static final String CREATE_MULTIPLE_QUESTIONS_ERROR = "Only one /q tag is allowed.";
-    public static final String CREATE_MULTIPLE_ANSWERS_ERROR = "Only one /a tag is allowed.";
     public static final String CREATE_INVALID_INPUT_ERROR = "Invalid input: Text found before the /q tag. " +
             "Please start your input with /q.";
 
@@ -44,14 +43,15 @@ public class ErrorMessages {
     public static final String NO_DECK_TO_SWITCH = "No decks available. Create a deck before selecting.";
     public static final String NO_DECK_ERROR = "Select a deck first!";
     public static final String VIEW_DECKS_NO_ARGUMENTS_ALLOWED = "The 'decks' command does not take any arguments.";
+    public static final String UNSELECT_NO_ARGUMENTS_ALLOWED = "The 'unselect' command does not take any arguments.";
     public static final String EMPTY_DECK_NAME = "Deck name must not be empty!";
     public static final String DUPLICATE_DECK_NAME = "Deck name already exists!";
     public static final String UNCHANGED_DECK_NAME = "Deck name is unchanged!";
-    public static final String NO_SUCH_DECK = "Deck does not exist!";
     public static final String NO_DECK_TO_VIEW = "No decks available. Create a deck to start.";
     public static final String DELETE_EMPTY_DECK_ERROR = "No decks available. Unable to delete.";
     public static final String DECK_INDEX_OUT_OF_BOUNDS = "Index is out of bounds of the current list of decks.";
     public static final String DECK_EMPTY_INPUT = "Index cannot be empty.";
+    public static final String NO_DECK_TO_UNSELECT = "No deck selected.";
 
     // Code insertion error messages
     public static final String INSERT_MISSING_FIELD = "Missing /c in input.";
@@ -70,9 +70,11 @@ public class ErrorMessages {
 
     // Command help message
     public static final String POSSIBLE_COMMANDS = String.format(
-            "Possible commands are: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s.",
+            "Possible commands are: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,\n" +
+                    "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s.",
             ADD_CARD, VIEW_QN, VIEW_ANS, EDIT_CARD, LIST_CARDS, DELETE_CARD,
             INSERT_CODE, SEARCH_CARD, QUIZ, MARK_UNLEARNED, MARK_LEARNED, VIEW_RES,
-            NEW_DECK, SELECT_DECK, RENAME_DECK, VIEW_DECKS, REMOVE_DECK, USER_GUIDE, EXIT
+            NEW_DECK, SELECT_DECK, RENAME_DECK, VIEW_DECKS, REMOVE_DECK, UNSELECT_DECK,
+            USER_GUIDE, EXIT
     );
 }

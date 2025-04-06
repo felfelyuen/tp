@@ -18,9 +18,9 @@ public class SuccessMessages {
 
     public static final String EDIT_SUCCESS = "Updated flashcard.\n" +
             "Edit Question: %s\n" +
-            "Updated: %s\n" +
+            "   Updated Question: %s\n" +
             "Edit Answer: %s\n" +
-            "Updated: %s\n";
+            "   Updated Answer: %s\n";
 
     public static final String LIST_SUCCESS = "List of flashcards:\n%s";
 
@@ -32,10 +32,11 @@ public class SuccessMessages {
     public static final String RENAME_DECK_SUCCESS = "Renamed deck \"%s\" to \"%s\" ";
     public static final String VIEW_DECKS_SUCCESS = "List of decks:\n%s";
     public static final String DELETE_DECK_SUCCESS = "Deleted deck \"%s\"";
+    public static final String UNSELECT_DECK_SUCCESS = "Deck \"%s\" unselected";
     public static final String INSERT_SUCCESS = "Inserted code snippet to flashcard.\n" +
             "Question: %s\n" +
             "Answer: %s\n" +
-            "Code Snippet: %s\n";
+            "Code Snippet: \n%s\n";
 
     public static final String CHANGED_ISLEARNED_SUCCESS = "Changed flashcard number %s into %s";
     public static final String CHANGED_ISLEARNED_NOCHANGENEEDED = "Flashcard is already %s";

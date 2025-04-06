@@ -36,7 +36,7 @@ Third-party libraries used:
 - JUnit 5 - Unit testing framework
 - PlantUML - For generating UML diagrams
 
-This project's structure was inspired by the SE-EDU AddressBook-Level3 project.
+This project's structure was inspired by the SE-EDU AddressBook-Level3 and AddressBook-Level4 project.
 
 ---
 
@@ -86,14 +86,13 @@ If the arguments are invalid, the exception `FlashCLIArgumentException` will be 
 1. When the command is executed using `CommandCreateFlashcard#executeCommand()`, the `Deck#createFlashcard()` method is called.
 2. Then, `Deck#checkQuestionAndAnswer()` checks if the arguments are valid, according to the previously mentioned [conditions](#before-creating-the-flashcard-these-conditions-must-be-satisfied).
 3. If it is valid, the question and answer strings will be passed to create a new `Flashcard` object.
-4. A success message will then be shown to the user.
+4. A success message will then be shown to the user upon completion.
 
 **Note**: The lifeline for `CommandCreateFlashcard` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
 
 #### Why is it implemented this way?
 
 - The user has to select a deck before creating a flashcard, which prevents flashcards from being created and not being in any decks.
-- 
 - Each command eg `CommandCreateFlashcard` is a separate class, allowing the code to achieve the **Separation of Concerns** design principle.
 - The tags `/q` and `/a` are compulsory to prevent improper creation of Flashcard objects.
 - Any text after the first `/q` or `/a` tag will be considered as `QUESTION` or `ANSWER` respectively, to simplify the usage of the command and allow for a greater range of characters in the question.
@@ -139,7 +138,7 @@ This feature enables the user to edit the question and answer to a specific flas
 
 #### Design
 
-The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on a 0-based index. The system validates the index and ensures it’s within bounds.
+The delete flashcard feature allows users to remove a specific flashcard from the currently selected deck based on index. The system validates the index and ensures it’s within bounds.
 
 #### Class Diagram
 
@@ -227,83 +226,131 @@ This feature allows the user to create a new deck with a deck name.
 
 The create deck mechanism is facilitated by `DeckManager` and `CommandCreateDeck`.
 
-To ensure deck names are unique, a hashmap is used to track existing deck names.
+To ensure deck names are unique, a LinkedHashMap is used to track existing deck names.
+
+#### **Before creating the deck, these conditions must be satisfied:**
+* **Duplicate Deck Name**: If the user attempts to create a deck with a name that already exists, an error message is displayed, and the command is not executed.
+* **Empty Deck Name**: if the new deck name is empty or consists only of whitespaces, it is considered invalid.
+
+Note that the provided deck name will be trimmed.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
 #### Implementation of `DeckManager.createDeck()`
 Below shows the sequence diagram of the operations of creating a deck:
 ![](images/CreateDeckSequenceDiagram.png)
 
-1. The user issues the command to create a new deck.
-2. The `DeckManager.createDeck()` method checks whether the deck name already exists in the hashmap.
-3. If the name is unique, a new `Deck` object is created and stored in the hashmap, with the name as the key and the `Deck` object as the value.
-4. If the name already exists, an error message is shown to the user.
+1. When the command is executed using `CommandCreateDeck#executeCommand()`, the `DeckManager.createDeck()` method is called.
+2. The `DeckManager.createDeck()` method checks for the conditions listed above.
+3. Then, a new `Deck` object is created and stored in the LinkHashMap, with the name as the key and the `Deck` object as the value.
+4. A success message will then be shown to the user upon completion.
 
-#### Handling Edge Cases
-* **Duplicate Deck Name**: If the user attempts to create a deck with a name that already exists, an error message is displayed, and the command is not executed.
-* **Empty Deck Name**: Empty deck names are considered invalid.
-* **Whitespace-Only Names**: Deck names consisting solely of spaces are considered invalid.
+The diagram purposely omits interactions with `Ui` as it would unnecessarily complicate the diagram. Hence, to clarify, the error and success messages will be shown to the user for each condition. 
 
-A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+**Note**: The lifeline for `CommandCreateDeck` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+
+#### Why is it implemented this way?
+
+- **Deck name uniqueness** is enforced to prevent user confusion and improve usability, ensuring each deck can be clearly identified.
+
+- A **`LinkedHashMap`** is used over `HashMap` for efficient `O(1)` lookups and to preserve the insertion order of decks, which supports predictable and user-friendly display — a consideration also relevant in the [select decks feature](#324-selecting-a-deck).
+
+- **`DeckManager` handles all deck-related logic** to follow the **Single Responsibility Principle**, improving code maintainability and separation of concerns.
 
 ### 3.2.2. Renaming decks
 
-The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. Similar to creating decks, a hashmap is used to track existing deck names. A deck has to be selected before being able to use this command.
+This feature allows users to rename selected decks.
 
+The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. A `LinkedHashMap` is used to track existing deck names. A deck has to be selected before being able to use this command.
 
-#### Implementation of `DeckManager.renameDeck()`
-Below shows the sequence diagram for the operations of rename deck:
-![](images/RenameDeckSequenceDiagram.png)
+The ordering of the decks is preserved.
 
-1. The user issues the command to rename an existing deck.
-2. The `DeckManager.renameDeck()` method checks whether the deck name already exists in the hashmap.
-3. If the new name is unique, the `name` attribute of `Deck` object will be updated to the new name. Then, the new name with the renamed `Deck` object will be added to the hashmap as a new entry. 
-4. The old entry will then be removed from the hashmap.
-
-#### Handling Edge Cases
+#### **Before renaming a deck, these conditions must be satisfied:**
 * **Unchanged Name**: If the user renames back to the same name as previous, it will not be allowed.
 * **Duplicate Deck Name**: The user will not be able to rename the selected deck to deck names that are already created.
 * **Empty Deck Name / Whitespace-Only Names**: Empty deck names or names consisting solely of spaces are considered invalid.
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
+#### Implementation of `DeckManager.renameDeck()`
+![](images/RenameDeckSequenceDiagram.png)
+
+1. The `DeckManger.validateNewDeckName()` method checks the new deck name according to the [conditions](#before-renaming-a-deck-these-conditions-must-be-satisfied).
+2. The `Deck` object must be preserved, as it contains all the flashcards created. Hence, we rename the `Deck` using `Deck#setname()`.
+3. However, as the keys of the `LinkedHashMap` are immutable, we cannot update it directly.
+4. Thus, we create a new `LinkedHashMap` and copy over all previous entries while updating the new deck name.
+5. This ensures that relative order is preserved during the rename process.
+
+#### Why is it implemented this way?
+
+- **Deck order is preserved** to maintain a consistent and intuitive user experience — renaming a deck should not change its position in the list.
+- Since **`LinkedHashMap` does not support key updates directly**, we reconstruct the map when renaming a deck. This allows the renamed deck to stay in the same position.
+- While this introduces a time complexity of **`O(n)`**, the tradeoff is justified by the importance of preserving deck order.
+- The actual `Deck` object is preserved to retain all associated flashcards — only the name (key) is updated.
+
 ### 3.2.3. Listing all decks
 
+This feature allows users to view all decks along with their corresponding indices. It does not allow any arguments, although whitespace is allowed.
+
 The `decks` command is implemented using the `Deck` class and the `CommandViewDecks` class. 
+
+The ordering of the decks is preserved.
 
 #### Implementation of `DeckManager.viewDecks()`
 * Using the `StringBuilder` class from `java.lang`, the method prints the name of each deck in the hashmap, along with a counter index that goes from 1 to n.
 
 #### Handling Edge Cases
 * **No Decks**: If there are no decks available, the user will not be able to list them.
+* **No extra arguments**: There must be no input after the command. e.g. `decks abc` is not allowed. However, whitespace is allowed.
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
 ### 3.2.4. Selecting a deck
 
+This command allows the user to select a deck via its `INDEX`, which can be viewed using the `decks` command.
+
 The `select` command is implemented using the `Deck` class and the `CommandSelectDeck` class.
 
-#### Implementation of `DeckManager.selectDeck()`
-* Updates `currentDeck` to the selected `Deck` object if deck exists.
-
-#### Handling Edge Cases
+#### **Before selecting a deck, these conditions must be satisfied:**
 * **No Decks**: If there are no decks available, the user will not be able to select any decks.
-* * **Deck not found**: If the deck name is not found in the keys of the hashmap, the user will not be able to select the deck.
+* **Invalid index**: 
+  * Checks the following conditions:
+    * Empty or whitespace input provided
+    * Not a number
+    * Index out of bounds
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
+#### Implementation of `DeckManager.selectDeck()`
+![](images/SelectDeckSequenceDiagram.png)
+* Checks for the [conditions](#before-selecting-a-deck-these-conditions-must-be-satisfied) listed above
+* `DeckManager.checkAndGetListIndex()` checks if the index is valid and returns listIndex.
+* Then, we get the deck corresponding to that index. The `LinkedHashMap` has to be converted into a `Set` via the `entrySet()` method and then to a `List`. This is to facilitate the accessing of decks via index.
+* After getting the deck, we select it by assigning it to `currentDeck`, which indicates the deck selected.
+
+**Note**: The lifeline for `CommandSelectDeck` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+
+#### Why is it implemented this way?
+
+- `LinkedHashMap` was chosen over `LinkedHashSet`, `HashMap`, `Set` etc. due to its ability to maintain insertion order and allow index access without having to maintain multiple lists. 
+- We chose to convert the `LinkedHashMap` to a `List` everytime we require index access, instead of setting the `List` as an attribute. This is because the list is a shallow copy of the `LinkedHashMap` and will not be updated when the hashmap changes. To prevent adding further complexity to the code and having to maintain another list, we chose to sacrifice some speed in exchange for user convenience.
+
 ### 3.2.5. Deleting a deck
+
+This feature allows users to remove a deck via its index. The deck need not be selected.
 
 The `remove` command is implemented using the `Deck` class and the `CommandDeleteDeck` class.
 
 #### Implementation of `DeckManager.deleteDeck()`
-* Removes the selected deck from the hashmap via its key if the deck exists.
-* Also deselects the deck if the currentDeck is the deck being deleted. 
-* A confirmation message is raised to the user before deletion. This can be found in `Parser`.
+![](images/DeleteDeckSequenceDiagram.png)
+* When the command is sent, we first validate if the deck exists using `Parser.validateDeckExistsForDelete()`.
+* This is done through `DeckManager.checkAndGetListIndex()`, which checks that the input is a valid index and converts it from String to Integer.
+* Then, we confirm if the user indeed wants to delete the deck. This is done by continuously looping until the user enters "yes" or "no". The input is not case-sensitive. 
+* After which, a new `CommandDeleteDeck` object is created if the user confirms deletion or a message is shown to the user if "no" is entered.
 
 #### Handling Edge Cases
+* **Invalid input**: The input is empty or consists of only whitespace, or is out of bounds of the deck list.
 * **No Decks**: There are no decks to delete.
-* **Deck not found**: The deck does not exists as it is not in the hashmap. 
-* **Empty Deck Name / Whitespace-Only Names**: The deck name is empty or consists of only whitespace, which is not a valid deck name.
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
@@ -548,190 +595,335 @@ practice using terminal commands while memorising key information required for t
 
 ---
 
+## Appendix E: Instructions for manual testing
+
+### Notes
+* *Testing Purpose* - These instructions are for basic testing only
+* *Expected Output* - Describes system behavior, not exact console output
+
+### Setup
+* *Java Requirement* - Ensure Java 17+ is installed
+* *Download* - Get latest FlashCLI.jar
+* *Run Command* - Execute `java -jar FlashCLI_2.0.jar`
+
+---
+
 ### Test Cases
 
 #### 1. Userguide Command
+* *Test Case*
+* *Prerequisites*: you do not select any deck
+    * *Input*:
+      ```
+      user_guide
+      ```
+    * *Expected*:
+      ```
+      Quick Start:
+      Create a deck of flashcards with "new", select it with "select", and begin 
+      adding flashcards with "add"!
+      List of commands......
+      ```
+#### 2. Create deck Command
 * *Test Case 1 - Valid Input*
-* *Prerequisites*: the user is under a deck named "computer science"
-* *Input*:
-  ```
-  user_guide:
-  ```
-* *Expected*:
-  Quick Start:
-  Create a deck of flashcards with "new", select it with "select", and begin adding flashcards with "add"!
+* *Prerequisites*: declare a different new deck
+    * *Input*:
+      ```
+      new computer science
+      ```
+    * *Expected*:
+      ```
+      Deck "computer science" created, number of decks: 1
+      ```
 
-    List of commands
+* *Test Case 2 - repetitive naming*
+* *Prerequisites*: declare a deck with a same name as an existing deck
+    * *Input*:
+      ```
+      new computer science
+      ```
+    * *Expected*:
+      ```
+      Deck name already exists!
+      ```
 
-#### 2. Add Flashcard Command
-* *Test Case 1 - Valid Input*
-* *Prerequisites*: the user is under a deck named "computer science"
-* *Input*:
-  ```
-  add /q What is binary number 1101's decimal Equivalent? /a 13
-  ```
-* *Expected*:
-  Added a new flashcard.
-  Question: What is binary number 1101's decimal Equivalent?
-  Answer: 13
-  You have 1 flashcard(s) in your deck.
+#### 3. Show Decks Command
+* *Test Case 1* valid input
+* *Prerequisites*: there is at least one deck
+    * *Input*:
+      ```
+      decks
+      ```
+    * *Expected*:
+      ```
+      List of decks:
+      1. computer science
+      ```
+* *Test Case 2 - no deck available*
+* *Prerequisites*: there is no deck
+    * *Input*:
+      ```
+      decks
+      ```
+    * *Expected*:
+      ```
+      No decks available. Create a deck to start.
+      ```
 
-* *Test Case 2 - Missing deck*
-* *Prerequisites*: None
-* *Input*:
-  ```
-  add /q What is binary number 1101's decimal Equivalent? /a 13
-  ```
-* *Expected*: Prompts for category input
-  Select a deck first!
+#### 4. Select and unselect a deck Command
+* *Test Case 1*  select 
+* *Prerequisites*: 
+    * *Input*:
+      ```
+      select 1
+      ```
+    * *Expected*:
+      ```
+      Switched to deck "computer science"
+      ```
+* *Test Case 2 - unselect*
+* *Prerequisites*: you already selected a deck
+    * *Input*:
+      ```
+      unselect
+      ```
+    * *Expected*:
+      ```
+      Deck "computer science" unselected
+      ```
+      
 
-* *Test Case 3 - Reversed order*
-* *Prerequisites*: the user is under a deck named "computer science"
-* *Input*:
-  ```
-  add /a What is binary number 1101's decimal Equivalent? /q 13
-  ```
-* *Expected*:
-  /a Answer first /q Question later
-  Usage: add /q {QUESTION} /a {ANSWER}
+#### 5. Add Flashcard Command
+* *Test Case 1 - Missing deck*
+* *Prerequisites*: you do not select any deck
+    * *Input*:
+      ```
+      add /q What is binary number 1101's decimal Equivalent? /a 13
+      ```
+    * *Expected*:
+      ```
+      Select a deck first!
+      ```
 
-#### 3. Create deck Command
-* *Test Case 1 - Valid Input*
-* *Prerequisites*: None
-* *Input*:
-  ```
-  new computer science
-  ```
-* *Expected*: Deck "computer science" created, number of decks: 1
 
-#### 4. Show Decks Command
-* *Test Case 1 - Valid Input*
-* *Prerequisites*: At least 1 deck exists
-* *Input*:
-  ```
-  decks
-  ```
-* *Expected*: List of decks:
-1. computer science
+* *Test Case 2 - Reversed order*
+* *Prerequisites*: the user has at least a deck and select it
+    * *Input*:
+      ```
+      add /a What is binary number 1101's decimal Equivalent? /q 13
+      ```
+    * *Expected*:
+      ```
+      /a Answer first /q Question later
+      Usage: add /q {QUESTION} /a {ANSWER}
+      ```
+
+
+* *Test Case 3 - Valid condition*
+* *Prerequisites*: the user has at least a deck and select it
+    * *Input*:
+      ```
+      add /q What is binary number 1101's decimal Equivalent? /a 13
+      ```
+    * *Expected*:
+        ```
+        Added a new flashcard.
+        Question: What is binary number 1101's decimal Equivalent?
+        Answer: 13
+        You have 1 flashcard(s) in your deck.
+        ```
+
+
 
 #### 5. Show Flashcards Command
+* *Test Case - Valid Input*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+    * *Input*:
+      ```
+      list
+      ```
+    * *Expected*:
+      ```
+      List of flashcards:
+      1. What is binary number 1101's decimal Equivalent?
+      ```
+
+#### 6. Learn and unlearn Command
 * *Test Case 1 - Valid Input*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  list
-  ```
-* *Expected*: List of flashcards:
-1. Is ant a type of insect?
+    * *Input*:
+      ```
+      mark_learned 1
+      ```
+    * *Expected*:
+      ```
+      Changed flashcard number 1 into learned
 
-#### 6. View Category Command
-* *Test Case*
+* *Test Case 2 - Valid Input*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  view-category
-  ```
-* *Expected*: Displays all categories
+    * *Input*:
+      ```
+      mark_unlearned 1
+      ```
+    * *Expected*:
+      ```
+      Changed flashcard number 1 into unlearned
+      ```
 
-#### 7. Learn and unlearn Command
-* *Test Case
+#### 7. Insert code snippet Command
+* *Test Case - Valid Input*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input1*:
-  ```
-  mark_learned 1
-  ```
-* *Expected1*: Changed flashcard number 1 into learned
-* 
-* *Input2*:
-  ```
-  mark_unlearned 1
-  ```
-* *Expected1*: Changed flashcard number 1 into unlearned
+    * *Input*:
+      ```
+      insert_code 1 /c printf(hello world)
+      ```
+    * *Expected*:
+      ```
+      Inserted code snippet to flashcard.
+      Question: hello
+      Answer: world
+      Code Snippet: printf(hello world)
 
-#### 8. Insert code snippet
-* *Test Case*
+* *Test Case - Invalid*
+* *Prerequisites*: not under a deck
+    * *Input*:
+      ```
+      insert_code 1 /c printf(hello world)
+      ```
+    * *Expected*:
+      ```
+      Select a deck first!
+      ```
+
+#### 8. rename Command
+* *Test Case 1 - Valid Input*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  insert_code 1 /c printf(hello world)
-  ```
-* *Expected*: Inserted code snippet to flashcard.
-  Question: hello
-  Answer: world
-  Code Snippet: printf(hello world)
+    * *Input*:
+      ```
+      computer graphics
+      ```
+    * *Expected*:
+      ```
+      Renamed deck "computer science" to "computer graphics"
 
-#### 8. Quiz mode
-* *Test Case*
+* *Test Case 2 - repetitive name*
 * *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  quiz
-  ```
-* *Expected*: Entering quiz mode... get ready!
-  Type 'exit_quiz' to cancel the quiz and leave at anytime
-  Cancelling the quiz would not save your results
-  You have 1 question left:
-  What is binary number 1101's decimal Equivalent? 
-* 
-* *Input*:
-  ```
-    13
-  ```
-* *Expected*:
-  Correct!
-  You finished the test! You took: 15 seconds!
-  Type view_res to check your test result
-* *Input*:
-  ```
-    view_res
-  ```
-* *Expected*:
-  Correct!
-  You have answered 1 questions in the quiz.
-  Great job! You have answered all of questions correctly.
+    * *Input*:
+      ```
+      computer graphics
+      ```
+    * *Expected*:
+      ```
+      Deck name is unchanged!
 
+* *Test Case 3 - Invalid*
+* *Prerequisites*: not under a deck
+    * *Input*:
+      ```
+      insert_code 1 /c printf(hello world)
+      ```
+    * *Expected*:
+      ```
+      Select a deck first!
+      ```
+      
 #### 9. Edit flashcard command
+* *Test Case 3 - Invalid*
+* *Prerequisites*: Under a deck and at least 1 flashcard exists
+    * *Input*:
+      ```
+      edit 1 /q what is binary number 1001's decimal Equivalent? /a 9
+      ```
+    * *Expected*:
+      ```
+      Updated flashcard.
+      Edit Question: what is binary number 1001's decimal Equivalent?3
+      Updated: what is binary number 1101's decimal Equaivalent?
+      Edit Answer: 9
+      Updated: 13
+
+#### 10. Edit flashcard command
+* *Test Case 1 - search by keyword(question)*
+* *Prerequisites*:
+    * *Input*:
+      ```
+      search /q What
+      ```
+    * *Expected*:
+      ```
+      Flashcards matched:
+      Question: what is binary number 1001's decimal Equivalent? 3
+      Update: 13
+
+* *Test Case 2 - search by keyword(answer)*
+* *Prerequisites*:
+    * *Input*:
+      ```
+      search /a 1
+      ```
+    * *Expected*:
+      ```
+      Flashcards matched:
+      Question: what is binary number 1001's decimal Equivalent? 3
+      Update: 13
+
+#### 11. Quiz mode
+* *Test Case - total pipeline*
+* *Prerequisites*:
+    * *Input 1*:
+      ```
+      quiz
+      ```
+    * *Expected 1*:
+      ```
+      Entering quiz mode... get ready!
+      Type 'exit_quiz' to cancel the quiz and leave at anytime
+      Cancelling the quiz would not save your results
+      You have 2 questions left:
+
+      q1?
+    * *Input 2*:
+      ```
+      a1
+      ```
+    * *Expected 2*:
+      ```
+      Correct!
+      You have 1 question left:
+      q2?
+      ```
+    * *Input 3*:
+      ```
+      a1
+      ```
+    * *Expected 3*:
+      ```
+      Incorrect.
+      You finished the test! You took: 16 seconds!
+      Type view_res to check your test result
+      ```
+    * *Input 4*:
+      ```
+      view_res
+      ```     
+  * *Expected 3*:
+      ```
+      You have answered 2 questions in the quiz.
+      You got 1 questions correctly.
+      You got 2 questions incorrectly.
+      Review your mistakes:
+      FlashCard 2 question: q2 correct answer: a2 Your answer: a1
+      This is the end of the test report.
+      ```
+#### 12. Exit
 * *Test Case*
-* *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  edit 1 /q what is binary number 1001's decimal Equivalent? /a 9
-  ```
-* *Expected*: Inserted code snippet to flashcard.
-  Question: hello
-  Answer: world
-  Code Snippet: Updated flashcard.
-  Edit Question: hello
-  Updated: what is binary number 1001's decimal Equivalent?
-  Edit Answer: world
-  Updated: 9
+* *Prerequisites*:
+    * *Input*:
+      ```
+      exit
+      ```
+    * *Expected*:
+      ```
+      Thank you for using FlashCLI!
 
-#### 10. search flashcard
-* *Test Case1 - search by question*
-* *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  search /q What is OOP?
-  ```
 
-* *Expected*: Flashcards matched:
-  Question: What is OOP?
-  Answer: Object-Oriented Prog
-
-* *Test Case2 - search by answer*
-* *Prerequisites*: Under a deck and at least 1 flashcard exists
-* *Input*:
-  ```
-  search /a Object-Oriented Prog
-  ```
-
-* *Expected*: Flashcards matched:
-  Question: What is OOP?
-  Answer: Object-Oriented Prog
-
-### Command Prefix Key
-| Prefix | Purpose      | Example                   |
-|--------|--------------|---------------------------|
-| /q     | Question     | `/q What is OOP?`         |
-| /a     | Answer       | `/a Object-Oriented Prog` |
-| /c     | Code snippet | `/c System.out.println()` |

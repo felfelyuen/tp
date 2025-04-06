@@ -485,8 +485,8 @@ public class DeckTest {
             insertTest.executeCommand();
             String viewOutput = deck.viewFlashcardQuestion("1");
             assertEquals(1, deck.getFlashcards().size());
-            assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1,"[ ]", "What is Java?",
-                    "Class Java { void method() {...} }"), viewOutput);
+            assertEquals(String.format(VIEW_QUESTION_SUCCESS, 1, "[ ]", "What is Java?",
+                    "Class Java {\n    void method() {\n      ...\n   } \n}"), viewOutput);
         } catch (FlashCLIArgumentException | NumberFormatException e) {
             fail("Unexpected Exception was thrown: " + e.getMessage());
         }
