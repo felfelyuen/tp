@@ -268,7 +268,7 @@ Answer: Java
 ### Create a new deck: `new`
 Creates a new deck with the given deck name. Deck name should not already be in use.
 
-**Format:** `new DECKNAME`<br>
+**Format:** `new DECKNAME`, `DECKNAME` cannot contain `\` or `/`.<br>
 **Examples:**
 * `new testDeck` → Creates a new deck named **testDeck** (if the name is not already taken).
 
@@ -283,7 +283,7 @@ Selects the specified deck via the index. There must be an available deck to sel
 ### **Rename a Deck: `rename`**
 Renames the currently selected deck to a new name. A deck must be selected before using this command.
 
-**Format:** `rename NEWNAME`
+**Format:** `rename NEWNAME`, `NEWNAME` cannot contain `\` or `/`.
 
 **Examples:**
 * **`rename testDeck2`** → Renames the current deck to **testDeck2**.
