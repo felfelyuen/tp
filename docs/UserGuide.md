@@ -379,6 +379,7 @@ Unselects the specified deck. There must be a deck selected to use this command.
 | **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                          |
 | **View Decks**       | `decks`                                                                                           |
 | **Delete Deck**      | `remove DECKNAME` e.g. `remove testDeck`                                                          |
+| **Unselect Deck**    | `unselect`                                                                                        |
 | **Quiz Mode**        | `quiz`                                                                                            |
 | **View Results**     | `view_results` , `redo`                                                                           |
 | **Code Snippet**     | `insert_code INDEX /c CODE_SNIPPET` e.g. `insert_code 3 /c interface Interface{ void method(); }` |
