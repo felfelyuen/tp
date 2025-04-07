@@ -10,6 +10,7 @@ import command.CommandDeleteFlashcard;
 import exceptions.FlashCLIArgumentException;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SavingLoadingTest {
@@ -167,5 +169,59 @@ public class SavingLoadingTest {
         assertEquals("What is Java?", f.getQuestion());
         assertEquals("A programming language.", f.getAnswer());
         assertTrue(f.getIsLearned(), "Flashcard should be marked as learned after reloading.");
+    }
+
+    @Test
+    void createDeck_withInvalidName_throwsFlashCLIArgumentException() {
+        assertThrows(FlashCLIArgumentException.class, () -> {
+            DeckManager.createDeck("Invalid/Name");
+        });
+
+        assertThrows(FlashCLIArgumentException.class, () -> {
+            DeckManager.createDeck("Invalid\\Name");
+        });
+    }
+
+    @Test
+    void saveDeck_withEmptyFlashcard_doesNotPersistInvalidFlashcard() throws IOException {
+        testDeck.insertFlashcard(new Flashcard(1, "", "", false));
+        Saving.saveDeck("TestDeck", testDeck);
+
+        DeckManager.decks.clear();
+        Deck loadedDeck = Loading.loadAllDecks().get("TestDeck");
+
+        assertNotNull(loadedDeck);
+        assertEquals(0, loadedDeck.getFlashcards().size());
+    }
+
+    @Test
+    void saveAndLoadDeck_withMultipleFlashcards_preservesAll() throws IOException, FlashCLIArgumentException {
+        testDeck.createFlashcard("/q What is Java? /a A language.");
+        testDeck.createFlashcard("/q What is OOP? /a A paradigm.");
+        Saving.saveDeck("TestDeck", testDeck);
+
+        DeckManager.decks.clear();
+        Deck loadedDeck = Loading.loadAllDecks().get("TestDeck");
+
+        assertNotNull(loadedDeck);
+        assertEquals(2, loadedDeck.getFlashcards().size());
+    }
+
+    @Test
+    void loadDeck_missingLearnedField_defaultsToUnlearned() throws IOException {
+        File file = new File("./data/decks/TestDeck.txt");
+        file.getParentFile().mkdirs();
+
+        try (FileWriter fw = new FileWriter(file)) {
+            fw.write("Q: Sample question\n");
+            fw.write("A: Sample answer\n\n");
+        }
+
+        DeckManager.decks.clear();
+        Deck loadedDeck = Loading.loadAllDecks().get("TestDeck");
+
+        assertNotNull(loadedDeck);
+        assertEquals(1, loadedDeck.getFlashcards().size());
+        assertFalse(loadedDeck.getFlashcards().get(0).getIsLearned());
     }
 }
