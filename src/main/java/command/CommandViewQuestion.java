@@ -20,6 +20,7 @@ public class CommandViewQuestion extends Command{
      */
     public void executeCommand() {
         try {
+            Ui.loadingeffect();
             Ui.showToUser(currentDeck.viewFlashcardQuestion(arguments));
         } catch (NumberFormatException e) {
             Ui.showError(INVALID_INDEX_INPUT);

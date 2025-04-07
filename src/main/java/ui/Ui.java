@@ -1,6 +1,11 @@
 package ui;
 
+import static constants.ColorConstants.BG_GRADIENT;
+import static constants.ColorConstants.BOLD;
+import static constants.ColorConstants.RAINBOW;
+import static constants.ColorConstants.RESET;
 import static constants.CommandConstants.EXIT;
+
 import java.util.Scanner;
 
 /**
@@ -39,5 +44,25 @@ public class Ui {
      */
     public static void showError(String message) {
         System.out.println(message);
+    }
+
+    /**
+     * Displays a loading animation with rainbow colors.
+     */
+    public static void loadingeffect() {
+        System.out.print(BG_GRADIENT);
+        for (int i = 0; i < 3; i++) {
+            for (String color : RAINBOW) {
+                System.out.print(color + BOLD + "processing your command......" + RESET);
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    // Restore interrupted status (important!)
+                    Thread.currentThread().interrupt();
+                    System.err.println("Sleep interrupted: " + e.getMessage());
+                }
+                System.out.print("\r");
+            }
+        }
     }
 }

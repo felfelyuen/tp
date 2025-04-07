@@ -1,6 +1,12 @@
 @startuml
+hide circle
+skinparam classAttributeIconSize 0
+
 class Saving {
   + saveAllDecks(Map<String, Deck>)
+  + saveDeck(String, Deck)
+  + deleteDeckFile(String)
+  + renameDeckFile(String, String)
 }
 
 class Loading {
@@ -11,6 +17,18 @@ class DeckManager {
   + static Map<String, Deck> decks
 }
 
+class Deck {
+  + getFlashcards(): List<Flashcard>
+}
+
+class Flashcard {
+  + getQuestion(): String
+  + getAnswer(): String
+  + getIsLearnedAsString(): String
+}
+
 Saving --> DeckManager
+Saving --> Deck
+Deck --> Flashcard
 Loading --> DeckManager
 @enduml

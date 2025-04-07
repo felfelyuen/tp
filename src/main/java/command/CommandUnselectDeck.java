@@ -15,6 +15,7 @@ public class CommandUnselectDeck extends Command {
      */
     public void executeCommand() {
         try {
+            Ui.loadingeffect();
             Ui.showToUser(unselectDeck(this.arguments));
         } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());
