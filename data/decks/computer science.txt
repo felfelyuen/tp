@@ -1,8 +1,0 @@
-[ ]
-Q: li
-A: li
-
-[ ]
-Q: hello
-A: hello
-
