@@ -1,0 +1,45 @@
+@startuml
+
+hide circle
+skinparam classAttributeIconSize 0
+skinparam packageStyle Rectangle
+
+package Deck {
+    class DeckManager {
+        + <u>currentDeck: Deck</u>
+        + <u>Decks: LinkedHashMap<String, Deck> </u>
+        + <u>createDeck(arguments: String): String
+        + <u>renameDeck(arguments: String): String
+        + <u>viewDecks(arguments: String): String
+        + <u>selectDeck(arguments: String): String
+        + <u>deleteDeck(listIndex: int): String
+        + <u>unselectDeck(arguments: String): String
+        + <u>globalSearch(arguments: String): String
+    }
+
+    class Deck {
+        - name: String
+        - flashcards: ArrayList<Flashcard>
+        + createFlashcard(arguments: String): String
+        + viewFlashcardQuestion(arguments: String): String
+        + viewFlashcardAnswer(arguments: String): String
+        + editFlashcard(arguments: String): String
+        + listFlashcards(listIndex: int): String
+        + deleteFlashcard(arguments: String): String
+        + quizFlashcards(arguments: String): String
+        + insertCodeSnippet(arguments: String, index: int): String
+        + searchFlashcard(arguments: String): String
+    }
+    class Flashcard {
+        # index: int
+        # question: String
+        # answer: String
+        # codeSnippet: String
+        # isLearned: boolean
+    }
+
+    DeckManager -> "*" Deck : manages >
+    Deck *-> "*" Flashcard : manages >
+}
+
+@enduml
