@@ -52,6 +52,7 @@ public class ErrorMessages {
     public static final String DECK_INDEX_OUT_OF_BOUNDS = "Index is out of bounds of the current list of decks.";
     public static final String DECK_EMPTY_INPUT = "Index cannot be empty.";
     public static final String NO_DECK_TO_UNSELECT = "No deck selected.";
+    public static final String SAME_DECK_SELECTED = "The deck is already selected!";
 
     // Code insertion error messages
     public static final String INSERT_MISSING_FIELD = "Missing /c in input.";
