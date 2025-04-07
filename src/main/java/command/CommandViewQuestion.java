@@ -1,9 +1,9 @@
 package command;
 
 import static constants.ErrorMessages.INVALID_INDEX_INPUT;
-import static constants.ErrorMessages.INDEX_OUT_OF_BOUNDS;
 import static deck.DeckManager.currentDeck;
 
+import exceptions.FlashCLIArgumentException;
 import ui.Ui;
 
 /**
@@ -20,12 +20,11 @@ public class CommandViewQuestion extends Command{
      */
     public void executeCommand() {
         try {
-            int index = Integer.parseInt(arguments);
-            Ui.showToUser(currentDeck.viewFlashcardQuestion(index));
-        } catch (ArrayIndexOutOfBoundsException e) {
-            Ui.showError(INDEX_OUT_OF_BOUNDS);
+            Ui.showToUser(currentDeck.viewFlashcardQuestion(arguments));
         } catch (NumberFormatException e) {
             Ui.showError(INVALID_INDEX_INPUT);
+        } catch (FlashCLIArgumentException e) {
+            Ui.showError(e.getMessage());
         }
     }
 }

@@ -13,6 +13,7 @@ public class Flashcard {
     /**
      * Constructs a Flashcard with the specified question and answer.
      *
+     * @param index The index of the flashcard within the deck.
      * @param question The question for the flashcard.
      * @param answer The answer to the flashcard question.
      */
@@ -24,12 +25,36 @@ public class Flashcard {
     }
 
     /**
+     * Alternative constructor that specifies the question, answer, and the isLearned value.
+     *
+     * @param index The index of the flashcard within the deck.
+     * @param question The question for the flashcard.
+     * @param answer The answer to the flashcard question.
+     * @param isLearned The isLearned value of the flashcard.
+     */
+    public Flashcard (int index, String question, String answer, boolean isLearned) {
+        this.index = index;
+        this.question = question;
+        this.answer = answer;
+        this.isLearned = isLearned;
+    }
+
+    /**
      * Returns the index of the flashcard.
      *
      * @return The flashcard index in the deck
      */
     public int getIndex() {
         return index;
+    }
+
+    /**
+     * Sets the index of the flashcard.
+     *
+     * @param index of the flashcard.
+     */
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     /**
@@ -92,6 +117,18 @@ public class Flashcard {
      */
     public void setIsLearned(boolean change) {
         this.isLearned = change;
+    }
+
+    /**
+     * Returns String representation of whether flashcard is learned
+     * @return string representation of flashcard's isLearned value
+     */
+    public String getIsLearnedAsString() {
+        if (isLearned) {
+            return "[X]";
+        } else {
+            return "[ ]";
+        }
     }
 }
 
