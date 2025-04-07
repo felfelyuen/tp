@@ -226,7 +226,7 @@ This feature allows the user to create a new deck with a deck name.
 
 The create deck mechanism is facilitated by `DeckManager` and `CommandCreateDeck`.
 
-To ensure deck names are unique, a LinkedHashMap is used to track existing deck names.
+To ensure deck names are unique, a `LinkedHashMap` is used to track existing deck names.
 
 #### **Before creating the deck, these conditions must be satisfied:**
 * **Duplicate Deck Name**: If the user attempts to create a deck with a name that already exists, an error message is displayed, and the command is not executed.
@@ -334,6 +334,7 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 
 - `LinkedHashMap` was chosen over `LinkedHashSet`, `HashMap`, `Set` etc. due to its ability to maintain insertion order and allow index access without having to maintain multiple lists. 
 - We chose to convert the `LinkedHashMap` to a `List` everytime we require index access, instead of setting the `List` as an attribute. This is because the list is a shallow copy of the `LinkedHashMap` and will not be updated when the hashmap changes. To prevent adding further complexity to the code and having to maintain another list, we chose to sacrifice some speed in exchange for user convenience.
+- Selection via index was also more efficient than typing the deck name, further catering to our intended audience of fast typists.
 
 ### 3.2.5. Deleting a deck
 
