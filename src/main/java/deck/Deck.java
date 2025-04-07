@@ -363,10 +363,11 @@ public class Deck {
     }
 
     /**
-     * quizzes flashcards within the current deck
-     * clears incorrect_flashcards, incorrect_card_indexes and incorrect_answers if quiz starts.
-     * adds into incorrect_flashcards, incorrect_card_indexes and incorrect_answers if incorrect answers are given.
-     * @throws EmptyListException if there are no flashcards in the deck
+     * Starts the quiz mode with the current set of flashcards.
+     * Displays questions one by one, tracks incorrect answers, and measures completion time.
+     *
+     * @throws EmptyListException if there are no flashcards to quiz
+     * @throws QuizCancelledException if user cancels the quiz mid-way
      */
     //@@author felfelyuen
     public void quizFlashcards() throws EmptyListException, QuizCancelledException {
@@ -421,12 +422,15 @@ public class Deck {
     }
 
     /**
-     * handles asking the flashcard's question and taking in the input
-     * function specific for quiz, as incorrect answer would affect the arrays for incorrect answers
-     * @param indexCard to ask the question from
-     * @throws QuizCancelledException if user wants to cancel halfway through the quiz
+     * Handles the process of asking a single quiz question and processing the user's answer.
+     * Tracks incorrect answers in temporary lists during the quiz.
+     *
+     * @param indexCard the flashcard containing the question to ask
+     * @param tempIncorrectFlashcards list to store flashcards answered incorrectly
+     * @param tempIncorrectIndexes list to store indexes of incorrect answers
+     * @param tempIncorrectAnswers list to store user's incorrect answers
+     * @throws QuizCancelledException if user cancels the quiz mid-way
      */
-    //@@author felfelyuen
     public void handleQuestionForQuiz(
             Flashcard indexCard,
             ArrayList<Flashcard> tempIncorrectFlashcards,
@@ -455,14 +459,15 @@ public class Deck {
     }
 
     /**
-     * checks if the answer is correct with a specific flashcard
-     * @param indexCard the card with the question and index
-     * @param userAnswer the answer that is inputted
-     * @return boolean value of whether the answer is correct
-     * @throws QuizCancelledException if the user wants to cancel the quiz half-way.
+     * Checks if the user's answer matches the flashcard's correct answer.
+     * Provides feedback to the user about the correctness of their answer.
+     *
+     * @param indexCard the flashcard containing the correct answer
+     * @param userAnswer the answer provided by the user
+     * @return true if the answer is correct, false otherwise
+     * @throws QuizCancelledException if user cancels the quiz mid-way
      */
-    //@@author felfelyuen
-    public boolean handleAnswerForFlashcard (Flashcard indexCard, String userAnswer)
+    public boolean handleAnswerForFlashcard(Flashcard indexCard, String userAnswer)
             throws QuizCancelledException {
         assert (!userAnswer.isEmpty()) : "userAnswer should not be empty";
         if(userAnswer.equals(QUIZ_CANCEL)) {

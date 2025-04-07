@@ -21,6 +21,7 @@ public class CommandCreateFlashcard extends Command{
      */
     public void executeCommand() {
         try {
+            Ui.loadingeffect();
             Ui.showToUser(currentDeck.createFlashcard(arguments));
         } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());

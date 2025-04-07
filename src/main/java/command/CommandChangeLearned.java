@@ -17,6 +17,7 @@ public class CommandChangeLearned extends Command {
 
     public void executeCommand() {
         try {
+            Ui.loadingeffect();
             String output = currentDeck.changeIsLearned(arguments, isLearned);
             Ui.showToUser(output);
         } catch (NumberFormatException e) {
