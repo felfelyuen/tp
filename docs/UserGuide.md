@@ -124,7 +124,7 @@ Answer: Java
 ```
 
 ### Edit question and answer: `edit`
-Show the question of a flashcard via its index.
+Edit the question and answer of a flashcard via its index.
 
 Format: `edit INDEX /q QUESTION /a ANSWER`
 INDEX must be a positive integer, ie: 1, 2, 3
@@ -140,7 +140,7 @@ Edit Answer: Old placeholder answer here
 
 ```
 ### Edit question only: `edit`
-Show the question of a flashcard via its index.
+Edit the question of a flashcard via its index.
 
 Format: `edit INDEX /q QUESTION`
 INDEX must be a positive integer, ie: 1, 2, 3
@@ -156,7 +156,7 @@ Edit Answer: Old placeholder answer here
 
 ```
 ### Edit answer only: `edit`
-Show the question of a flashcard via its index.
+Edit the answer of a flashcard via its index.
 
 Format: `edit INDEX /a ANSWER`
 INDEX must be a positive integer, ie: 1, 2, 3
@@ -173,7 +173,7 @@ Edit Answer: Old placeholder answer here
 ```
 
 ### Insert code snippet: `Insert_code`
-Show the question of a flashcard via its index.
+Inserts code snippet of a flashcard via its index.
 
 Format: `insert_code INDEX /c CODE_SNIPPET`
 INDEX must be a positive integer, ie: 1, 2, 3
