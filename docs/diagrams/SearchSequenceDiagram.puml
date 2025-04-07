@@ -1,5 +1,7 @@
 @startuml
 actor User
+participant ":CommandSearchFlashcard" as CommandSearchFlashcard
+participant ":Deck" as Deck
 User -> CommandSearchFlashcard : executeCommand()
 alt Deck selected
     CommandSearchFlashcard -> Deck : searchFlashcardQuestion(arguments)

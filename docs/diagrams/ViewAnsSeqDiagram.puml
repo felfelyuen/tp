@@ -1,5 +1,8 @@
 @startuml
 actor User
+participant ":CommandViewAnswer" as CommandViewAnswer
+participant ":Deck" as Deck
+participant ":Ui" as Ui
 User -> CommandViewAnswer : executeCommand()
 CommandViewAnswer -> Deck : viewFlashcardAnswer(index)
 Deck -> CommandViewAnswer : answer string

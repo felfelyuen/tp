@@ -230,7 +230,8 @@ To ensure deck names are unique, a LinkedHashMap is used to track existing deck 
 
 #### **Before creating the deck, these conditions must be satisfied:**
 * **Duplicate Deck Name**: If the user attempts to create a deck with a name that already exists, an error message is displayed, and the command is not executed.
-* **Empty Deck Name**: if the new deck name is empty or consists only of whitespaces, it is considered invalid.
+* **Empty Deck Name**: If the new deck name is empty or consists only of whitespaces, it is considered invalid.
+* **Names containing `/` or `\`**: Names containing these characters are invalid because it will affect saving functionality
 
 Note that the provided deck name will be trimmed.
 
@@ -269,6 +270,8 @@ The ordering of the decks is preserved.
 * **Unchanged Name**: If the user renames back to the same name as previous, it will not be allowed.
 * **Duplicate Deck Name**: The user will not be able to rename the selected deck to deck names that are already created.
 * **Empty Deck Name / Whitespace-Only Names**: Empty deck names or names consisting solely of spaces are considered invalid.
+* **Names containing `/` or `\`**: Names containing these characters are invalid because it will affect saving functionality
+
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
