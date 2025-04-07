@@ -77,7 +77,7 @@ public class Parser {
 
         ArrayList<String> commandsWithDeck =
                 new ArrayList<>(List.of(ADD_CARD, VIEW_QN, VIEW_ANS, VIEW_RES, EDIT_CARD, LIST_CARDS, DELETE_CARD,
-                        QUIZ, RENAME_DECK, INSERT_CODE));
+                        QUIZ, RENAME_DECK, INSERT_CODE, MARK_UNLEARNED, MARK_LEARNED));
         if (currentDeck == null && commandsWithDeck.contains(command)) {
             throw new FlashCLIArgumentException(NO_DECK_ERROR);
         }

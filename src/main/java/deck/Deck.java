@@ -27,6 +27,10 @@ import static constants.QuizMessages.QUIZ_NO_ANSWER_DETECTED;
 import static constants.QuizMessages.QUIZ_NO_UNLEARNED;
 import static constants.QuizMessages.QUIZ_QUESTIONS_LEFT;
 import static constants.QuizMessages.QUIZ_START;
+import static constants.QuizMessages.RESULT_HEADER;
+import static constants.QuizMessages.RESULT_FORMAT;
+import static constants.QuizMessages.MISTAKES_HEADER;
+import static constants.QuizMessages.FLASHCARD_FORMAT;
 import static constants.SuccessMessages.CHANGED_ISLEARNED_NOCHANGENEEDED;
 import static constants.SuccessMessages.CHANGED_ISLEARNED_SUCCESS;
 import static constants.SuccessMessages.CREATE_SUCCESS;
@@ -481,66 +485,267 @@ public class Deck {
     }
 
 
+
     /**
-     * Handles showing result upon the completion of a quiz
+     * Displays the quiz results including statistics and accuracy.
      *
-     * @return a success message indicating the result has been shown.
-     * @throws  FlashCLIArgumentException if the quiz is not completed or mismatched arrays
+     * @return A success message indicating the result has been shown
+     * @throws FlashCLIArgumentException If the quiz is not completed or arrays are mismatched
      */
     //@@author shunyang12
     public String showQuizResult() throws FlashCLIArgumentException {
-        logger.info("Trying to generate your quiz result...");
+        logger.info("Generating quiz results...");
+        validateQuizCompletion();
 
-        if (isQuizCompleted == false) {
-            throw new FlashCLIArgumentException(INCOMPLETED_QUIZ);
-        }
+        int incorrectCount = incorrectAnswers.size();
+        validateArrayConsistency(incorrectCount);
 
-        int incorrectAnswersSize = incorrectAnswers.size();
-        int incorrectIndexesSize = incorrectIndexes.size();
-        int incorrectFlashcardsSize = incorrectFlashcards.size();
-        int totalQuestionsSize = quizAmtAnswered;
+        displayQuizStatistics(incorrectCount);
+        displayMistakesIfAny(incorrectCount);
 
-        if (incorrectAnswersSize != incorrectIndexesSize 
-            | incorrectAnswersSize != incorrectFlashcardsSize 
-            | incorrectIndexesSize != incorrectFlashcardsSize) {
-            throw new FlashCLIArgumentException(MISMATCHED_ARRAYS);
-        }
-
-        Ui.showToUser("You have answered " + totalQuestionsSize + " questions in the quiz.");
-
-        if (incorrectAnswersSize == 0) {
-            return QUIZRESULT_FULL_MARKS;
-        }
-
-        Ui.showToUser("You got " + (totalQuestionsSize-incorrectAnswersSize) + " questions correctly.");
-        Ui.showToUser("You got " + incorrectAnswersSize + " questions incorrectly.");
-
-        Ui.showToUser("Review your mistakes: ");
-
-        showMistakes();
-
+        resetQuizState();
         return VIEW_QUIZRESULT_SUCCESS;
     }
 
     /**
-     * Handles showing result upon the completion of a quiz
+     * Validates that the quiz was properly completed before showing results.
      *
-     * @throws  FlashCLIArgumentException if the quiz is not completed or mismatched arrays
+     * @throws FlashCLIArgumentException If the quiz was not completed
+     */
+    private void validateQuizCompletion() throws FlashCLIArgumentException {
+        if (!isQuizCompleted) {
+            throw new FlashCLIArgumentException(INCOMPLETED_QUIZ);
+        }
+    }
+
+    /**
+     * Ensures all mistake-tracking arrays have consistent sizes.
+     *
+     * @param expectedSize The expected size for all mistake-tracking arrays
+     * @throws FlashCLIArgumentException If array sizes don't match
+     */
+    private void validateArrayConsistency(int expectedSize) throws FlashCLIArgumentException {
+        if (expectedSize != incorrectIndexes.size() ||
+                expectedSize != incorrectFlashcards.size()) {
+            throw new FlashCLIArgumentException(MISMATCHED_ARRAYS);
+        }
+    }
+
+    /**
+     * Builds and displays the quiz statistics message.
+     *
+     * @param incorrectCount Number of incorrect answers
+     */
+    private void displayQuizStatistics(int incorrectCount) {
+        int totalQuestions = quizAmtAnswered;
+        assert totalQuestions > 0 : "totalQuestions should not be zero";
+        double accuracy = calculateAccuracyPercentage(totalQuestions, incorrectCount);
+
+        String resultMessage = buildStatisticsMessage(totalQuestions, incorrectCount, accuracy);
+        Ui.showToUser(resultMessage);
+    }
+
+    /**
+     * Builds a formatted statistics message containing quiz results including:
+     * - Total questions count
+     * - Correct and incorrect answer counts
+     * - Accuracy percentage
+     * - Letter grade
+     * - Performance comment
+     * - Achievement art (if applicable)
+     * - Full marks message or mistakes header
+     *
+     * @param totalQuestions The total number of questions in the quiz
+     * @param incorrectCount The number of incorrectly answered questions
+     * @param accuracy The calculated accuracy percentage (0-100)
+     * @return A formatted string containing all quiz statistics and results,
+     *         ready for display. The string includes:
+     *         - Header section with basic statistics
+     *         - Accuracy and grade information
+     *         - Motivational performance comment
+     *         - Achievement medal art for high scores (90%+)
+     *         - Either full marks congratulation or mistakes review header
+     */
+    private String buildStatisticsMessage(int totalQuestions, int incorrectCount, double accuracy) {
+        String accuracyGrade = calculateAccuracyGrade(accuracy);
+
+        StringBuilder sb = new StringBuilder(RESULT_HEADER)
+                .append(String.format(RESULT_FORMAT, "Total Question(s)", totalQuestions))
+                .append(String.format(RESULT_FORMAT, "Correct Answer(s)", totalQuestions - incorrectCount))
+                .append(String.format(RESULT_FORMAT, "Incorrect Answer(s)", incorrectCount))
+                .append(String.format(RESULT_FORMAT, "Accuracy", formatPercentage(accuracy)))
+                .append(String.format(RESULT_FORMAT, "Grade", accuracyGrade))
+                .append("\n").append(getPerformanceComment(accuracy)).append("\n");
+
+        if (accuracy >= 90) {
+            sb.append("\n").append(getAchievementArt(accuracy));
+        }
+
+        if (incorrectCount == 0) {
+            sb.append("\n").append("\n" + QUIZRESULT_FULL_MARKS + "\n");
+        } else {
+            sb.append(MISTAKES_HEADER);
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Generates ASCII art achievement medals based on quiz accuracy.
+     * Medals are awarded for exceptional performance:
+     * - Gold medal for perfect score (100% accuracy)
+     * - Silver medal for near-perfect score (95-99% accuracy)
+     * - No medal for scores below 95%
+     *
+     * @param accuracy The quiz accuracy percentage (0-100)
+     * @return String containing ASCII art medal representation:
+     *         - Gold medal art for 100% accuracy
+     *         - Silver medal art for 95-99% accuracy
+     *         - Empty string for accuracy below 95%
+     *         Each medal consists of 6 lines forming the medal shape
+     *         with appropriate label underneath
+     */
+    private String getAchievementArt(double accuracy) {
+        if (accuracy == 100) {
+            return "   ,d88b.d88b,\n" +
+                    "   88888888888\n" +
+                    "   `Y8888888Y'\n" +
+                    "     `Y888Y'\n" +
+                    "       `Y'\n" +
+                    "   GOLD MEDAL";
+        }
+        if (accuracy >= 70) {
+            return "   ,d88b.d88b,\n" +
+                    "   88888888888\n" +
+                    "    `Y88888Y'\n" +
+                    "      `Y88Y'\n" +
+                    "        `Y'\n" +
+                    "  SILVER MEDAL";
+        }
+        return "";
+    }
+
+    /**
+     * Calculates a letter grade based on accuracy percentage
+     * @param accuracy The accuracy percentage (0-100)
+     * @return Letter grade with emoji
+     */
+    private String calculateAccuracyGrade(double accuracy) {
+        if (accuracy >= 90) {
+            return "A+ :)";
+        }
+        if (accuracy >= 85) {
+            return "A :>";
+        }
+        if (accuracy >= 80) {
+            return "A-";
+        }
+        if (accuracy >= 75) {
+            return "B+";
+        }
+        if (accuracy >= 70) {
+            return "B";
+        }
+        if (accuracy >= 65) {
+            return "B-";
+        }
+        if (accuracy >= 60) {
+            return "C+";
+        }
+        if (accuracy >= 55) {
+            return "C";
+        }
+        if (accuracy >= 50) {
+            return "C-";
+        }
+        if (accuracy >= 40) {
+            return "D";
+        }
+        return "F ;(";
+    }
+
+    private String getPerformanceComment(double accuracy) {
+        if (accuracy == 100) {
+            return "PERFECT SCORE! FLAWLESS PERFORMANCE!";
+        }
+        if (accuracy >= 95) {
+            return "Outstanding! You've mastered this material!";
+        }
+        if (accuracy >= 85) {
+            return "Excellent work! You're doing great!";
+        }
+        if (accuracy >= 75) {
+            return "Good job! You're making solid progress.";
+        }
+        if (accuracy >= 65) {
+            return "Not bad! Review your mistakes to improve.";
+        }
+        if (accuracy >= 50) {
+            return "You passed, but more practice would help.";
+        }
+        return "Keep practicing! Review the material and try again.";
+    }
+
+    /**
+     * Calculates the accuracy percentage.
+     *
+     * @param total Total questions answered
+     * @param incorrect Number of incorrect answers
+     * @return Accuracy percentage (0-100)
+     */
+    private double calculateAccuracyPercentage(int total, int incorrect) {
+        return total == 0 ? 0 : ((double)(total - incorrect) / total) * 100;
+    }
+
+    /**
+     * Formats a percentage value to 2 decimal places.
+     *
+     * @param value Percentage value to format
+     * @return Formatted percentage string (e.g., "85.71%")
+     */
+    private String formatPercentage(double value) {
+        return String.format("%.2f%%", value);
+    }
+
+    /**
+     * Displays mistakes if there were any incorrect answers.
+     *
+     * @param incorrectCount Number of incorrect answers
+     */
+    private void displayMistakesIfAny(int incorrectCount) {
+        if (incorrectCount > 0) {
+            showMistakes();
+        }
+    }
+
+    /**
+     * Resets the quiz completion state after showing results.
+     */
+    private void resetQuizState() {
+        isQuizCompleted = false;
+    }
+
+    /**
+     * Displays each mistake with the original question, correct answer, and user's answer.
+     *
+     * @throws ArrayIndexOutOfBoundsException If any index in incorrectIndexes is invalid
      */
     //@@author shunyang12
     public void showMistakes() throws ArrayIndexOutOfBoundsException {
-        int wrongAnswerCount = 0;
-        for (Integer indexIncorrect: incorrectIndexes) {
-            if(indexIncorrect < 0 | indexIncorrect > flashcards.size() ) {
-                throw new ArrayIndexOutOfBoundsException(INDEX_OUT_OF_BOUNDS);
-            }
-            Ui.showToUser("FlashCard " + indexIncorrect +
-                    " question: " + flashcards.get(indexIncorrect - 1).getQuestion() +
-                    " correct answer: " + flashcards.get(indexIncorrect - 1).getAnswer() +
-                    " Your answer: " + incorrectAnswers.get(wrongAnswerCount));
-            wrongAnswerCount++;
+        for (int i = 0; i < incorrectIndexes.size(); i++) {
+            int index = incorrectIndexes.get(i);
+
+            Flashcard card = flashcards.get(index);
+            String userAnswer = incorrectAnswers.get(i);
+
+            Ui.showToUser(String.format(FLASHCARD_FORMAT,
+                    index + 1,
+                    card.getQuestion(),
+                    card.getAnswer(),
+                    userAnswer));
         }
     }
+
 
     /**
      * Inserts code snippets to the flashcard
