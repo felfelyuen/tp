@@ -10,6 +10,7 @@ import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
 import static constants.ErrorMessages.NO_DECK_TO_UNSELECT;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
+import static constants.ErrorMessages.SAME_DECK_SELECTED;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
 import static constants.ErrorMessages.UNSELECT_NO_ARGUMENTS_ALLOWED;
@@ -242,9 +243,19 @@ public class DeckManagerTest {
     void selectDeck_onlySpacesInput_throwsException() throws FlashCLIArgumentException {
         createDeck("Spaces Input Deck");
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            selectDeck("   ");  // Spaces input
+            selectDeck("   ");
         });
         assertEquals(DECK_EMPTY_INPUT, exception.getMessage());
+    }
+
+    @Test
+    void selectDeck_sameDeck_throwsException() throws FlashCLIArgumentException {
+        createDeck("Test deck 123");
+        selectDeck("1");
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            selectDeck("1");
+        });
+        assertEquals(SAME_DECK_SELECTED, exception.getMessage());
     }
 
     /*

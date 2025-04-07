@@ -4,7 +4,9 @@
 
 ## Table of Contents
 1. [Acknowledgements](#1-acknowledgements)
-2. [Notes](#2-notes)
+2. [Design](#2-design)
+   - [2.1. Command & Parser Component](#21-command--parser-component)
+   - [2.2. Deck Component](#22-deck-component)
 3. [Implementation](#3-implementation)
     - [3.1. Flashcard Features](#31-flashcard-features)
         - [3.1.1. Create a flashcard](#311-create-a-flashcard)
@@ -41,9 +43,31 @@ This project's structure was inspired by the SE-EDU AddressBook-Level3 and Addre
 
 ---
 
-## 2. Notes
+## 2. Design
 
-This Developer Guide documents the core architecture and key components of FlashCLI, but does not exhaustively cover all implemented classes
+### 2.1 Command & Parser Component
+
+![](images/CommandComponentClassDiagram.png)
+
+1. The `Parser` package is responsible for processing user commands as well as code snippets.
+2. If the command is valid, a `Command` object will be created, where the user input will be split into command and arguments and the arguments will be stored.
+3. Then, the command is executed, where the related methods in the `Deck` package will be called to handle the operations according to the command.
+4. The result of the command execution is passed back as a String and shown to the user. 
+5. Some commands can also prompt for additional user inputs.
+
+### 2.2 Deck Component
+
+![](images/DeckComponentClassDiagram.png)
+
+The `Deck` component consists of the `Deck`, `DeckManager` and `Flashcard` classes. It is responsible for the logic involving the features related to Decks and Flashcards.
+
+**Deck:** The `Deck` class is responsible for all the logic involving a single deck only. This includes creation, deletion, quizzing of flashcards in a deck.
+
+**DeckManager:** The `DeckManager` class is a static class that is responsible for the logic for managing decks, including renaming, deleting and saving decks.
+
+**Flashcard:** The `Flashcard` class contains the fields and operations that can be performed on a flashcard, such as being able to be marked as learned.
+
+Note that only the important attributes and operations are shown in the class diagram.
 
 ---
 
