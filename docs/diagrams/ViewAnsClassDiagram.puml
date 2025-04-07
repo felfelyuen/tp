@@ -7,7 +7,7 @@ class CommandViewAnswer {
 }
 
 class Deck {
-  + String viewFlashcardAnswer(int): String
+  + viewFlashcardAnswer(int): String
 }
 
 CommandViewAnswer --> Deck

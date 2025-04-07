@@ -5,6 +5,7 @@ import static constants.ErrorMessages.DECK_EMPTY_INPUT;
 import static constants.ErrorMessages.DECK_INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.DUPLICATE_DECK_NAME;
 import static constants.ErrorMessages.EMPTY_DECK_NAME;
+import static constants.ErrorMessages.INVALID_DECK_NAME;
 import static constants.ErrorMessages.INVALID_INDEX_INPUT;
 import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
@@ -95,6 +96,11 @@ public class DeckManager {
             throw new FlashCLIArgumentException(MISSING_DECK_NAME);
         }
 
+        if (newDeckName.contains("/") || newDeckName.contains("\\")) {
+            logger.warning("Deck name contains invalid characters.");
+            throw new FlashCLIArgumentException(INVALID_DECK_NAME);
+        }
+
         if (decks.containsKey(newDeckName)) {
             logger.warning("Attempt to create duplicate deck: " + newDeckName);
             throw new FlashCLIArgumentException(DUPLICATE_DECK_NAME);
@@ -145,6 +151,11 @@ public class DeckManager {
         if (newDeckName.isEmpty()) {
             logger.warning("Deck name is empty.");
             throw new FlashCLIArgumentException(EMPTY_DECK_NAME);
+        }
+
+        if (newDeckName.contains("/") || newDeckName.contains("\\")) {
+            logger.warning("Deck name contains invalid characters.");
+            throw new FlashCLIArgumentException(INVALID_DECK_NAME);
         }
 
         boolean isNewDeckNameSameAsCurrent = currentDeck.getName().equals(newDeckName);
