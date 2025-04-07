@@ -7,7 +7,7 @@ class CommandDelete {
 }
 
 class Deck {
-  + String deleteFlashcard(int): String
+  + deleteFlashcard(int): String
 }
 
 CommandDelete --> Deck
