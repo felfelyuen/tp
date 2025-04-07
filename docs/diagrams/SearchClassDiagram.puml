@@ -9,12 +9,12 @@ class CommandSearchFlashcard {
 class DeckManager {
   + static Deck currentDeck
   + static Map<String, Deck> decks
-  + static String globalSearch(String): String
+  + static globalSearch(String): String
 }
 
 class Deck {
   + List<Flashcard> flashcards
-  + List<Flashcard> searchFlashcardQuestion(String): List<Flashcard>
+  + searchFlashcardQuestion(String): List<Flashcard>
 }
 
 class Flashcard {
