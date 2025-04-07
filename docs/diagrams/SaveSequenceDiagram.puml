@@ -1,11 +1,44 @@
 @startuml
 actor User
+participant "<<class>> \n :FlashCLI" as FlashCLI
+participant "<<class>>\n:Loading" as Loading
+participant "<<class>>\n:FileSystem" as FileSystem
+participant ":Deck" as Deck
+participant ":Saving" as Saving
 User -> FlashCLI : main()
+activate FlashCLI
+
 FlashCLI -> Loading : loadAllDecks()
-Loading -> FileSystem : read .txt files
-Loading -> Deck : create flashcards
+activate Loading
+Loading -> FileSystem : list .txt files
+activate FileSystem
+deactivate FileSystem
+
+loop for each file
+    Loading -> FileSystem : read file
+    activate FileSystem
+    FileSystem --> Loading : file content
+    deactivate FileSystem
+
+    Loading -> Deck : construct from Q:/A: entries
+    activate Deck
+    Deck --> Loading
+    deactivate Deck
+end
+deactivate Loading
+
 FlashCLI -> User : run session
+
 User -> FlashCLI : exit command
+
 FlashCLI -> Saving : saveAllDecks(decks)
-Saving -> FileSystem : write .txt files (overwrite + delete removed)
+activate Saving
+loop for each deck
+    Saving -> FileSystem : overwrite deckName.txt
+    activate FileSystem
+    FileSystem --> Saving
+    deactivate FileSystem
+end
+deactivate Saving
+deactivate FlashCLI
 @enduml
