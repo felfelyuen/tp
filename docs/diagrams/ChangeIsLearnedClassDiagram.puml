@@ -1,0 +1,15 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+class CommandChangeLearned {
+  - String arguments
+  - boolean isLearned
+  + executeCommand()
+}
+
+class Deck {
+  +  changeIsLearned(arguments: String, isLearned: boolean): String
+}
+
+CommandChangeLearned --> Deck
+@enduml

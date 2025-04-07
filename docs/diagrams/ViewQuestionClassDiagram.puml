@@ -1,0 +1,14 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+class CommandViewQuestion {
+  - String arguments
+  + executeCommand()
+}
+
+class Deck {
+  +  viewFlashcardQuestion(String): String
+}
+
+CommandViewQuestion --> Deck
+@enduml

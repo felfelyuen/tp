@@ -10,8 +10,10 @@
         - [3.1.1. Create a flashcard](#311-create-a-flashcard)
         - [3.1.2. Edit a flashcard](#312-edit-a-flashcard)
         - [3.1.3. Delete a flashcard](#313-delete-a-flashcard)
-        - [3.1.4. View a flashcard answer](#314-view-a-flashcard-answer)
-        - [3.1.5. Insert code snippet in a flashcard](#315-insert-code-snippet-in-a-flashcard)
+        - [3.1.4. View a flashcard question](#314-view-a-flashcard-question)
+        - [3.1.5. View a flashcard question](#315-view-a-flashcard-answer)
+        - [3.1.6. Insert code snippet in a flashcard](#316-insert-code-snippet-in-a-flashcard)
+        - [3.1.7. List flashcards' questions](#317-list-flashcard-questions)
     - [3.2. Deck Features](#32-deck-features)
         - [3.2.1. Creating a new deck](#321-creating-a-new-deck)
         - [3.2.2. Renaming decks](#322-renaming-decks)
@@ -167,7 +169,33 @@ The delete flashcard feature allows users to remove a specific flashcard from th
 - Invalid input format (e.g., not an integer) → `NumberFormatException`
 - Index out of bounds → `ArrayIndexOutOfBoundsException`
 
-### 3.1.4. View a flashcard answer
+### 3.1.4. View a flashcard question
+
+#### Design 
+
+This feature enables the user to view the question to a specific flashcard by supplying its index. It assumes the user has already selected a deck.
+
+#### Class Diagram
+
+![](images/ViewQuestionClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/ViewQuestionSequenceDiagram.png)
+
+#### Implementation
+
+`viewFlashcardQuestion`
+- Fetches the question from the target flashcard with its index, as well as its isLearned value.
+- Returns the question as a String.
+
+**Edge cases handled:**
+- If index for flashcard to be viewed is not a number → throws `NumberFormatException`
+- If index for flashcard is outside of deck size. (lower or equals to 0, and more than the size of the deck) → throws `FlashCliArgumentException`
+- If no index is inputted → throws `FlashCLIArgumentException`
+
+
+### 3.1.5. View a flashcard answer
 
 #### Design
 
@@ -193,7 +221,7 @@ This feature enables the user to view the answer to a specific flashcard by supp
 - Validates that it's a valid number and within bounds
 - Retrieves and displays the answer
 
-### 3.1.5. Insert code snippet in a flashcard
+### 3.1.6. Insert code snippet in a flashcard
 
 #### Design
 
@@ -219,6 +247,58 @@ This feature enables the user to insert a code snippet to a specific flashcard b
 **Edge Cases Handled:**
 - Invalid index format → `NumberFormatException`
 - Out-of-bounds index → `ArrayIndexOutOfBoundsException`
+
+### 3.1.7 List Flashcard Questions
+
+Allows the user to list out all the flashcard questions in the current deck. It assumes that the user is currently in a deck.
+
+#### Design
+
+Iterates through the deck, and prints out the question for each flashcard.
+
+#### Class Diagram
+
+![](images/ListClassDiagram.png)
+
+#### Sequence Diagram
+![](images/ListSequenceDiagram.png)
+
+#### Implementation
+`listFlashcards`
+- appends to a string with the index of the question, the isLearned value of the flashcard(as "[ ]" if unlearned and "[X]" if learned) and the flashcard's question, for each flashcard. A "\n" is further written to separate the flashcards.
+- returns aforementioned string
+
+**Edge cases handled:**
+- If the deck is empty → throws `EmptyListException`
+
+**Improvements made**
+- Added isLearned value into the list, to help users find out the isLearned status of all their flashcards at a glance. 
+
+### 3.1.8 Mark learned/ Mark unlearned method
+
+#### Design
+
+Allows the user to mark the flashcard as learned or unlearned, by supplying the index of the flashcard they wish to change. It assumes that the user has already selected a deck.
+
+#### Class Diagram
+
+![](images/ChangeIsLearnedClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/ChangeIsLearnedSequenceDiagram.png)
+
+#### Implementation
+
+`changeIsLearned`
+- changes the isLearned value of target flashcard.
+- returns a string of whether it is now learned or unlearned.
+
+**Edge Cases Handled:**
+- If index for flashcard to be changed is not a number → throws `NumberFormatException`
+- If index for flashcard is outside of deck size. (lower or equals to 0, and more than the size of the deck) → throws `FlashCliArgumentException`
+- If no index is inputted → throws `FlashCLIArgumentException`
+- If flashcard is already in the state that the user wants to mark it to, ie: the user wants to mark "learned" to an already learned flashcard → throws `FlashCLIArgumentException`
 
 ### 3.2. Deck features
 ### 3.2.1. Creating a New Deck
