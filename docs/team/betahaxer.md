@@ -62,6 +62,7 @@ Due to page limitations, I am unable to elaborate further on the challenges face
     - Updated the sections corresponding to the features I implemented, eg creating a flashcard/deck
   - Developer's Guide:
     - Updated overall structure and heading, eg heading numbering
+    - Added design section, including class diagrams
     - Updated Appendix B: User Stories
     - Updated the sections corresponding to the features I implemented, complete with sequence diagrams, rationale etc.
 

@@ -10,6 +10,7 @@ import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
 import static constants.ErrorMessages.NO_DECK_TO_UNSELECT;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
+import static constants.ErrorMessages.SAME_DECK_SELECTED;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
 import static constants.ErrorMessages.UNSELECT_NO_ARGUMENTS_ALLOWED;
@@ -262,8 +263,13 @@ public class DeckManager {
         }
 
         int listIndex = checkAndGetListIndex(arguments);
+        Deck deckToSelect = getDeckByIndex(listIndex);
 
-        currentDeck = getDeckByIndex(listIndex);
+        if (currentDeck == deckToSelect) {
+            throw new FlashCLIArgumentException(SAME_DECK_SELECTED);
+        }
+
+        currentDeck = deckToSelect;
         assert currentDeck != null : "Current deck should not be null after switching!";
         assert decks.containsKey(currentDeck.getName()) : "Switched deck does not exist in decks!";
         logger.info("Switched to deck: " + currentDeck.getName());
