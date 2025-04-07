@@ -26,7 +26,7 @@ import static constants.CommandConstants.EXIT;
  */
 public class ErrorMessages {
     // Flashcard error messages
-    public static final String CREATE_USAGE = "Usage: " + ADD_CARD + " /q {QUESTION} /a {ANSWER}";
+    public static final String CREATE_USAGE = "Usage: " + ADD_CARD + " /q QUESTION /a ANSWER";
     public static final String CREATE_MISSING_FIELD = "Missing /q or /a in input.";
     public static final String CREATE_MISSING_DESCRIPTION = "Question or Answer cannot be empty.";
     public static final String CREATE_INVALID_ORDER = "/a Answer first /q Question later";
@@ -35,11 +35,11 @@ public class ErrorMessages {
 
     public static final String INVALID_INDEX_INPUT = "Input is not a number";
     public static final String INDEX_OUT_OF_BOUNDS = "Input is out of bounds of current list of flashcards";
-    public static final String EDIT_USAGE = "Usage: " + EDIT_CARD + " {INDEX} /q {QUESTION} /a {ANSWER}";
+    public static final String EDIT_USAGE = "Usage: " + EDIT_CARD + " INDEX /q QUESTION /a ANSWER";
     public static final String EMPTY_LIST = "Invalid: List is empty.";
 
     // Deck error messages
-    public static final String MISSING_DECK_NAME = "Deck must have a name.";
+    public static final String MISSING_DECK_NAME = "Deck name cannot be empty or have whitespace only.";
     public static final String NO_DECK_TO_SWITCH = "No decks available. Create a deck before selecting.";
     public static final String NO_DECK_ERROR = "Select a deck first!";
     public static final String VIEW_DECKS_NO_ARGUMENTS_ALLOWED = "The 'decks' command does not take any arguments.";
@@ -57,7 +57,7 @@ public class ErrorMessages {
     // Code insertion error messages
     public static final String INSERT_MISSING_FIELD = "Missing /c in input.";
     public static final String INSERT_MISSING_CODE = "Code snippet cannot be empty.";
-    public static final String INSERT_USAGE = "Usage: " + INSERT_CODE + " {INDEX} /c {CODE_SNIPPET}";
+    public static final String INSERT_USAGE = "Usage: " + INSERT_CODE + " INDEX /c CODE_SNIPPET";
 
     // Quiz error messages
     public static final String MISSING_INPUT_INDEX = "No input index detected.";
