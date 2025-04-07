@@ -46,6 +46,8 @@ FlashCLI is a command-line flashcard application designed specifically for CS211
 - **What it does:** Allow users to unselect the current deck selected.
 - **Justification:** Helps to improve testability of other commands, especially those involving flashcards as they cannot be used without a deck.
 
+Due to page limitations, I am unable to elaborate further on the challenges faced etc. Do refer to the [Developer's Guide](https://ay2425s2-cs2113-f11-4.github.io/tp/DeveloperGuide.html) for that.
+
 ### Other aspects
 #### **Project Management / Contribution to Team-Based Tasks:**
 1. Setting up of project structure, including `Command`, `Parser` etc. and test structure, which was critical in moving the team in the same direction
