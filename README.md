@@ -1,66 +1,79 @@
-## FlashCLI
+## FlashCLI - CLI-based Flashcard App 
 
-This is a project template for a greenfield Java project. It's named after the Java mascot _Duke_. Given below are instructions on how to use it.
+## Overview
 
-## Setting up in Intellij
+FlashCLI 2.0 is a command-line flashcard application designed specifically for CS2113 Software Engineering students. It helps students create, manage, and review flashcards efficiently, making it easier to retain important concepts in Java, software design, and coding best practices.
 
-Prerequisites: JDK 17 (use the exact version), update Intellij to the most recent version.
+## Quick Start
 
-1. **Ensure Intellij JDK 17 is defined as an SDK**, as described [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk) -- this step is not needed if you have used JDK 17 in a previous Intellij project.
-1. **Import the project _as a Gradle project_**, as described [here](https://se-education.org/guides/tutorials/intellijImportGradleProject.html).
-1. **Verify the setup**: After the importing is complete, locate the `src/main/java/seedu/duke/Duke.java` file, right-click it, and choose `Run Duke.main()`. If the setup is correct, you should see something like the below:
-   ```
-   > Task :compileJava
-   > Task :processResources NO-SOURCE
-   > Task :classes
-   
-   > Task :Duke.main()
-   Hello from
-    ____        _        
-   |  _ \ _   _| | _____ 
-   | | | | | | | |/ / _ \
-   | |_| | |_| |   <  __/
-   |____/ \__,_|_|\_\___|
-   
-   What is your name?
-   ```
-   Type some word and press enter to let the execution proceed to the end.
+1. Ensure you have Java `17` or above installed in your Computer.<br>
+   **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-**Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+2. Download the latest `.jar` file from [here](https://github.com/AY2425S2-CS2113-F11-4/tp/releases).
 
-## Build automation using Gradle
+3. Copy the file to the folder you want to use as the _home folder_ for FlashCLI.
 
-* This project uses Gradle for build automation and dependency management. It includes a basic build script as well (i.e. the `build.gradle` file).
-* If you are new to Gradle, refer to the [Gradle Tutorial at se-education.org/guides](https://se-education.org/guides/tutorials/gradle.html).
+4. Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar FlashCLI.jar` command to run the application.<br>
+   You should be greeted with a welcome message.
 
-## Testing
+5. Type the command in the command box and press Enter to execute it. e.g. typing **`user_guide`** and pressing Enter will list the available commands.<br>
+   Some example commands you can try:
 
-### I/O redirection tests
+   * `new testDeck` : Creates a new deck named "testDeck".
 
-* To run _I/O redirection_ tests (aka _Text UI tests_), navigate to the `text-ui-test` and run the `runtest(.bat/.sh)` script.
+   * `select 1` : Selects the first deck.
 
-### JUnit tests
+   * `add /q What is an assertion? /a Assertions are used to...` : Creates a new flashcard with the question and answer provided.
 
-* A skeleton JUnit test (`src/test/java/seedu/duke/DukeTest.java`) is provided with this project template. 
-* If you are new to JUnit, refer to the [JUnit Tutorial at se-education.org/guides](https://se-education.org/guides/tutorials/junit.html).
+   * `list`: Shows the list of flashcards in the selected deck.
 
-## Checkstyle
+   * `exit` : Exits the app.
 
-* A sample CheckStyle rule configuration is provided in this project.
-* If you are new to Checkstyle, refer to the [Checkstyle Tutorial at se-education.org/guides](https://se-education.org/guides/tutorials/checkstyle.html).
+## Features
 
-## CI using GitHub Actions
+* **View Command List**: 
+  * Quickly see all available actions and how to use them. **Never feel lost; instantly access the help you need to navigate FlashCLI efficiently.**
+* **Create Flashcards**: 
+  * Easily generate new learning cards with questions and answers. **Build your knowledge base rapidly by turning key concepts into study material.**
+* **List Flashcards**: 
+  * Get a clear overview of all flashcards within a specific deck. **Confidently review the scope of your current study topic at a glance.**
+* **View Question**: 
+  * Focus solely on the prompt of a flashcard. **Sharpen your recall by testing yourself before revealing the answer.**
+* **View Answer**: 
+  * Reveal the solution to a flashcard question. **Immediately check your understanding and identify areas needing more attention.**
+* **Edit Flashcards**: 
+  * Modify existing questions and answers to keep your study material accurate. **Ensure your learning resources evolve with your understanding.**
+* **Insert Code Snippets**: 
+  * Associate practical code examples directly with your flashcards. **Deepen your comprehension by linking theoretical knowledge with real-world applications.**
+* **Delete Flashcards**: 
+  * Remove irrelevant or incorrect cards from your decks. **Maintain a focused and effective learning environment.**
+* **Interactive Quizzes**: 
+  * Test your knowledge with timed quizzes on unlearned cards. **Actively engage with the material and track your progress over time.**
+* **Mark as Learned**: 
+  * Track your mastery by designating cards you've successfully learned. **Concentrate your efforts on the concepts that still challenge you.**
+* **Mark as Unlearned**: 
+  * Revisit previously learned material for reinforcement. **Solidify your understanding by periodically reviewing key concepts.**
+* **View Quiz Results**: 
+  * Analyze your performance after each quiz, seeing what you got right and wrong. **Pinpoint your weaknesses and tailor your study strategy accordingly.**
+* **Search Flashcards**: 
+  * Quickly find specific cards by searching for keywords in questions or answers. **Access the exact information you need without tedious browsing.**
+* **Create Decks**: 
+  * Organize your flashcards into logical categories or subjects. **Structure your learning for different modules or topics for better management.**
+* **Select Deck**: 
+  * Choose a specific deck to focus your current study session. **Concentrate your learning on the material that matters most right now.**
+* **Rename Deck**: 
+  * Update the name of your decks to better reflect their content. **Maintain a clear and intuitive organization of your study resources.**
+* **View Decks**: 
+  * See a comprehensive list of all your created flashcard collections. **Get a bird's-eye view of your entire learning library.**
+* **Delete Decks**: 
+  * Remove entire collections of flashcards when they are no longer needed. **Keep your learning environment clean and efficient.**
+* **Unselect Deck**: 
+  * Return to a general state without a specific deck in focus. **Prepare for actions that apply across all your learning materials.**
+* **Exit Application**: 
+  * Gracefully close FlashCLI when your study session is complete. **End your session knowing your progress is saved.**
 
-The project uses [GitHub actions](https://github.com/features/actions) for CI. When you push a commit to this repo or PR against it, GitHub actions will run automatically to build and verify the code as updated by the commit/PR.
+Learn more about FlashCLI:
+* [User Guide](docs/UserGuide.md)
+* [Developer Guide](docs/DeveloperGuide.md)
+* [About Us](docs/AboutUs.md)
 
-## Documentation
-
-`/docs` folder contains a skeleton version of the project documentation.
-
-Steps for publishing documentation to the public: 
-1. If you are using this project template for an individual project, go your fork on GitHub.<br>
-   If you are using this project template for a team project, go to the team fork on GitHub.
-1. Click on the `settings` tab.
-1. Scroll down to the `GitHub Pages` section.
-1. Set the `source` as `master branch /docs folder`.
-1. Optionally, use the `choose a theme` button to choose a theme for your documentation.
