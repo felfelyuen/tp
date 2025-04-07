@@ -15,6 +15,7 @@ public class CommandDeleteDeck extends Command {
 
     public void executeCommand() {
         try {
+            Ui.loadingeffect();
             Ui.showToUser(deleteDeck(this.listIndex));
         } catch (FlashCLIArgumentException e) {
             Ui.showError(e.getMessage());

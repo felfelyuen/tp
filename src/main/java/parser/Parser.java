@@ -77,7 +77,7 @@ public class Parser {
 
         ArrayList<String> commandsWithDeck =
                 new ArrayList<>(List.of(ADD_CARD, VIEW_QN, VIEW_ANS, VIEW_RES, EDIT_CARD, LIST_CARDS, DELETE_CARD,
-                        QUIZ, RENAME_DECK, INSERT_CODE));
+                        QUIZ, RENAME_DECK, INSERT_CODE, MARK_UNLEARNED, MARK_LEARNED));
         if (currentDeck == null && commandsWithDeck.contains(command)) {
             throw new FlashCLIArgumentException(NO_DECK_ERROR);
         }
@@ -158,22 +158,21 @@ public class Parser {
      *
      * @param codeSnippet the code snippet input.
      * @return the formatted code snippet for storage and printing.
-     * @throws FlashCLIArgumentException if the input is invalid or required arguments are missing.
      */
     public static String parseCodeSnippet(String codeSnippet) {
         int numIndents = 0;
         int braceStartIndex = codeSnippet.indexOf("{");
         int braceEndIndex = codeSnippet.indexOf("}");
         String output = "";
-        while (braceStartIndex > 0 || braceEndIndex > 0) {
+        while (braceStartIndex >= 0 || braceEndIndex >= 0) {
             boolean addCloseBrace = false;
             String frontCode;
             String backCode;
-            if (braceStartIndex > 0) {
+            if (braceStartIndex >= 0) {
                 frontCode = codeSnippet.substring(0, braceStartIndex + "{".length());
                 backCode = codeSnippet.substring(braceStartIndex + "{".length());
                 numIndents += 1;
-            } else if (braceEndIndex > 0) {
+            } else if (braceEndIndex >= 0) {
                 frontCode = codeSnippet.substring(0, braceEndIndex);
                 backCode = codeSnippet.substring(braceEndIndex + "}".length());
                 numIndents -= 1;

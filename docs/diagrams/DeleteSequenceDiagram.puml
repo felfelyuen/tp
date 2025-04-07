@@ -1,5 +1,8 @@
 @startuml
 actor User
+participant ":CommandDelete" as CommandDelete
+participant ":Deck" as Deck
+participant ":Ui" as Ui
 User -> CommandDelete : executeCommand()
 CommandDelete -> Deck : deleteFlashcard(index)
 Deck -> CommandDelete : confirmation message

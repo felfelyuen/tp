@@ -11,6 +11,7 @@ public class CommandUserGuide extends Command{
 
     @Override
     public void executeCommand() {
+        Ui.loadingeffect();
         Ui.showToUser(USER_GUIDE_INFORMATION);
     }
 }

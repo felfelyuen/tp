@@ -1,5 +1,7 @@
 @startuml QuizResultClassDiagram
 
+hide circle
+skinparam classAttributeIconSize 0
 skinparam {
     classFontSize 13
     arrowFontSize 12
@@ -7,17 +9,17 @@ skinparam {
 }
 
 package "Command Layer" {
-    abstract class Command {
+    abstract "{abstract} \n Command" {
         +{abstract} executeCommand()
     }
 
-    class CommandViewQuizResult {
+    class "CommandViewQuizResult" {
         +executeCommand()
     }
 }
 
 package "Deck Layer" {
-    class Deck {
+    class "Deck" {
         -incorrectIndexes: ArrayList<Integer>
         -incorrectFlashcards: ArrayList<Flashcard>
         -incorrectAnswers: ArrayList<String>
@@ -29,7 +31,7 @@ package "Deck Layer" {
 }
 
 package "Data Model" {
-    class Flashcard {
+    class "Flashcard" {
         -question: String
         -answer: String
         -codeSnippet: String
@@ -39,33 +41,20 @@ package "Data Model" {
 }
 
 package "UI Layer" {
-    class Ui {
+    class "Ui" {
         +showToUser(message: String): void
         +showError(error: String): void
     }
 }
 
 ' Relationships
-Command <|-- CommandViewQuizResult
-CommandViewQuizResult --> Deck : "1..1" calls
-CommandViewQuizResult --> Ui : "1..1" displays through
+"{abstract} \n Command" <|-- "CommandViewQuizResult"
+"CommandViewQuizResult" -> "Deck" : uses
+"CommandViewQuizResult" -> "Ui" : uses
 
-Deck "1" *-- "0..*" Flashcard : contains
-Deck "1" *-- "0..*" Integer : incorrectIndexes
-Deck "1" *-- "0..*" String : incorrectAnswers
+"Deck" *-- "Flashcard" : contains
+"Deck" o-- "Integer" : incorrectIndexes
+"Deck" o-- "String" : incorrectAnswers
 
-' Method call annotations
-note top of Deck
-  showQuizResult() workflow:
-  1. validateArrays()
-  2. calculateStats()
-  3. showMistakes()
-end note
-
-note right of Flashcard
-  Data structure for:
-  - Original questions
-  - Correct answers
-end note
 
 @enduml
