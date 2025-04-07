@@ -7,6 +7,7 @@ import deck.Flashcard;
 import command.Command;
 import command.CommandCreateFlashcard;
 import command.CommandDeleteFlashcard;
+import exceptions.FlashCLIArgumentException;
 
 import java.io.File;
 import java.io.IOException;
@@ -138,5 +139,33 @@ public class SavingLoadingTest {
 
         Map<String, Deck> loaded = Loading.loadAllDecks();
         assertTrue(loaded.isEmpty());
+    }
+
+    @Test
+    void saveAndLoadDeck_preservesLearnedStatus() throws FlashCLIArgumentException {
+        String input = "/q What is Java? /a A programming language.";
+        Command createCommand = new CommandCreateFlashcard(input);
+        createCommand.executeCommand();
+
+        // Mark the flashcard as learned
+        testDeck.changeIsLearned("1", true);
+
+        try {
+            Saving.saveDeck("TestDeck", testDeck);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        DeckManager.decks.clear();
+        Map<String, Deck> loaded = Loading.loadAllDecks();
+        Deck loadedDeck = loaded.get("TestDeck");
+
+        assertNotNull(loadedDeck);
+        assertEquals(1, loadedDeck.getFlashcards().size());
+
+        Flashcard f = loadedDeck.getFlashcards().get(0);
+        assertEquals("What is Java?", f.getQuestion());
+        assertEquals("A programming language.", f.getAnswer());
+        assertTrue(f.getIsLearned(), "Flashcard should be marked as learned after reloading.");
     }
 }
