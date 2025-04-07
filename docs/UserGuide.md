@@ -60,7 +60,7 @@ List of commands:
 "quiz": quizzes the unlearned flashcards
 "mark_learned": marks flashcard as learned
 "mark_unlearned": marks flashcard as unlearned
-"view_results": views results from quiz after quiz is completed
+"view_res": views results from quiz after quiz is completed
 "new": creates a new deck of flashcards
 "rename": renames flashcard deck
 "decks": shows list of decks
@@ -91,8 +91,8 @@ Examples:
 ```
 [INPUT]: list
 [OUTPUT]: 
-1. /q What colour is an apple? 
-2. /q What language is used in CS2113?
+1. [ ] What colour is an apple? 
+2. [ ]] What language is used in CS2113?
 ```
 
 ### View question only: `qn`
@@ -103,7 +103,10 @@ INDEX must be a positive integer, ie: 1, 2, 3
 Examples:
 ```
 [INPUT]: qn 3
-[OUTPUT]: What is a java interface?
+[OUTPUT]: 
+Question of flashcard index: 3
+Learned?: [ ]
+Question: What is a java interface?
 
 interface Interface{
 void method();
@@ -224,11 +227,11 @@ Examples:
 [INPUT]: Blue.
 [OUTPUT]: Incorrect.
 [OUTPUT]: You finished the test! You took: 22 seconds!
-Type view_results to check your test result
+Type view_res to check your test result
 ```
 
 ### Mark as learned: `mark_learned`
-Marks the question as learned. Flashcards that are correctly answered in quiz mode would be automatically marked as learned. Learned flashcards are not tested again in quiz mode.
+Marks the question as learned. Flashcards that are correctly answered in quiz mode would be automatically marked as learned. Learned flashcards are not tested again in quiz mode. Learned flashcards cannot be mark learned again.
 
 Format: `mark_learned INDEX`
 INDEX must be a positive integer, i.e: 1, 2, 3
@@ -236,11 +239,11 @@ INDEX must be a positive integer, i.e: 1, 2, 3
 Examples:
 ```
 [INPUT]:mark_learned 2
-[OUTPUT]: Changed flashcard number 2 into learned
+[OUTPUT]:Changed flashcard number 2 into learned
 ```
 
 ### Unmark learned: `mark_unlearned`
-Marks the flashcard as unlearned. Unlearned flashcards are tested in quiz mode.
+Marks the flashcard as unlearned. Unlearned flashcards are tested in quiz mode. Unlearned flashcards cannot be marked unlearned again.
 
 Format: `mark_unlearned INDEX`
 INDEX must be a positive integer, i.e: 1, 2, 3
