@@ -18,7 +18,13 @@ Given below are my contributions to the project
       The wrongly answered flashcards will be a global variable assigned to the test deck. However, developer struggled to debug the ridiculous issue encountered in IDE, which could
       not be resolved even after he consulted his teammate. The break point and other debugging techniques couldn't work for the issue. Due to time concern, the developer decided to drop the stretch goal. 
     - Credits: 
-  
+
+- **New Feature**: Added a loading effect before execution of each command.
+    - What it does: Add a colorful and interactive colored loading progress bar to notify user
+      that the command is being processed. This will not determine if the command is illegal because
+      the checking is allocated to be at the back.
+    - Credits:
+
 
 - **New Feature(Not implemented upon failure of gradle test)**: Added a colorful ASCIl text effect for opening title.
     - What it does: It output a colored fading UI effect for the title to make the application more interesting.
@@ -26,18 +32,13 @@ Given below are my contributions to the project
       when developer exhausted its debugging skills and asked peer, TA and prof.
       https://github.com/AY2425S2-CS2113-F11-4/tp/actions?page=3
     - Credits: ChatGPT for organizing color ASCIl constants
-  
 
-- **New Feature(Not implemented upon failure of gradle test)**: Added a loading effect before execution of each command.
-    - What it does: Add a colorful and interactive colored loading progress bar to notify user
-      that the command is being processed. This will not determine if the command is illegal because
-      the checking is allocated to be at the back. 
-    - Highlights: The feature cannot be merged to the main repo because it constantly failed the gradle i/o test
-      when developer exhausted its debugging skills and asked peer, TA and prof. 
-      https://github.com/AY2425S2-CS2113-F11-4/tp/actions?page=3
-    - Credits: 
-  
-
+### Other aspects
+#### **Project Management / Contribution to Team-Based Tasks:**
+1. Updating issue tracker by closing issues already completed based on teammates' PR
+2. Triaging 5 bugs transferred from the PE Dry Run by assigning members, tagging priority and bug type
+3. Reviewing over 11 of the team's PRs
+4. Set up GitHub repo together as a team
 
 - Code contributed: [RepoSense link](https://nus-cs2113-ay2425s2.github.io/tp-dashboard/?search=manz9802&breakdown=true&sort=groupTitle%20dsc&sortWithin=title&since=2025-02-21&timeframe=commit&mergegroup=&groupSelect=groupByRepos&checkedFileTypes=docs~functional-code~test-code~other)
 - **Documentation:**
