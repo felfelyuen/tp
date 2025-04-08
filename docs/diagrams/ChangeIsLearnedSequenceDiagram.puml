@@ -2,12 +2,11 @@
 
 actor User
 User -> CommandChangeLearned **: executeCommand()
-CommandChangeLearned++
-CommandChangeLearned -> Deck++: changeIsLearned()
+CommandChangeLearned -> Deck: changeIsLearned()
+return
+CommandChangeLearned -> Ui: showToUser(changed isLearned value)
+return
 
-    Deck -> Ui++: showToUser(changed isLearned value)
-return
-return
 CommandChangeLearned --> User
 
 
