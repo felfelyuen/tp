@@ -352,8 +352,8 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 #### Implementation of `DeckManager.selectDeck()`
 ![](images/SelectDeckSequenceDiagram.png)
 * Checks for the [conditions](#before-selecting-a-deck-these-conditions-must-be-satisfied) listed above
-* `DeckManager.checkAndGetListIndex()` checks if the index is valid and returns listIndex.
-* Then, we get the deck corresponding to that index. The `LinkedHashMap` has to be converted into a `Set` via the `entrySet()` method and then to a `List`. This is to facilitate the accessing of decks via index.
+* `DeckManager.checkAndGetListIndex()` checks if the index is valid and returns `listIndex`.
+* Then, we get the deck corresponding to that index. The method `DeckManager.checkAndGetListIndex()` converts a `LinkedHashMap` into a `Set` via the `entrySet()` method and then to a `List`. This is to facilitate the accessing of decks via index.
 * After getting the deck, we select it by assigning it to `currentDeck`, which indicates the deck selected.
 
 **Note**: The lifeline for `CommandSelectDeck` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
@@ -373,9 +373,9 @@ The `remove` command is implemented using the `DeckManager` class and the `Comma
 #### Implementation of `DeckManager.deleteDeck()`
 ![](images/DeleteDeckSequenceDiagram.png)
 * When the command is sent, we first validate if the deck exists using `Parser.validateDeckExistsForDelete()`.
-* This is done through `DeckManager.checkAndGetListIndex()`, which checks that the input is a valid index and converts it from String to Integer.
+* This is done through `DeckManager.checkAndGetListIndex()`, which is the same method used for select decks, and it checks that the input is a valid index and converts it from String to Integer. 
 * Then, we confirm if the user indeed wants to delete the deck. This is done by continuously looping until the user enters "yes" or "no". The input is not case-sensitive. 
-* After which, a new `CommandDeleteDeck` object is created if the user confirms deletion or a message is shown to the user if "no" is entered.
+* After which, a new `CommandDeleteDeck` object is created which then executes the deletion of the deck if the user confirms deletion. If the user enters "no", a message is shown to the user.
 
 #### Handling Edge Cases
 * **Invalid input**: The input is empty or consists of only whitespace, or is out of bounds of the deck list.
