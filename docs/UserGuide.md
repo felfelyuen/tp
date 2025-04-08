@@ -36,6 +36,31 @@ FlashCLI 2.0 is a command-line flashcard application designed specifically for C
 
 ## Features
 
+1. [Flashcard Features](#flashcard-features)
+   - [Viewing User Guide](#viewing-user-guide-user_guide)
+   - [Create flashcards](#create-flashcards-add)
+   - [Summary view of the flashcard deck](#summary-view-of-the-flashcard-deck-list)
+   - [View question only](#view-question-only-qn)
+   - [View answer only](#view-answer-only-ans)
+   - [Edit question and answer](#edit-question-and-answer-edit)
+   - [Edit question only](#edit-question-only-edit)
+   - [Edit answer only](#edit-answer-only-edit)
+   - [Insert code snippet](#insert-code-snippet-insert_code)
+   - [Delete flashcard](#delete-flashcard-delete)
+   - [Quiz mode with timer](#quiz-mode-with-timer-quiz)
+   - [Mark as learned](#mark-as-learned-mark_learned)
+   - [Unmark learned](#unmark-learned-mark_unlearned)
+   - [View test results](#view-test-results-view_results)
+   - [Search Flashcards](#search-flashcards-search)
+2. [Deck Features](#deck-features)
+  - [Create a new deckk](#create-a-new-deck-new)
+  - [Select a Deck](#select-a-deck-select)
+  - [Rename a Deck](#rename-a-deck-rename)
+  - [View All Decks](#view-all-decks-decks)
+  - [Delete a Deck](#delete-a-deck-remove)
+  - [Unselect a Deck](#unselect-a-deck-unselect)
+3. [FAQ](#faq)
+4. [Command Summary](#command-summary)
 
 ---
 ### Flashcard Features
@@ -176,7 +201,7 @@ Edit Answer: Old placeholder answer here
 
 ```
 
-### Insert code snippet: `Insert_code`
+### Insert code snippet: `insert_code`
 Inserts code snippet of a flashcard via its index.
 
 Format: `insert_code INDEX /c CODE_SNIPPET`
@@ -255,14 +280,14 @@ Examples:
 [OUTPUT]: Changed flashcard number 2 into unlearned
 ```
 
-### View test results: `view_results`
+### View test results: `view_res`
 Views the flashcards that were answered wrong after test mode.
 
-Format: `view_results`
+Format: `view_res`
 
 Examples:
 ```
-[INPUT]: view_resultS
+[INPUT]: view_res
 [OUTPUT]: Your test for DECK_WEEK result is 9/10, correctness: 90%
 Your wrong answers are following:
 -Q1. What colour is an apple?  Your answer: Red
