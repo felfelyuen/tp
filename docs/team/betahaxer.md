@@ -44,9 +44,9 @@ Due to page limitations, please refer to the [Developer's Guide](https://ay2425s
 
 ### Other aspects
 #### **Project Management / Contribution to Team-Based Tasks:**
-1. Setting up of project structure, including `Command`, `Parser` etc. and test structure, which was critical in moving the team in the same direction
+1. Setting up of project structure, including `Command`, `Parser` etc. and test structure
 2. Releasing `v1.0` and assisting with releasing `v2.0` and `v2.1` by helping with file conversions of documentation to PDFs
-3. Updating issue tracker by closing issues already completed based on teammates' PR
+3. Updating issue tracker by closing issues
 4. Triaging **all** 51 bugs transferred from the PE Dry Run by assigning members, tagging priority and bug type
 5. Reviewing over 22 of the team's PRs
 
@@ -60,12 +60,12 @@ Due to page limitations, please refer to the [Developer's Guide](https://ay2425s
     - Updated the sections corresponding to the features I implemented, complete with sequence diagrams, rationale etc.
 
 #### Mentoring/Team Contributions
--  Coordinated meetings and pushed the team to meet deadlines **throughout the project**, e.g. setting internal deadlines
-- Setting up branch protection to prevent unauthorised pushing to master branch (it actually happened) and requiring Gradle tests to pass and at least 1 review to merge
-- Helping teammates debug issues with their IDE and Java version, so that they can work on the project
+-  Coordinated meetings and pushed the team to meet deadlines **throughout the project**
+- Setting up branch protection to prevent unauthorised pushing to master branch (it actually happened) etc.
+- Helping teammates debug issues with their code/IDE/Java version
 
 #### Contributions Beyond the Project Team
-- Reported 10 bugs in other teams’ tP.
+- Reported 10 bugs in other teams’ tP for PE Dry Run.
 - Gave structured and constructive feedback on other teams' DG.
 
 
