@@ -4,11 +4,13 @@ import static constants.ErrorMessages.DECK_EMPTY_INPUT;
 import static constants.ErrorMessages.DECK_INDEX_OUT_OF_BOUNDS;
 import static constants.ErrorMessages.DUPLICATE_DECK_NAME;
 import static constants.ErrorMessages.EMPTY_DECK_NAME;
+import static constants.ErrorMessages.INVALID_DECK_NAME;
 import static constants.ErrorMessages.INVALID_INDEX_INPUT;
 import static constants.ErrorMessages.MISSING_DECK_NAME;
 import static constants.ErrorMessages.NO_DECK_TO_SWITCH;
 import static constants.ErrorMessages.NO_DECK_TO_UNSELECT;
 import static constants.ErrorMessages.NO_DECK_TO_VIEW;
+import static constants.ErrorMessages.SAME_DECK_SELECTED;
 import static constants.ErrorMessages.SEARCH_RESULT_EMPTY;
 import static constants.ErrorMessages.UNCHANGED_DECK_NAME;
 import static constants.ErrorMessages.UNSELECT_NO_ARGUMENTS_ALLOWED;
@@ -67,6 +69,14 @@ public class DeckManagerTest {
     }
 
     @Test
+    void createDeck_invalidDeckName_throwsException() {
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            createDeck("/wrong");
+        });
+        assertEquals(INVALID_DECK_NAME, exception.getMessage());
+    }
+
+    @Test
     void createDeck_duplicateDeckName_throwsException() throws FlashCLIArgumentException {
         createDeck("test1");
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
@@ -89,6 +99,16 @@ public class DeckManagerTest {
 
     @Test
     void renameDeck_emptyNewName_throwsException() throws FlashCLIArgumentException {
+        createDeck("Coding Quality Concepts");
+        currentDeck = decks.get("Coding Quality Concepts");
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            renameDeck("/error");
+        });
+        assertEquals(INVALID_DECK_NAME, exception.getMessage());
+    }
+
+    @Test
+    void renameDeck_invalidNewName_throwsException() throws FlashCLIArgumentException {
         createDeck("Coding Quality Concepts");
         currentDeck = decks.get("Coding Quality Concepts");
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
@@ -223,9 +243,19 @@ public class DeckManagerTest {
     void selectDeck_onlySpacesInput_throwsException() throws FlashCLIArgumentException {
         createDeck("Spaces Input Deck");
         FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
-            selectDeck("   ");  // Spaces input
+            selectDeck("   ");
         });
         assertEquals(DECK_EMPTY_INPUT, exception.getMessage());
+    }
+
+    @Test
+    void selectDeck_sameDeck_throwsException() throws FlashCLIArgumentException {
+        createDeck("Test deck 123");
+        selectDeck("1");
+        FlashCLIArgumentException exception = assertThrows(FlashCLIArgumentException.class, () -> {
+            selectDeck("1");
+        });
+        assertEquals(SAME_DECK_SELECTED, exception.getMessage());
     }
 
     /*

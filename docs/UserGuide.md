@@ -355,15 +355,11 @@ Unselects the specified deck. There must be a deck selected to use this command.
 
 **Q**: I have created many flashcards, will my data be saved?
 
-**A**: Yes, your data will be saved to a txt file under `./data/decks/`.
+**A**: Yes, your data will be saved to a txt file under `./data/decks/`. Remember to use the `exit` command to save!
 
 **Q**: How do I transfer my data to another computer? 
 
-**A**: It's easy, simply install FlashCLI using the instructions given in [Quick Start](#Quick-Start). Then, overwrite the txt file located in `./data/decks/` on the new computer.
-
----
-
-## Known Issues
+**A**: It's easy, simply install FlashCLI using the instructions given in [Quick Start](#Quick-Start). Then, overwrite the txt file(s) located in `./data/decks/` on the new computer.
 
 ---
 

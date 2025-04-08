@@ -1,0 +1,39 @@
+@startuml
+
+hide circle
+skinparam classAttributeIconSize 0
+skinparam packageStyle Rectangle
+
+package Parser {
+    class "Parser" as ParserClass {
+        + <u>parseInput(input: String): Command
+        + <u>parseCodeSnippet(codeSnippet: String): String
+    }
+}
+
+package Command {
+    class "{abstract}\nCommand" as CommandClass {
+        + executeCommand(): void {abstract}
+    }
+
+    class XYZCommand {
+        - arguments: String
+        + executeCommand(): void
+    }
+}
+
+package Deck {
+    Class HiddenModel #FFFFFF
+    hide HiddenModel
+}
+
+ParserClass -> "1"XYZCommand:creates >
+XYZCommand -up-|> CommandClass
+
+XYZCommand -> Deck: executes methods in >
+
+note top of XYZCommand
+  XYZCommand = CommandCreateFlashcard,
+  CommandDeleteFlashcard etc.
+end note
+@enduml
