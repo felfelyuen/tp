@@ -4,7 +4,9 @@
 
 ## Table of Contents
 1. [Acknowledgements](#1-acknowledgements)
-2. [Notes](#2-notes)
+2. [Design](#2-design)
+   - [2.1. Command & Parser Component](#21-command--parser-component)
+   - [2.2. Deck Component](#22-deck-component)
 3. [Implementation](#3-implementation)
     - [3.1. Flashcard Features](#31-flashcard-features)
         - [3.1.1. Create a flashcard](#311-create-a-flashcard)
@@ -18,9 +20,10 @@
         - [3.2.3. Listing all decks](#323-listing-all-decks)
         - [3.2.4. Selecting a deck](#324-selecting-a-deck)
         - [3.2.5. Deleting a deck](#325-deleting-a-deck)
-        - [3.2.6. Searching](#326-searching)
-        - [3.2.7. Save/Load Functionality](#327-saveload-functionality)
-        - [3.2.8. Viewing quiz results ](#328-viewing-quiz-results)
+        - - [3.2.6. Unselecting a deck](#326-unselecting-a-deck)
+        - [3.2.7. Searching](#327-searching)
+        - [3.2.8. Save/Load Functionality](#328-saveload-functionality)
+        - [3.2.9. Viewing quiz results ](#329-viewing-quiz-results)
 4. [Appendix A: Product Scope](#appendix-a-product-scope)
 5. [Appendix B: User Stories](#appendix-b-user-stories)
 6. [Appendix C: Non-Functional Requirements](#appendix-c-non-functional-requirements)
@@ -40,9 +43,31 @@ This project's structure was inspired by the SE-EDU AddressBook-Level3 and Addre
 
 ---
 
-## 2. Notes
+## 2. Design
 
-This Developer Guide documents the core architecture and key components of FlashCLI, but does not exhaustively cover all implemented classes
+### 2.1 Command & Parser Component
+
+![](images/CommandComponentClassDiagram.png)
+
+1. The `Parser` package is responsible for processing user commands as well as code snippets.
+2. If the command is valid, a `Command` object will be created, where the user input will be split into command and arguments and the arguments will be stored.
+3. Then, the command is executed, where the related methods in the `Deck` package will be called to handle the operations according to the command.
+4. The result of the command execution is passed back as a String and shown to the user. 
+5. Some commands can also prompt for additional user inputs.
+
+### 2.2 Deck Component
+
+![](images/DeckComponentClassDiagram.png)
+
+The `Deck` component consists of the `Deck`, `DeckManager` and `Flashcard` classes. It is responsible for the logic involving the features related to Decks and Flashcards.
+
+**Deck:** The `Deck` class is responsible for all the logic involving a single deck only. This includes creation, deletion, quizzing of flashcards in a deck.
+
+**DeckManager:** The `DeckManager` class is a static class that is responsible for the logic for managing decks, including renaming, deleting and saving decks.
+
+**Flashcard:** The `Flashcard` class contains the fields and operations that can be performed on a flashcard, such as being able to be marked as learned.
+
+Note that only the important attributes and operations are shown in the class diagram.
 
 ---
 
@@ -226,11 +251,12 @@ This feature allows the user to create a new deck with a deck name.
 
 The create deck mechanism is facilitated by `DeckManager` and `CommandCreateDeck`.
 
-To ensure deck names are unique, a LinkedHashMap is used to track existing deck names.
+To ensure deck names are unique, a `LinkedHashMap` is used to track existing deck names.
 
 #### **Before creating the deck, these conditions must be satisfied:**
 * **Duplicate Deck Name**: If the user attempts to create a deck with a name that already exists, an error message is displayed, and the command is not executed.
-* **Empty Deck Name**: if the new deck name is empty or consists only of whitespaces, it is considered invalid.
+* **Empty Deck Name**: If the new deck name is empty or consists only of whitespaces, it is considered invalid.
+* **Names containing `/` or `\`**: Names containing these characters are invalid because it will affect saving functionality
 
 Note that the provided deck name will be trimmed.
 
@@ -261,7 +287,7 @@ The diagram purposely omits interactions with `Ui` as it would unnecessarily com
 
 This feature allows users to rename selected decks.
 
-The `rename` command is implemented using the `Deck` class and the `CommandRenameDeck` class. A `LinkedHashMap` is used to track existing deck names. A deck has to be selected before being able to use this command.
+The `rename` command is implemented using the `DeckManager` class and the `CommandRenameDeck` class. A `LinkedHashMap` is used to track existing deck names. A deck has to be selected before being able to use this command.
 
 The ordering of the decks is preserved.
 
@@ -269,6 +295,8 @@ The ordering of the decks is preserved.
 * **Unchanged Name**: If the user renames back to the same name as previous, it will not be allowed.
 * **Duplicate Deck Name**: The user will not be able to rename the selected deck to deck names that are already created.
 * **Empty Deck Name / Whitespace-Only Names**: Empty deck names or names consisting solely of spaces are considered invalid.
+* **Names containing `/` or `\`**: Names containing these characters are invalid because it will affect saving functionality
+
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
@@ -292,7 +320,7 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 
 This feature allows users to view all decks along with their corresponding indices. It does not allow any arguments, although whitespace is allowed.
 
-The `decks` command is implemented using the `Deck` class and the `CommandViewDecks` class. 
+The `decks` command is implemented using the `DeckManager` class and the `CommandViewDecks` class. 
 
 The ordering of the decks is preserved.
 
@@ -309,7 +337,7 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 
 This command allows the user to select a deck via its `INDEX`, which can be viewed using the `decks` command.
 
-The `select` command is implemented using the `Deck` class and the `CommandSelectDeck` class.
+The `select` command is implemented using the `DeckManager` class and the `CommandSelectDeck` class.
 
 #### **Before selecting a deck, these conditions must be satisfied:**
 * **No Decks**: If there are no decks available, the user will not be able to select any decks.
@@ -324,8 +352,8 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 #### Implementation of `DeckManager.selectDeck()`
 ![](images/SelectDeckSequenceDiagram.png)
 * Checks for the [conditions](#before-selecting-a-deck-these-conditions-must-be-satisfied) listed above
-* `DeckManager.checkAndGetListIndex()` checks if the index is valid and returns listIndex.
-* Then, we get the deck corresponding to that index. The `LinkedHashMap` has to be converted into a `Set` via the `entrySet()` method and then to a `List`. This is to facilitate the accessing of decks via index.
+* `DeckManager.checkAndGetListIndex()` checks if the index is valid and returns `listIndex`.
+* Then, we get the deck corresponding to that index. The method `DeckManager.checkAndGetListIndex()` converts a `LinkedHashMap` into a `Set` via the `entrySet()` method and then to a `List`. This is to facilitate the accessing of decks via index.
 * After getting the deck, we select it by assigning it to `currentDeck`, which indicates the deck selected.
 
 **Note**: The lifeline for `CommandSelectDeck` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
@@ -334,19 +362,20 @@ A `FlashCLIArgumentException` will be thrown for each of these cases, with a cus
 
 - `LinkedHashMap` was chosen over `LinkedHashSet`, `HashMap`, `Set` etc. due to its ability to maintain insertion order and allow index access without having to maintain multiple lists. 
 - We chose to convert the `LinkedHashMap` to a `List` everytime we require index access, instead of setting the `List` as an attribute. This is because the list is a shallow copy of the `LinkedHashMap` and will not be updated when the hashmap changes. To prevent adding further complexity to the code and having to maintain another list, we chose to sacrifice some speed in exchange for user convenience.
+- Selection via index was also more efficient than typing the deck name, further catering to our intended audience of fast typists.
 
 ### 3.2.5. Deleting a deck
 
 This feature allows users to remove a deck via its index. The deck need not be selected.
 
-The `remove` command is implemented using the `Deck` class and the `CommandDeleteDeck` class.
+The `remove` command is implemented using the `DeckManager` class and the `CommandDeleteDeck` class.
 
 #### Implementation of `DeckManager.deleteDeck()`
 ![](images/DeleteDeckSequenceDiagram.png)
 * When the command is sent, we first validate if the deck exists using `Parser.validateDeckExistsForDelete()`.
-* This is done through `DeckManager.checkAndGetListIndex()`, which checks that the input is a valid index and converts it from String to Integer.
+* This is done through `DeckManager.checkAndGetListIndex()`, which is the same method used for select decks, and it checks that the input is a valid index and converts it from String to Integer. 
 * Then, we confirm if the user indeed wants to delete the deck. This is done by continuously looping until the user enters "yes" or "no". The input is not case-sensitive. 
-* After which, a new `CommandDeleteDeck` object is created if the user confirms deletion or a message is shown to the user if "no" is entered.
+* After which, a new `CommandDeleteDeck` object is created which then executes the deletion of the deck if the user confirms deletion. If the user enters "no", a message is shown to the user.
 
 #### Handling Edge Cases
 * **Invalid input**: The input is empty or consists of only whitespace, or is out of bounds of the deck list.
@@ -354,7 +383,25 @@ The `remove` command is implemented using the `Deck` class and the `CommandDelet
 
 A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
 
-### 3.2.6. Searching
+### 3.2.6. Unselecting a deck
+
+This feature allows users to unselect the current selected deck. It does not allow any arguments, although whitespace is allowed.
+
+The `unselect` command is implemented using the `DeckManager` class and the `CommandUnselectDeck` class.
+
+This command is mainly to facilitate testing of other commands such as `select`.
+
+#### Implementation of `DeckManager.unselectDeck()`
+* The implementation is fairly straightforward and involves setting `currentDeck` to `null` as `currentDeck` holds the current deck selected.
+* A success message will be shown along with the deck name that is unselected.
+
+#### Handling Edge Cases
+* **No Decks**: If there are no decks available, the user will not be able to unselect them.
+* **No extra arguments**: There must be no input after the command. e.g. `unselect abc` is not allowed. However, whitespace is allowed.
+
+A `FlashCLIArgumentException` will be thrown for each of these cases, with a custom message and the error is displayed to the user.
+
+### 3.2.7. Searching
 
 #### Design
 
@@ -424,7 +471,7 @@ This command bridges user input with search logic:
 - Could be extended to highlight matched terms or paginate long results
 - Error handling is gracefully propagated to the UI layer
 
-### 3.2.7. Save/Load Functionality
+### 3.2.8. Save/Load Functionality
 
 #### Design
 
@@ -487,7 +534,7 @@ Saving.saveAllDecks(DeckManager.decks);
 - Current implementation assumes well-formed files
 - Future improvements: introduce backup/restore, encryption, or support for import/export formats like JSON/CSV
 
-### 3.2.8. Viewing quiz results
+### 3.2.9. Viewing quiz results
 
 #### Design
 

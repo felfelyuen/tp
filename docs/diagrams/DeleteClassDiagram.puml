@@ -1,11 +1,13 @@
 @startuml
+hide circle
+skinparam classAttributeIconSize 0
 class CommandDelete {
   - String arguments
   + executeCommand()
 }
 
 class Deck {
-  + String deleteFlashcard(int): String
+  + deleteFlashcard(int): String
 }
 
 CommandDelete --> Deck

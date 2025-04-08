@@ -124,7 +124,7 @@ Answer: Java
 ```
 
 ### Edit question and answer: `edit`
-Show the question of a flashcard via its index.
+Edit the question and answer of a flashcard via its index.
 
 Format: `edit INDEX /q QUESTION /a ANSWER`
 INDEX must be a positive integer, ie: 1, 2, 3
@@ -140,7 +140,7 @@ Edit Answer: Old placeholder answer here
 
 ```
 ### Edit question only: `edit`
-Show the question of a flashcard via its index.
+Edit the question of a flashcard via its index.
 
 Format: `edit INDEX /q QUESTION`
 INDEX must be a positive integer, ie: 1, 2, 3
@@ -156,7 +156,7 @@ Edit Answer: Old placeholder answer here
 
 ```
 ### Edit answer only: `edit`
-Show the question of a flashcard via its index.
+Edit the answer of a flashcard via its index.
 
 Format: `edit INDEX /a ANSWER`
 INDEX must be a positive integer, ie: 1, 2, 3
@@ -173,7 +173,7 @@ Edit Answer: Old placeholder answer here
 ```
 
 ### Insert code snippet: `Insert_code`
-Show the question of a flashcard via its index.
+Inserts code snippet of a flashcard via its index.
 
 Format: `insert_code INDEX /c CODE_SNIPPET`
 INDEX must be a positive integer, ie: 1, 2, 3
@@ -218,11 +218,11 @@ Examples:
 [OUTPUT]: You have 2 questions left:
 [OUTPUT]: What language is used in CS2113?
 [INPUT]: Java.
-[OUTPUT]: Correct!
+[OUTPUT]: Correct! Time elapsed: 10 seconds
 [OUTPUT]: You have 1 question left:
 [OUTPUT]: What colour is an apple?
 [INPUT]: Blue.
-[OUTPUT]: Incorrect.
+[OUTPUT]: Incorrect. Time elapsed: 22 seconds
 [OUTPUT]: You finished the test! You took: 22 seconds!
 Type view_results to check your test result
 ```
@@ -365,15 +365,11 @@ Unselects the specified deck. There must be a deck selected to use this command.
 
 **Q**: I have created many flashcards, will my data be saved?
 
-**A**: Yes, your data will be saved to a txt file under `./data/decks/`.
+**A**: Yes, your data will be saved to a txt file under `./data/decks/`. Remember to use the `exit` command to save!
 
 **Q**: How do I transfer my data to another computer? 
 
-**A**: It's easy, simply install FlashCLI using the instructions given in [Quick Start](#Quick-Start). Then, overwrite the txt file located in `./data/decks/` on the new computer.
-
----
-
-## Known Issues
+**A**: It's easy, simply install FlashCLI using the instructions given in [Quick Start](#Quick-Start). Then, overwrite the txt file(s) located in `./data/decks/` on the new computer.
 
 ---
 
@@ -393,6 +389,7 @@ Unselects the specified deck. There must be a deck selected to use this command.
 | **Rename Deck**      | `rename NEWNAME` e.g. `rename testDeck2`                                                          |
 | **View Decks**       | `decks`                                                                                           |
 | **Delete Deck**      | `remove DECKNAME` e.g. `remove testDeck`                                                          |
+| **Unselect Deck**    | `unselect`                                                                                        |
 | **Quiz Mode**        | `quiz`                                                                                            |
 | **View Results**     | `view_results` , `redo`                                                                           |
 | **Code Snippet**     | `insert_code INDEX /c CODE_SNIPPET` e.g. `insert_code 3 /c interface Interface{ void method(); }` |
