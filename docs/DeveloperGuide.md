@@ -13,7 +13,9 @@
         - [3.1.4. View a flashcard question](#314-view-a-flashcard-question)
         - [3.1.5. View a flashcard question](#315-view-a-flashcard-answer)
         - [3.1.6. Insert code snippet in a flashcard](#316-insert-code-snippet-in-a-flashcard)
-        - [3.1.7. List flashcards' questions](#317-list-flashcard-questions)
+        - [3.1.7. List flashcards' questions](#317-list-the-flashcard-questions)
+        - [3.1.8 mark learned/unlearned for a flashcard](#318-mark-learned-mark-unlearned-for-a-flashcard)
+        - [3.1.9 quiz mode](#319-quiz-mode)
     - [3.2. Deck Features](#32-deck-features)
         - [3.2.1. Creating a new deck](#321-creating-a-new-deck)
         - [3.2.2. Renaming decks](#322-renaming-decks)
@@ -248,7 +250,7 @@ This feature enables the user to insert a code snippet to a specific flashcard b
 - Invalid index format → `NumberFormatException`
 - Out-of-bounds index → `ArrayIndexOutOfBoundsException`
 
-### 3.1.7 List Flashcard Questions
+### 3.1.7 List the flashcard questions
 
 Allows the user to list out all the flashcard questions in the current deck. It assumes that the user is currently in a deck.
 
@@ -274,7 +276,7 @@ Iterates through the deck, and prints out the question for each flashcard.
 **Improvements made**
 - Added isLearned value into the list, to help users find out the isLearned status of all their flashcards at a glance. 
 
-### 3.1.8 Mark learned/ Mark unlearned method
+### 3.1.8 Mark learned/ Mark unlearned for a flashcard
 
 #### Design
 
@@ -299,6 +301,48 @@ Allows the user to mark the flashcard as learned or unlearned, by supplying the 
 - If index for flashcard is outside of deck size. (lower or equals to 0, and more than the size of the deck) → throws `FlashCliArgumentException`
 - If no index is inputted → throws `FlashCLIArgumentException`
 - If flashcard is already in the state that the user wants to mark it to, ie: the user wants to mark "learned" to an already learned flashcard → throws `FlashCLIArgumentException`
+
+### 3.1.9 Quiz mode
+
+#### Design
+
+This feature allows the user to enter a timed quiz mode, by asking only the unlearned flashcards. It assumes that the user has already selected a desk.
+
+In timed quiz mode, the flashcard's question would appear and wait for the user's input answer. If the answer is correct, the user is shown "Correct!", and if it is answered incorrectly, the user is shown "Incorrect.". Afterwards, the user would proceed to the next question.
+At the start of the quiz mode, a timer object is instantiated, and its duration would be retrieved after quiz mode ends.
+If the question is answered correctly, the flashcard would be mark as learned, otherwise, its isLearned value remains the same.
+After the quiz is finished, the user would be shown how long he took, and an option to view results (`view_res`).
+
+#### Sequence Diagram
+
+![](images/QuizClassDiagram.png)
+
+#### Sequence Diagram
+
+![](images/QuizSequenceDiagram.png)
+
+#### Implementation
+
+`quizFlashcards()`
+- Quizzes through the unlearned flashcards in a deck.
+- Prints the "end quiz" statement to output
+
+`handleQuestionForQuiz`
+- Outputs the question and waits for the input to be inputted by the user.
+
+`handleAnswerForFlashcard`
+- Checks if inputted value is correct.
+- Returns boolean value true if answer is correct.
+
+**Edge Cases Handled:**
+- Empty deck/no unlearned flashcards in deck. → throws `EmptyListException`
+- If the quiz is cancelled midway through (through exit_quiz) → throws `QuizCancelledException`
+- Empty answer inputted → the system would wait again for the user to input any answer.
+
+#### Future updates:
+- Mass quiz mode: (quiz through all unlearned flashcards)
+- Endless mode: (continuously quizzing, stops when there are 3 mistakes)
+- Against the clock mod: (quiz must be done by a certain timing)
 
 ### 3.2. Deck features
 ### 3.2.1. Creating a New Deck

@@ -36,6 +36,7 @@ FlashCLI 2.0 is a command-line flashcard application designed specifically for C
 
 ## Features
 
+
 ---
 ### Flashcard Features
 ### Viewing user guide: `user_guide`
@@ -84,7 +85,7 @@ Examples:
 If no deck is selected, this command cannot be used.
 
 ### Summary view of the flashcard deck: `list`
-Shows a list of all the flashcards in your deck, including information about the index and question of each flashcard. Limit to only 50 flashcards per page.
+Shows a list of all the flashcards in your deck, including information about the index and question of each flashcard.
 
 Format: `list`
 Examples:
