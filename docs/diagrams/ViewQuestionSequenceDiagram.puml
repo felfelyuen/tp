@@ -1,10 +1,9 @@
 @startuml
 actor User
 User -> CommandViewQuestion **: executeCommand()
-CommandViewQuestion++
-CommandViewQuestion -> Deck++: viewFlashcardQuestion()
+CommandViewQuestion -> Deck: viewFlashcardQuestion()
 Deck -> CommandViewQuestion: String question
-CommandViewQuestion -> Ui++: showToUser(question)
+CommandViewQuestion -> Ui: showToUser(question)
 
 
 CommandViewQuestion -> User

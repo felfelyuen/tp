@@ -148,6 +148,7 @@ public class Deck {
     /**
      * helper function to directly insert a flashcard into the deck
      * without having to create one
+     *
      * @param flashcard
      */
     //@@ author ManZ9802
@@ -255,6 +256,7 @@ public class Deck {
 
     /**
      * Views flashcard answer
+     *
      * @param index index of flashcard
      * @return the answer in the format of VIEW_ANSWER_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
@@ -274,7 +276,7 @@ public class Deck {
     /**
      * Edits the flashcard
      *
-     * @param index     index of flashcard to view
+     * @param index index of flashcard to view
      * @param arguments user inputs containing updated question and answer
      * @return the updated flashcard in the format of EDIT_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
@@ -328,6 +330,7 @@ public class Deck {
 
     /**
      * lists out the questions of the flashcards
+     *
      * @return list of questions in the format of LIST_SUCCESS
      * @throws EmptyListException if the list is empty
      */
@@ -356,6 +359,7 @@ public class Deck {
 
     /**
      * Deletes the flashcard
+     *
      * @param index index of flashcard
      * @return the flashcard details in the format of DELETE_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
@@ -450,6 +454,7 @@ public class Deck {
      * @param tempIncorrectAnswers list to store user's incorrect answers
      * @throws QuizCancelledException if user cancels the quiz mid-way
      */
+    //@@author felfelyuen
     public void handleQuestionForQuiz(
             Flashcard indexCard,
             ArrayList<Flashcard> tempIncorrectFlashcards,
@@ -486,6 +491,7 @@ public class Deck {
      * @return true if the answer is correct, false otherwise
      * @throws QuizCancelledException if user cancels the quiz mid-way
      */
+    //@@author felfelyuen
     public boolean handleAnswerForFlashcard(Flashcard indexCard, String userAnswer)
             throws QuizCancelledException {
         assert (!userAnswer.isEmpty()) : "userAnswer should not be empty";
@@ -507,8 +513,6 @@ public class Deck {
             return false;
         }
     }
-
-
 
     /**
      * Displays the quiz results including statistics and accuracy.
@@ -641,6 +645,7 @@ public class Deck {
 
     /**
      * Calculates a letter grade based on accuracy percentage
+     *
      * @param accuracy The accuracy percentage (0-100)
      * @return Letter grade with emoji
      */
@@ -760,7 +765,6 @@ public class Deck {
         }
     }
 
-
     /**
      * Inserts code snippets to the flashcard
      * @param index     index of flashcard to insert code snippet
@@ -796,7 +800,6 @@ public class Deck {
                 formattedCodeSnippet);
     }
 
-
     /**
      * Shuffles the given deck, including only unlearned flashcards.
      * Filters out learned flashcards before shuffling the remaining ones.
@@ -819,11 +822,13 @@ public class Deck {
 
     /**
      * changes isLearned of Flashcard
+     *
      * @param arguments index of flashcard
      * @param isLearned new boolean value of isLearned
      * @throws NumberFormatException if arguments is not a number
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size.
      */
+    //@@author felfelyuen
     public String changeIsLearned (String arguments, boolean isLearned)
             throws NumberFormatException,
             FlashCLIArgumentException {
@@ -861,6 +866,7 @@ public class Deck {
 
     /**
      * helper function to search for flashcards
+     *
      * @param arguments question and/or answer to be searched
      * @return arraylist of flashcards
      * @throws FlashCLIArgumentException if no question or answer is provided
@@ -908,6 +914,7 @@ public class Deck {
 
     /**
      * wrapper function for searching flashcards
+     *
      * @param arguments question and/or answer to be searched
      * @return string of matching questions and answers
      * @throws FlashCLIArgumentException if no question or answer is provided

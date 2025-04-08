@@ -8,7 +8,7 @@ public class SuccessMessages {
             "Answer: %s\n" +
             "You have %d flashcard(s) in your deck.";
 
-    public static final String VIEW_QUESTION_SUCCESS = "Question of flashcard index: %s\n " +
+    public static final String VIEW_QUESTION_SUCCESS = "Question of flashcard index: %s\n" +
             "Learned?: %s\n" +
             "Question: %s\n" +
             "%s";
