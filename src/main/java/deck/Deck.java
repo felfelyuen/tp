@@ -43,6 +43,16 @@ import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUIZRESULT_SUCCESS;
+import static constants.AchievementConstants.PERFECT_SCORE;
+import static constants.AchievementConstants.OUTSTANDING;
+import static constants.AchievementConstants.EXCELLENT;
+import static constants.AchievementConstants.GOOD_JOB;
+import static constants.AchievementConstants.NOT_BAD;
+import static constants.AchievementConstants.PASSED;
+import static constants.AchievementConstants.KEEP_PRACTICING;
+import static constants.AchievementConstants.GOLD_MEDAL_ART;
+import static constants.AchievementConstants.SILVER_MEDAL_ART;
+import static constants.AchievementConstants.NO_MEDAL_ART;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -625,22 +635,12 @@ public class Deck {
      */
     private String getAchievementArt(double accuracy) {
         if (accuracy == 100) {
-            return "   ,d88b.d88b,\n" +
-                    "   88888888888\n" +
-                    "   `Y8888888Y'\n" +
-                    "     `Y888Y'\n" +
-                    "       `Y'\n" +
-                    "   GOLD MEDAL";
+            return GOLD_MEDAL_ART;
         }
         if (accuracy >= 70) {
-            return "   ,d88b.d88b,\n" +
-                    "   88888888888\n" +
-                    "    `Y88888Y'\n" +
-                    "      `Y88Y'\n" +
-                    "        `Y'\n" +
-                    "  SILVER MEDAL";
+            return SILVER_MEDAL_ART;
         }
-        return "";
+        return NO_MEDAL_ART;
     }
 
     /**
@@ -685,24 +685,24 @@ public class Deck {
 
     private String getPerformanceComment(double accuracy) {
         if (accuracy == 100) {
-            return "PERFECT SCORE! FLAWLESS PERFORMANCE!";
+            return PERFECT_SCORE;
         }
         if (accuracy >= 95) {
-            return "Outstanding! You've mastered this material!";
+            return OUTSTANDING;
         }
         if (accuracy >= 85) {
-            return "Excellent work! You're doing great!";
+            return EXCELLENT;
         }
         if (accuracy >= 75) {
-            return "Good job! You're making solid progress.";
+            return GOOD_JOB;
         }
         if (accuracy >= 65) {
-            return "Not bad! Review your mistakes to improve.";
+            return NOT_BAD;
         }
         if (accuracy >= 50) {
-            return "You passed, but more practice would help.";
+            return PASSED;
         }
-        return "Keep practicing! Review the material and try again.";
+        return KEEP_PRACTICING;
     }
 
     /**

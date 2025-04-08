@@ -282,20 +282,34 @@ Examples:
 
 ### View test results: `view_res`
 Views the flashcards that were answered wrong after test mode.
+You can only view the test result after 
+a test and you can only view it once.
 
 Format: `view_res`
 
 Examples:
 ```
 [INPUT]: view_res
-[OUTPUT]: Your test for DECK_WEEK result is 9/10, correctness: 90%
-Your wrong answers are following:
--Q1. What colour is an apple?  Your answer: Red
-Correct answer: Blue
--Q5. What is the capital of the UK? Your answer: Washington DC     
-Correct answer: London
+[OUTPUT]:
+=== Quiz Results ===and......
+- Total Question(s): 1
+- Correct Answer(s): 1
+- Incorrect Answer(s): 0
+- Accuracy: 100.00%
+- Grade: A+ :)
 
-    Type “redo” to restart the test.
+PERFECT SCORE! FLAWLESS PERFORMANCE!
+
+   ,d88b.d88b,
+   88888888888
+   `Y8888888Y'
+     `Y888Y'
+       `Y'
+   GOLD MEDAL
+
+Great job! You have answered all of questions correctly.
+
+This is the end of the test report.
 ```
 
 ### Search Flashcards: `search`
