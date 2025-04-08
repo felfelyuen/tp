@@ -3,8 +3,8 @@ actor User
 activate Flashcard
 User -> CommandEdit : executeCommand()
 activate CommandEdit
-CommandEdit -> UI : showToUser()
-activate UI
+CommandEdit -> Ui : showToUser()
+activate Ui
 return
 CommandEdit -> Flashcard : editFlashcard(int, String)
 deactivate CommandEdit

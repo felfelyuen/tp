@@ -247,11 +247,11 @@ Examples:
 [OUTPUT]: You have 2 questions left:
 [OUTPUT]: What language is used in CS2113?
 [INPUT]: Java.
-[OUTPUT]: Correct!
+[OUTPUT]: Correct! Time elapsed: 10 seconds
 [OUTPUT]: You have 1 question left:
 [OUTPUT]: What colour is an apple?
 [INPUT]: Blue.
-[OUTPUT]: Incorrect.
+[OUTPUT]: Incorrect. Time elapsed: 22 seconds
 [OUTPUT]: You finished the test! You took: 22 seconds!
 Type view_res to check your test result
 ```
