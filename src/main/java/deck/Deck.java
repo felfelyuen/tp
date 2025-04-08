@@ -114,6 +114,15 @@ public class Deck {
     }
 
     /**
+     * Starts and sets a timer for the quiz
+     *
+     * @param timer the Timer object for the deck
+     */
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    /**
      * Returns the list of flashcards in the deck.
      *
      * @return an {@code ArrayList} of {@code Flashcard} objects.
@@ -390,7 +399,7 @@ public class Deck {
 
         Ui.showToUser(QUIZ_START);
         long startTime = System.nanoTime();
-        timer = new Timer(startTime);
+        setTimer(new Timer(startTime));
         int lastIndex = queue.size() - 1;
         assert lastIndex >= 0 : "Queue size should not be zero";
         for (int i = 0; i < lastIndex; i++) {
@@ -470,21 +479,21 @@ public class Deck {
     public boolean handleAnswerForFlashcard(Flashcard indexCard, String userAnswer)
             throws QuizCancelledException {
         assert (!userAnswer.isEmpty()) : "userAnswer should not be empty";
+        long duration = timer.getDuration();
         if(userAnswer.equals(QUIZ_CANCEL)) {
             logger.info("Quiz cancelled by user. Exiting quiz:");
             isQuizCompleted = false;
             throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
         }
-
         logger.info("answer detected:" + userAnswer);
         if (userAnswer.equals(indexCard.getAnswer())) {
             logger.info("Correct answer detected");
-            Ui.showToUser(QUIZ_CORRECT);
+            Ui.showToUser(String.format(QUIZ_CORRECT, duration));
             return true;
         } else {
             logger.info("Wrong answer detected, should be:" +
                     indexCard.getAnswer());
-            Ui.showToUser(QUIZ_INCORRECT);
+            Ui.showToUser(String.format(QUIZ_INCORRECT, duration));
             return false;
         }
     }

@@ -41,6 +41,7 @@ import exceptions.FlashCLIArgumentException;
 import exceptions.QuizCancelledException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import timer.Timer;
 
 import java.util.ArrayList;
 
@@ -427,6 +428,7 @@ public class DeckTest {
 
             ArrayList<Flashcard> flashcards = deck.getFlashcards();
             String userAnswer = "A programming language.";
+            deck.setTimer(new Timer(System.nanoTime()));
             boolean testSuccess = deck.handleAnswerForFlashcard(flashcards.get(0), userAnswer);
             assertTrue(testSuccess);
         } catch (Exception e) {
@@ -443,6 +445,7 @@ public class DeckTest {
 
             ArrayList<Flashcard> flashcards = deck.getFlashcards();
             String userAnswer = "dummy response";
+            deck.setTimer(new Timer(System.nanoTime()));
             boolean testSuccess = deck.handleAnswerForFlashcard(flashcards.get(0), userAnswer);
             assertFalse(testSuccess);
         } catch (QuizCancelledException e) {
@@ -472,6 +475,7 @@ public class DeckTest {
 
             ArrayList<Flashcard> flashcards = deck.getFlashcards();
             String userAnswer = "dummy response";
+            deck.setTimer(new Timer(System.nanoTime()));
             boolean testSuccess = deck.handleAnswerForFlashcard(flashcards.get(0), userAnswer);
             assertFalse(testSuccess);
             boolean exitQuizSuccess = deck.handleAnswerForFlashcard(flashcards.get(1), QUIZ_CANCEL);
