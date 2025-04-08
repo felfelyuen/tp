@@ -2,15 +2,17 @@
 actor User
 participant ":CommandSearchFlashcard" as CommandSearchFlashcard
 participant ":Deck" as Deck
+participant "<<class>> \n :DeckManager" as DeckManager
+participant ":Ui" as Ui
 User -> CommandSearchFlashcard : executeCommand()
 alt Deck selected
     CommandSearchFlashcard -> Deck : searchFlashcardQuestion(arguments)
     Deck -> Deck : filter Flashcards
-    Deck -> CommandSearchFlashcard : result
+    Deck --> CommandSearchFlashcard : result
 else No deck selected
     CommandSearchFlashcard -> DeckManager : globalSearch(arguments)
     DeckManager -> Deck : searchFlashcardQuestion(arguments) [loop over decks]
-    DeckManager -> CommandSearchFlashcard : result
+    DeckManager --> CommandSearchFlashcard : result
 end
 CommandSearchFlashcard -> Ui : showToUser(result)
 @enduml
