@@ -19,34 +19,28 @@ FlashCLI is a command-line flashcard application designed specifically for CS211
 #### **Critical Feature**: Creating Decks
 
 - **What it does:** Allow users to create a named flashcard deck, given that there are no duplicated decks.
-- **Justification:** Decks organize flashcards, making this crucial for user workflow.
 
 #### New Feature: Renaming Decks
 
 - **What it does:** Allow users to rename existing decks when a deck is selected, while also preserving deck order and flashcards.
-- **Justification:** Allows decks to be updated as study needs evolve or when mistakes are made in naming decks
 
 #### New Feature: Listing Decks
 
 - **What it does:** Allow users to view all the decks they have created, along with the deck indices.
-- **Justification:** Facilitates the user experience by allowing users to view the decks they have created. Also facilitates selection of decks by index.
 
 #### New Feature: Selecting Decks
 
 - **What it does:** Allow users select a deck by its index.
-- **Justification:** Significantly improves user experience as deck names may be long and difficult to type.
 
 #### New Feature: Deleting Decks
 
 - **What it does:** Allow users remove a deck by its index.
-- **Justification:** Improves user experience as it prevents outdated decks from accumulating
 
 #### New Feature: Unselecting Decks
 
 - **What it does:** Allow users to unselect the current deck selected.
-- **Justification:** Helps to improve testability of other commands, especially those involving flashcards as they cannot be used without a deck.
 
-Due to page limitations, I am unable to elaborate further on the challenges faced etc. Do refer to the [Developer's Guide](https://ay2425s2-cs2113-f11-4.github.io/tp/DeveloperGuide.html) for that.
+Due to page limitations, please refer to the [Developer's Guide](https://ay2425s2-cs2113-f11-4.github.io/tp/DeveloperGuide.html) for the rationale for the features.
 
 ### Other aspects
 #### **Project Management / Contribution to Team-Based Tasks:**
@@ -61,13 +55,12 @@ Due to page limitations, I am unable to elaborate further on the challenges face
     - Set up the User Guide for the team, including Quick Start, FAQ, Command Summary
     - Updated the sections corresponding to the features I implemented, eg creating a flashcard/deck
   - Developer's Guide:
-    - Updated overall structure and heading, eg heading numbering
-    - Added design section, including class diagrams
+    - Updated overall structure and heading, eg heading numbering, added design section, including class diagrams
     - Updated Appendix B: User Stories
     - Updated the sections corresponding to the features I implemented, complete with sequence diagrams, rationale etc.
 
 #### Mentoring/Team Contributions
--  Coordinated meetings and pushed the team to meet deadlines **throughout the project**, e.g. setting internal deadlines, checking up on team progress
+-  Coordinated meetings and pushed the team to meet deadlines **throughout the project**, e.g. setting internal deadlines
 - Setting up branch protection to prevent unauthorised pushing to master branch (it actually happened) and requiring Gradle tests to pass and at least 1 review to merge
 - Helping teammates debug issues with their IDE and Java version, so that they can work on the project
 
