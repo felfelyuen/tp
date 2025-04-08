@@ -5,6 +5,6 @@ participant ":Deck" as Deck
 participant ":Ui" as Ui
 User -> CommandDelete : executeCommand()
 CommandDelete -> Deck : deleteFlashcard(index)
-Deck -> CommandDelete : confirmation message
+Deck --> CommandDelete : confirmation message
 CommandDelete -> Ui : showToUser(message)
 @enduml
