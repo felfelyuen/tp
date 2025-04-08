@@ -41,6 +41,7 @@ public class ErrorMessages {
     // Deck error messages
     public static final String MISSING_DECK_NAME = "Deck name cannot be empty or have whitespace only.";
     public static final String NO_DECK_TO_SWITCH = "No decks available. Create a deck before selecting.";
+    public static final String INVALID_DECK_NAME = "Invalid deck name";
     public static final String NO_DECK_ERROR = "Select a deck first!";
     public static final String VIEW_DECKS_NO_ARGUMENTS_ALLOWED = "The 'decks' command does not take any arguments.";
     public static final String UNSELECT_NO_ARGUMENTS_ALLOWED = "The 'unselect' command does not take any arguments.";

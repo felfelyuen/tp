@@ -1,0 +1,20 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+class CommandQuizFlashcards {
+  + executeCommand()
+}
+
+class Deck {
+  - flashcards: ArrayList<Flashcard>
+  - incorrectFlashcards: ArrayList<Flashcard>
+  - incorrectIndexes: ArrayList<Integer>
+  - incorrectAnswers: ArrayList<String>
+  - quizAmtAnswered: int
+  +  quizFlashcards(): void
+  + handleQuestionForQuiz(indexCard: Flashcard, tempIncorrectFlashcards: ArrayList<Flashcard>, tempIncorrectIndexes: ArrayList<Integer>, tempIncorrectAnswers: ArrayList<String>) : void
+  + handleAnswerForFlashcard(indexCard: Flashcard, userAnswer: String): boolean
+}
+
+CommandQuizFlashcards --> Deck
+@enduml

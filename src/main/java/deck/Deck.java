@@ -43,6 +43,16 @@ import static constants.SuccessMessages.SEARCH_SUCCESS;
 import static constants.SuccessMessages.VIEW_ANSWER_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUESTION_SUCCESS;
 import static constants.SuccessMessages.VIEW_QUIZRESULT_SUCCESS;
+import static constants.AchievementConstants.PERFECT_SCORE;
+import static constants.AchievementConstants.OUTSTANDING;
+import static constants.AchievementConstants.EXCELLENT;
+import static constants.AchievementConstants.GOOD_JOB;
+import static constants.AchievementConstants.NOT_BAD;
+import static constants.AchievementConstants.PASSED;
+import static constants.AchievementConstants.KEEP_PRACTICING;
+import static constants.AchievementConstants.GOLD_MEDAL_ART;
+import static constants.AchievementConstants.SILVER_MEDAL_ART;
+import static constants.AchievementConstants.NO_MEDAL_ART;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -114,6 +124,15 @@ public class Deck {
     }
 
     /**
+     * Starts and sets a timer for the quiz
+     *
+     * @param timer the Timer object for the deck
+     */
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    /**
      * Returns the list of flashcards in the deck.
      *
      * @return an {@code ArrayList} of {@code Flashcard} objects.
@@ -129,6 +148,7 @@ public class Deck {
     /**
      * helper function to directly insert a flashcard into the deck
      * without having to create one
+     *
      * @param flashcard
      */
     //@@ author ManZ9802
@@ -236,6 +256,7 @@ public class Deck {
 
     /**
      * Views flashcard answer
+     *
      * @param index index of flashcard
      * @return the answer in the format of VIEW_ANSWER_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
@@ -255,7 +276,7 @@ public class Deck {
     /**
      * Edits the flashcard
      *
-     * @param index     index of flashcard to view
+     * @param index index of flashcard to view
      * @param arguments user inputs containing updated question and answer
      * @return the updated flashcard in the format of EDIT_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
@@ -309,6 +330,7 @@ public class Deck {
 
     /**
      * lists out the questions of the flashcards
+     *
      * @return list of questions in the format of LIST_SUCCESS
      * @throws EmptyListException if the list is empty
      */
@@ -337,6 +359,7 @@ public class Deck {
 
     /**
      * Deletes the flashcard
+     *
      * @param index index of flashcard
      * @return the flashcard details in the format of DELETE_SUCCESS
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size
@@ -390,7 +413,7 @@ public class Deck {
 
         Ui.showToUser(QUIZ_START);
         long startTime = System.nanoTime();
-        timer = new Timer(startTime);
+        setTimer(new Timer(startTime));
         int lastIndex = queue.size() - 1;
         assert lastIndex >= 0 : "Queue size should not be zero";
         for (int i = 0; i < lastIndex; i++) {
@@ -431,6 +454,7 @@ public class Deck {
      * @param tempIncorrectAnswers list to store user's incorrect answers
      * @throws QuizCancelledException if user cancels the quiz mid-way
      */
+    //@@author felfelyuen
     public void handleQuestionForQuiz(
             Flashcard indexCard,
             ArrayList<Flashcard> tempIncorrectFlashcards,
@@ -467,29 +491,28 @@ public class Deck {
      * @return true if the answer is correct, false otherwise
      * @throws QuizCancelledException if user cancels the quiz mid-way
      */
+    //@@author felfelyuen
     public boolean handleAnswerForFlashcard(Flashcard indexCard, String userAnswer)
             throws QuizCancelledException {
         assert (!userAnswer.isEmpty()) : "userAnswer should not be empty";
+        long duration = timer.getDuration();
         if(userAnswer.equals(QUIZ_CANCEL)) {
             logger.info("Quiz cancelled by user. Exiting quiz:");
             isQuizCompleted = false;
             throw new QuizCancelledException(QUIZ_CANCEL_MESSAGE);
         }
-
         logger.info("answer detected:" + userAnswer);
         if (userAnswer.equals(indexCard.getAnswer())) {
             logger.info("Correct answer detected");
-            Ui.showToUser(QUIZ_CORRECT);
+            Ui.showToUser(String.format(QUIZ_CORRECT, duration));
             return true;
         } else {
             logger.info("Wrong answer detected, should be:" +
                     indexCard.getAnswer());
-            Ui.showToUser(QUIZ_INCORRECT);
+            Ui.showToUser(String.format(QUIZ_INCORRECT, duration));
             return false;
         }
     }
-
-
 
     /**
      * Displays the quiz results including statistics and accuracy.
@@ -612,26 +635,17 @@ public class Deck {
      */
     private String getAchievementArt(double accuracy) {
         if (accuracy == 100) {
-            return "   ,d88b.d88b,\n" +
-                    "   88888888888\n" +
-                    "   `Y8888888Y'\n" +
-                    "     `Y888Y'\n" +
-                    "       `Y'\n" +
-                    "   GOLD MEDAL";
+            return GOLD_MEDAL_ART;
         }
         if (accuracy >= 70) {
-            return "   ,d88b.d88b,\n" +
-                    "   88888888888\n" +
-                    "    `Y88888Y'\n" +
-                    "      `Y88Y'\n" +
-                    "        `Y'\n" +
-                    "  SILVER MEDAL";
+            return SILVER_MEDAL_ART;
         }
-        return "";
+        return NO_MEDAL_ART;
     }
 
     /**
      * Calculates a letter grade based on accuracy percentage
+     *
      * @param accuracy The accuracy percentage (0-100)
      * @return Letter grade with emoji
      */
@@ -671,24 +685,24 @@ public class Deck {
 
     private String getPerformanceComment(double accuracy) {
         if (accuracy == 100) {
-            return "PERFECT SCORE! FLAWLESS PERFORMANCE!";
+            return PERFECT_SCORE;
         }
         if (accuracy >= 95) {
-            return "Outstanding! You've mastered this material!";
+            return OUTSTANDING;
         }
         if (accuracy >= 85) {
-            return "Excellent work! You're doing great!";
+            return EXCELLENT;
         }
         if (accuracy >= 75) {
-            return "Good job! You're making solid progress.";
+            return GOOD_JOB;
         }
         if (accuracy >= 65) {
-            return "Not bad! Review your mistakes to improve.";
+            return NOT_BAD;
         }
         if (accuracy >= 50) {
-            return "You passed, but more practice would help.";
+            return PASSED;
         }
-        return "Keep practicing! Review the material and try again.";
+        return KEEP_PRACTICING;
     }
 
     /**
@@ -751,7 +765,6 @@ public class Deck {
         }
     }
 
-
     /**
      * Inserts code snippets to the flashcard
      * @param index     index of flashcard to insert code snippet
@@ -787,7 +800,6 @@ public class Deck {
                 formattedCodeSnippet);
     }
 
-
     /**
      * Shuffles the given deck, including only unlearned flashcards.
      * Filters out learned flashcards before shuffling the remaining ones.
@@ -810,11 +822,13 @@ public class Deck {
 
     /**
      * changes isLearned of Flashcard
+     *
      * @param arguments index of flashcard
      * @param isLearned new boolean value of isLearned
      * @throws NumberFormatException if arguments is not a number
      * @throws ArrayIndexOutOfBoundsException if the index is outside of list size.
      */
+    //@@author felfelyuen
     public String changeIsLearned (String arguments, boolean isLearned)
             throws NumberFormatException,
             FlashCLIArgumentException {
@@ -852,6 +866,7 @@ public class Deck {
 
     /**
      * helper function to search for flashcards
+     *
      * @param arguments question and/or answer to be searched
      * @return arraylist of flashcards
      * @throws FlashCLIArgumentException if no question or answer is provided
@@ -899,6 +914,7 @@ public class Deck {
 
     /**
      * wrapper function for searching flashcards
+     *
      * @param arguments question and/or answer to be searched
      * @return string of matching questions and answers
      * @throws FlashCLIArgumentException if no question or answer is provided

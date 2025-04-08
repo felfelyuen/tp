@@ -1,14 +1,14 @@
 @startuml
 hide circle
 skinparam classAttributeIconSize 0
-class CommandDelete {
+class CommandViewQuestion {
   - String arguments
   + executeCommand()
 }
 
 class Deck {
-  + deleteFlashcard(int): String
+  +  viewFlashcardQuestion(String): String
 }
 
-CommandDelete --> Deck
+CommandViewQuestion --> Deck
 @enduml

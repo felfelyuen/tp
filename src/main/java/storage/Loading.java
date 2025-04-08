@@ -1,4 +1,3 @@
-//@@ author ManZ9802
 package storage;
 
 import java.io.BufferedReader;
@@ -49,12 +48,12 @@ public class Loading {
                         question = line.substring(3).trim();
                     } else if (line.startsWith("A: ")) {
                         answer = line.substring(3).trim();
-                        if (question != null && !question.isEmpty()) {
+                        if (question != null && !question.isEmpty() && answer != null && !answer.isEmpty()) {
                             deck.insertFlashcard(new Flashcard(deck.getDeckSize(), question, answer, isLearned));
-                            question = null;
-                            answer = null;
-
                         }
+                        question = null;
+                        answer = null;
+                        isLearned = false;
                     }
                 }
             } catch (IOException e) {

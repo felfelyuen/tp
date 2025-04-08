@@ -36,6 +36,32 @@ FlashCLI 2.0 is a command-line flashcard application designed specifically for C
 
 ## Features
 
+1. [Flashcard Features](#flashcard-features)
+   - [Viewing User Guide](#viewing-user-guide-user_guide)
+   - [Create flashcards](#create-flashcards-add)
+   - [Summary view of the flashcard deck](#summary-view-of-the-flashcard-deck-list)
+   - [View question only](#view-question-only-qn)
+   - [View answer only](#view-answer-only-ans)
+   - [Edit question and answer](#edit-question-and-answer-edit)
+   - [Edit question only](#edit-question-only-edit)
+   - [Edit answer only](#edit-answer-only-edit)
+   - [Insert code snippet](#insert-code-snippet-insert_code)
+   - [Delete flashcard](#delete-flashcard-delete)
+   - [Quiz mode with timer](#quiz-mode-with-timer-quiz)
+   - [Mark as learned](#mark-as-learned-mark_learned)
+   - [Unmark learned](#unmark-learned-mark_unlearned)
+   - [View test results](#view-test-results-view_results)
+   - [Search Flashcards](#search-flashcards-search)
+2. [Deck Features](#deck-features)
+  - [Create a new deckk](#create-a-new-deck-new)
+  - [Select a Deck](#select-a-deck-select)
+  - [Rename a Deck](#rename-a-deck-rename)
+  - [View All Decks](#view-all-decks-decks)
+  - [Delete a Deck](#delete-a-deck-remove)
+  - [Unselect a Deck](#unselect-a-deck-unselect)
+3. [FAQ](#faq)
+4. [Command Summary](#command-summary)
+
 ---
 ### Flashcard Features
 ### Viewing user guide: `user_guide`
@@ -60,7 +86,7 @@ List of commands:
 "quiz": quizzes the unlearned flashcards
 "mark_learned": marks flashcard as learned
 "mark_unlearned": marks flashcard as unlearned
-"view_results": views results from quiz after quiz is completed
+"view_res": views results from quiz after quiz is completed
 "new": creates a new deck of flashcards
 "rename": renames flashcard deck
 "decks": shows list of decks
@@ -84,15 +110,15 @@ Examples:
 If no deck is selected, this command cannot be used.
 
 ### Summary view of the flashcard deck: `list`
-Shows a list of all the flashcards in your deck, including information about the index and question of each flashcard. Limit to only 50 flashcards per page.
+Shows a list of all the flashcards in your deck, including information about the index and question of each flashcard.
 
 Format: `list`
 Examples:
 ```
 [INPUT]: list
 [OUTPUT]: 
-1. /q What colour is an apple? 
-2. /q What language is used in CS2113?
+1. [ ] What colour is an apple? 
+2. [ ]] What language is used in CS2113?
 ```
 
 ### View question only: `qn`
@@ -103,7 +129,10 @@ INDEX must be a positive integer, ie: 1, 2, 3
 Examples:
 ```
 [INPUT]: qn 3
-[OUTPUT]: What is a java interface?
+[OUTPUT]: 
+Question of flashcard index: 3
+Learned?: [ ]
+Question: What is a java interface?
 
 interface Interface{
 void method();
@@ -172,7 +201,7 @@ Edit Answer: Old placeholder answer here
 
 ```
 
-### Insert code snippet: `Insert_code`
+### Insert code snippet: `insert_code`
 Inserts code snippet of a flashcard via its index.
 
 Format: `insert_code INDEX /c CODE_SNIPPET`
@@ -218,17 +247,17 @@ Examples:
 [OUTPUT]: You have 2 questions left:
 [OUTPUT]: What language is used in CS2113?
 [INPUT]: Java.
-[OUTPUT]: Correct!
+[OUTPUT]: Correct! Time elapsed: 10 seconds
 [OUTPUT]: You have 1 question left:
 [OUTPUT]: What colour is an apple?
 [INPUT]: Blue.
-[OUTPUT]: Incorrect.
+[OUTPUT]: Incorrect. Time elapsed: 22 seconds
 [OUTPUT]: You finished the test! You took: 22 seconds!
-Type view_results to check your test result
+Type view_res to check your test result
 ```
 
 ### Mark as learned: `mark_learned`
-Marks the question as learned. Flashcards that are correctly answered in quiz mode would be automatically marked as learned. Learned flashcards are not tested again in quiz mode.
+Marks the question as learned. Flashcards that are correctly answered in quiz mode would be automatically marked as learned. Learned flashcards are not tested again in quiz mode. Learned flashcards cannot be mark learned again.
 
 Format: `mark_learned INDEX`
 INDEX must be a positive integer, i.e: 1, 2, 3
@@ -236,11 +265,11 @@ INDEX must be a positive integer, i.e: 1, 2, 3
 Examples:
 ```
 [INPUT]:mark_learned 2
-[OUTPUT]: Changed flashcard number 2 into learned
+[OUTPUT]:Changed flashcard number 2 into learned
 ```
 
 ### Unmark learned: `mark_unlearned`
-Marks the flashcard as unlearned. Unlearned flashcards are tested in quiz mode.
+Marks the flashcard as unlearned. Unlearned flashcards are tested in quiz mode. Unlearned flashcards cannot be marked unlearned again.
 
 Format: `mark_unlearned INDEX`
 INDEX must be a positive integer, i.e: 1, 2, 3
@@ -251,22 +280,36 @@ Examples:
 [OUTPUT]: Changed flashcard number 2 into unlearned
 ```
 
-### View test results: `view_results`
+### View test results: `view_res`
 Views the flashcards that were answered wrong after test mode.
+You can only view the test result after 
+a test and you can only view it once.
 
-Format: `view_results`
+Format: `view_res`
 
 Examples:
 ```
-[INPUT]: view_resultS
-[OUTPUT]: Your test for DECK_WEEK result is 9/10, correctness: 90%
-Your wrong answers are following:
--Q1. What colour is an apple?  Your answer: Red
-Correct answer: Blue
--Q5. What is the capital of the UK? Your answer: Washington DC     
-Correct answer: London
+[INPUT]: view_res
+[OUTPUT]:
+=== Quiz Results ===and......
+- Total Question(s): 1
+- Correct Answer(s): 1
+- Incorrect Answer(s): 0
+- Accuracy: 100.00%
+- Grade: A+ :)
 
-    Type “redo” to restart the test.
+PERFECT SCORE! FLAWLESS PERFORMANCE!
+
+   ,d88b.d88b,
+   88888888888
+   `Y8888888Y'
+     `Y888Y'
+       `Y'
+   GOLD MEDAL
+
+Great job! You have answered all of questions correctly.
+
+This is the end of the test report.
 ```
 
 ### Search Flashcards: `search`
